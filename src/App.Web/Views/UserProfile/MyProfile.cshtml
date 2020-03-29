@@ -1,0 +1,100 @@
+﻿@using App.Web.Models.ViewModels.Identity
+@model UserProfileViewModel
+@{
+    ViewData["Title"] = "MyProfile";
+}
+
+<div class="container p-t-20">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="text-green"><strong>Profile</strong></h3>
+            <h4><strong style="color:grey">My Profile</strong></h4>
+            <hr class="green">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-horizontal col-md-8 col-md-offset-2">
+            <div class="tabbable paper-shadow relative" data-z="0.5">
+               <!-- Panes -->
+                <div class="tab-content main">
+                    <div id="account" class="tab-pane active p-20 main-colour-bg">
+                        <form class="form-horizontal" asp-route-id="@Model.Id">
+                            @*<div class="form-group">
+                                <label asp-for="Photo" class="col-sm-2 control-label text-white">User Avatar</label>
+                                <div class="col-md-10">
+                                    <div class="media v-middle">
+                                        <div class="media-left">
+                                            @if (Model.Photo != null)
+                                            {
+                                                <div class="icon-block">
+                                                    <img src="/@Model.Photo" class="img-circle" width="120">
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="icon-block width-100 bg-grey-100">
+                                                    <i class="fa fa-photo text-light"></i>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="media-body">
+                                        @Html.EditorFor(model => model.Photo, new { @class = "form-control", @accept = "image/*", @extension = ".jpg,.jpeg,.png,.gif", @Ratio = 120.0 / 120.0, required = "required" })
+                                    </div>
+                                </div>
+                            </div>*@
+                            <div class="form-group">
+                                <label asp-for="Name" class="col-md-2 control-label text-white">Your Name</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" asp-for="Name" placeholder="Enter your name">
+                                    <p></p>
+                                    <span asp-validation-for="Name" class="text-white"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Address" class="col-md-2 control-label text-white">Address </label>
+                                <div class="col-md-10">
+                                    <textarea asp-for="Address" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Birthplace" class="col-md-2 control-label text-white">Birthplace </label>
+                                <div class="col-md-4">
+                                    <input type="text" asp-for="Birthplace" class="form-control" placeholder="Enter Your Birthplace">
+                                </div>
+                                <label asp-for="Birthdate" class="col-md-2 control-label text-white">Birthdate </label>
+                                <div class="col-md-4">
+                                    <input type="date" asp-for="Birthdate" class="form-control" placeholder="Enter Your Birthdate">
+                                </div>
+                            </div>
+                            <div class="form-group margin-none">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <button type="submit" class="btn b-r-20 btn-black pull-right" data-z="0.5" data-hover-z="1" data-animated=""><i class="fa fa-save"></i>&nbsp; Save Changes</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+
+                </div>
+                <!-- // END Panes -->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+
+@*@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }*@
+
+  
+}
+
+
+<style>
+    span.text-danger.img-avatar-validation {
+        color: #fff !important;
+    }
+</style>

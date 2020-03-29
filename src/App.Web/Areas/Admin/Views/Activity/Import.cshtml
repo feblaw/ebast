@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "Activity | Import";
+}
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Activity List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Import</span>
+    </li>
+}
+
+<h1 class="page-title">Activity <small>Import</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Activity Import Form</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <div class="row">
+
+            <div class="col-lg-12">
+                <form role="form" asp-action="Import" method="post" id="form" class="form-horizontal" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <div class="col-md-6 control-label">
+                            <input type="file" style="margin-left:10px;" class="control-label" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="submit" class="btn btn-primary" value="Upload" />
+                        </div>
+                    </div>
+                </form>
+                <hr />
+            </div>
+
+            <div class="col-lg-12">
+                <div class="col-lg-8">
+                    <div class="table-responsive">
+                        <p style="margin-left:10px;"><strong>Format Import ( Example ) :</strong></p>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td></td>
+                                <td>A</td>
+                                <td>B</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Activity Code</td>
+                                <td>Description</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>0055</td>
+                                <td>FSO RESOURCES</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>1640</td>
+                                <td>ASP/ARP RESOURCES</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>2450</td>
+                                <td>ARP RESOURCE</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" align="left"><strong>Worksheet 1</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-master-data", "#menu-activity");
+            FormValidation.init("#form");
+        });
+    </script>
+}

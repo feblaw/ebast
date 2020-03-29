@@ -1,0 +1,556 @@
+﻿@{
+    ViewData["Title"] = "BAST Page ";
+}
+@section breadcrumb{
+    <li>
+        <span>BAST List </span>
+    </li>
+}
+<h1 class="page-title">BAST <small>List</small></h1>
+@if (TempData["Messages"] != null)
+{
+    <div class="alert alert-warning  alert-dismissable">
+        <i class="fa fa-check"></i>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <b>Messages : </b> @TempData["Messages"]
+    </div>
+}
+<div class="portlet light portlet-fit portlet-datatable bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase"></span>
+        </div>
+        <div class="pull-right" id="toolbox">
+            &nbsp;&nbsp;&nbsp;
+            @if (User.IsInRole("Administrator"))
+            {
+                <span id="IsAdmin"></span>
+            }
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <table id="table" class="table table-striped table-bordered table-hover no-border-bottom">
+            <thead>
+                <tr>
+                    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                    <th>Bast Req No</th>
+                    <th>Bast No</th>
+                    <th>TOP</th>
+                    <th>Value</th>
+                    <th>Request By</th>
+                    <th>ASP</th>
+                    <th>ASP PM</th>
+                    <th>Approval Status</th>
+                    <th>Submit Date</th>
+                    <th>Project Admin</th>
+                    <th>Approval Status</th>
+                    <th>Approve/Reject Date</th>
+                    <th>IM/CPM</th>
+                    <th>Approval Status SL</th>
+                    <th>Approve/Reject Date</th>
+                    <th>TPM</th>
+                    <th>Approval Status</th>
+                    <th>Approve/Reject Date</th>
+                    <th>Rejection Reason</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Terminate</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="FormApprove" asp-controller="Vacancy" asp-action="Terminate">
+                    <input type="hidden" name="id" id="id" required />
+                    <div class="box-body">
+                        <p>Are you sure want to terminate / blacklist this source : <strong id="Name"></strong></p>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Terminate - Blacklist Note / Remark</label>
+                            <textarea id="notes" name="notes" class="form-control" rows="5" required></textarea>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal" style="margin-left:10px;">Cancel</button>
+                        <button type="submit" value="3" name="submit" class="btn btn-danger">Terminate</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    Html.RenderPartial("_DatatablesAssets");
+}
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            var UserRole = '@ViewBag.UserRole';
+
+            var datatableOption = {
+                ajaxMethod: "POST",
+                listUrl: "/admin/api/bast/postdatatables",
+                detailUrl: "@Url.Action("Details")/",
+                editUrl: "@Url.Action("Edit")/",
+                deleteUrl: "/admin/api/bast/",
+                deleteAlertSuccess: "BAST request has been removed",
+                columnDefs: [
+                    {
+                        "targets": 1, // name
+                        "data": "bastReqNo",
+                        name: "BastReqNo",
+                    },
+                    {
+                        "targets": 2, // name
+                        "data": "bastNo",
+                        name: "BastNo",
+                    },
+                    {
+                        "targets": 3, // Request By
+                        "data": "top",
+                        name: "top",
+                    },
+                    {
+                        "targets": 4, 
+                        "data": "totalValue",
+                        name: "TotalValue",
+                        "render":$.fn.dataTable.render.number( '.', ',', 0 )
+                         
+                    },
+                    {
+                        "targets": 5, // Request By
+                        "data": "requestBy",
+                        name: "requestBy.Name",
+                    },
+                    {
+                        "targets": 6, // Submitted Date
+                        "data": "asp",
+                        name: "Asp.Name",
+                    },
+                    
+                    {
+                        "targets": 7, // Request By
+                        "data": "approvalOne",
+                        name: "ApprovalOne.Name",
+                    },
+                    {
+                        "targets": 8, // Status Approve Line Manager
+                        "data": "approvalOneStatus",
+                        name: "ApprovalOneStatus",
+                        "render": function (data, type, row, meta) {
+                            var statussDB = parseInt(data);
+                            return Status(statussDB,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 9, // Submitted Date
+                        "data": "approvalOneDate",
+                        name: "ApprovalOneDate",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 10, // Request By
+                        "data": "approvalTwo",
+                        name: "ApprovalTwo.Name",
+                    },
+                    {
+                        "targets": 11, // Status Approve Line Manager
+                        "data": "approvalTwoStatus",
+                        name: "ApprovalTwoStatus",
+                        "render": function (data, type, row, meta) {
+                            var statussDB = parseInt(data);
+                            return Status(statussDB,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 12, // Submitted Date
+                        "data": "approvalTwoDate",
+                        name: "ApprovalTwoDate",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 13, // Request By
+                        "data": "approvalThree",
+                        name: "ApprovalThree.Name",
+                    },
+                    {
+                        "targets": 14, // Status Approve Line Manager
+                        "data": "approvalThreeStatus",
+                        name: "ApprovalThreeStatus",
+                        "render": function (data, type, row, meta) {
+                            var statussDB = parseInt(data);
+                            return Status(statussDB,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 15, // Submitted Date
+                        "data": "approvalThreeDate",
+                        name: "ApprovalThreeDate",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 16, // Request By
+                        "data": "approvalFour",
+                        name: "ApprovalFour.Name",
+                    },
+                    {
+                        "targets": 17, // Status Approve Line Manager
+                        "data": "approvalFourStatus",
+                        name: "ApprovalFourStatus",
+                        "render": function (data, type, row, meta) {
+                            var statussDB = parseInt(data);
+                            return Status(statussDB,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 18, // Submitted Date
+                        "data": "approvalFourDate",
+                        name: "ApprovalFourDate",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 19, // Request By
+                        "data": "rejectionReason",
+                        name: "rejectionReason",
+                    },
+
+                     {
+                         "targets": 0, // Action
+                         "data": "bastReqNo",
+                         name: "bastReqNo",
+                         "render": function(data, type, row, meta){
+                             //var Count = parseInt(row.countCandidate);
+                             if(document.getElementById("IsAdmin")!=null){
+                                 if (row.approvalFourStatus == 1) {
+                                     return "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                         "<a class='remove' title='Remove " + row.id + "'><i class='fa fa-trash'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                         "<a href='@Url.Content("~/")admin/bast/print/" + row.id + "'><i class='fa fa-download'></i>1</a>&nbsp;&nbsp;&nbsp;" +
+                                     "<a href='@Url.Content("~/")admin/bast/print2/" + row.id + "'><i class='fa fa-download'></i>2</a>";
+                                 } else {
+                                     return "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;";
+                                 }
+
+
+                                 
+                                 
+                                    
+                                 
+                             }else{
+                                 if (row.approvalOneStatus == 1 ) 
+                                 {
+                                     if (row.approvalFourStatus == 1) {
+                                         return "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                             "<a href='@Url.Content("~/")admin/bast/print/" + row.id + "'><i class='fa fa-download'></i>1</a>" +
+                                             "<a href='@Url.Content("~/")admin/bast/print2/" + row.id + "'><i class='fa fa-download'></i>2</a>";
+                                     } else {
+                                         return "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;";
+                                     }
+                                     
+                                     
+                                 }else if (row.approvalOneStatus == 0){
+                                     return "<a class='edit' title='Edit Vacancy'><i class='fa fa-edit'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                          "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                         "<a class='remove' title='Remove " + row.id + "'><i class='fa fa-trash'></i></a>";
+                                 }else if (row.approvalOneStatus == 2){
+                                     return "<a class='edit' title='Edit Vacancy'><i class='fa fa-edit'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                          "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;";
+                                 }
+                             }
+
+                         },
+                         "width": "60px",
+                         className: "text-center"
+                     }
+                ]
+            }
+            
+
+            $datatables.init("#table", datatableOption);
+            var table = $('#table')
+                .on('init.dt', function (e, settings, json) { disableImmediateSearchDt(e, settings, json, '#table'); })
+                .DataTable(); theDataTable = table;theDataTable = table;
+                table.order( [[1,'name']] );
+                //table.search('').columns().search('').draw();
+                var success = @((TempData["Success"] != null).ToString().ToLower());
+                if (success == true) {
+                    toastr.options = {
+                        "closeButton": true,
+                    "positionClass": "toast-top-right"
+                    }
+                    toastr.success("BAST request has been added");
+                }
+
+                var danger = @((TempData["Danger"] != null).ToString().ToLower());
+                if (danger == true) {
+                    toastr.options = {
+                        "closeButton": true,
+                    "positionClass": "toast-top-right"
+                    }
+                    toastr.success("@TempData["Danger"]");
+                }
+
+            $common.setMenu("#menu-vacancy", "#menu-vacancy");
+
+                new $.fn.dataTable.Buttons(table, {
+                buttons:
+                [{
+                    text:'<i class="fa fa-file-excel-o"></i> Export to Excel',
+                    extend:'excel',
+                    exportOptions: {
+                        columns: [1,2,3,4,5,6,7,8,9,10]
+                    },
+                    action: function (e, dt, button, config) {
+                            window.location.href = "/Export/Bast";
+                        }
+                    }]
+            });
+                table.buttons( 0, null ).container().appendTo( '#toolbox' );
+            $('.buttons-excel').each(function() {
+                $(this).removeClass('dt-button buttons-excel buttons-html5').addClass('btn btn-default')
+            })
+            
+
+
+
+                yadcf.init(table, [
+            {
+                column_number: 2,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 1,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 3,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 4,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 5,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            
+            {
+                column_number: 7,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 8,
+                filter_reset_button_text: false,
+                filter_default_label:'Select Filter',
+                data: [
+                    {
+                    value: 'Waiting',
+                        label: 'Waiting'
+                    },
+                    {
+                    value: 'Approved',
+                        label: 'Approved'
+                    },
+                    {
+                    value: 'Reject',
+                        label: 'Reject'
+                    }
+                ]
+            },
+            {
+                column_number: 10,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 11,
+                filter_reset_button_text: false,
+                filter_default_label:'Select Filter',
+                data: [
+                    {
+                    value: 'Waiting',
+                        label: 'Waiting'
+                    },
+                    {
+                    value: 'Approved',
+                        label: 'Approved'
+                    },
+                    {
+                    value: 'Reject',
+                        label: 'Reject'
+                    }
+                ]
+            },
+            {
+                column_number: 13,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 14,
+                filter_reset_button_text: false,
+                filter_default_label:'Select Filter',
+                data: [
+                    {
+                    value: 'Waiting',
+                        label: 'Waiting'
+                    },
+                    {
+                    value: 'Approved',
+                        label: 'Approved'
+                    },
+                    {
+                    value: 'Reject',
+                        label: 'Reject'
+                    }
+                ]
+            },
+            {
+                column_number: 16,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 17,
+                filter_reset_button_text: false,
+                filter_default_label:'Select Filter',
+                data: [
+                    {
+                        value: 'Waiting',
+                        label: 'Waiting'
+                    },
+                    {
+                        value: 'Approved',
+                        label: 'Approved'
+                    },
+                    {
+                        value: 'Reject',
+                        label: 'Reject'
+                    }
+                ]
+            },
+             {
+                 column_number: 19,
+                 filter_type:'text',
+                 filter_reset_button_text: false,
+                 filter_default_label:''
+             },
+
+            ],'footer');
+
+            });
+        function ShowDialog(id,name){
+            $('#id').val(id);
+            $('#Name').text(name);
+            $('#notes').val('');
+            $('#myModal').modal('show');
+        }
+
+        function Status(val,IsLm){
+            if(parseInt(val)==0){
+
+                return "<label class='label label-srf'><i class='fa fa-clock-o'></i> Waiting</label>";
+            }else if(parseInt(val)==1){
+                return "<label class='label label-primary'><i class='fa fa-check'></i> Approved </label>";
+            }else if(parseInt(val)==2){
+                return "<label class='label label-danger'><i class='fa fa-times'></i> Reject </label>";
+            }else{
+                return "-";
+            }
+        }
+        function GetStatus(val){
+            var data = new Array();
+            data[0] = "<label class='label label-info'><i class='fa fa-clock-o'></i> Job Vacancy</label>";
+            data[1] = "<label class='label label-primary'><i class='fa fa-user'></i> Selected</label>";
+            data[2] = "<label class='label label-success'><i class='fa fa-check'></i> Completed</label>";
+            data[3] = "<label class='label label-danger'><i class='fa fa-close'></i> Rejected</label>";
+            return data[val];
+        }
+
+    </script>
+}

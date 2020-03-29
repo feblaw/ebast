@@ -1,0 +1,243 @@
+﻿@model ApplicationUserForm
+@{
+    ViewBag.Title = "User Management Page | Edit";
+    var roles = (List<ApplicationRole>)ViewBag.Roles;
+    var company = new SelectList(@ViewBag.Company, "Id", "Name");
+}
+
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">User Management List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Edit</span>
+    </li>
+}
+
+<h1 class="page-title">User Management <small>Edit</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">User Management Edit</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <form role="form" asp-action="Edit" method="post" id="UserEdit" class="form-horizontal">
+            <div class="form-body">
+                <div class="alert alert-danger display-hide">
+                    <button class="close" data-close="alert"></button> You have some form errors. Please check below.
+                </div>
+                <div class="alert alert-success display-hide">
+                    <button class="close" data-close="alert"></button> Your form validation is successful!
+                </div>
+                @Html.ValidationSummary(true, "Failed to submit", new { @class = "alert alert-danger" })
+                <fieldset>
+                    <legend>Account</legend>
+                    <div class="form-group">
+                        <label asp-for="Username" class="control-label col-md-3">
+                            Username
+                            <span class="text-danger"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" asp-for="Username" required>
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label col-md-3">
+                            Email
+                            <span class="text-danger"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-envelope"></i>
+                                </span>
+                                <input type="text" class="form-control" asp-for="Email" required>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ASPId" class="control-label col-md-3">
+                            Company
+                            <span class="text-danger"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            <select class="form-control" asp-for="ASPId" asp-items="company" required>
+                                <option disabled selected>-- Select ASP --</option>
+                            </select>
+                            <span asp-validation-for="ASPId" class="text-danger"></span>
+                        </div>
+                        <span asp-validation-for="ASPId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password" class="control-label col-md-3">
+                            Password
+                        </label>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-key"></i>
+                                </span>
+                                <input type="Password" class="form-control" asp-for="Password">
+                            </div>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Roles" class="control-label col-md-3">
+                         
+                            <span class="text-danger"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            <div class="mt-checkbox-list" data-error-container="#roles_error">
+                                @foreach (var role in roles)
+                                {
+
+                                    if (role.Name != "Contractor")
+                                    {
+                                        var isChecked = "";
+                                        if (Model.Roles.Contains(role.Name))
+                                        {
+                                            isChecked = "checked='checked'";
+                                        }
+
+                                        <label class="mt-checkbox">
+                                            <input type="checkbox" value="@role.Name" name="Roles" @isChecked /> @role.Name
+                                            <span></span>
+                                        </label>
+                                    }
+
+                                }
+                            </div>
+                            <span class="help-block"></span>
+                            <div id="roles_error"></div>
+                            <span asp-validation-for="Roles" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Status" class="control-label col-md-3">
+                            Account Status
+                            <span class="text-danger"> * </span>
+                        </label>
+                        <div class="col-md-2">
+                            <select class="form-control" asp-for="Status" required>
+                                @if (Model.Status.Equals("1"))
+                                {
+                                    <option value="1" selected>Active</option>
+                                    <option value="0">Close</option>
+                                }
+                                else
+                                {
+                                    <option value="1">Active</option>
+                                    <option value="0" selected>Close</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Profile</legend>
+                    <div class="form-group">
+                        <label asp-for="Photo" class="control-label col-md-3">
+                            Photo
+                        </label>
+                        <div class="col-md-4">
+                            @Html.EditorFor(model => model.Photo, new {@preview=true, @class = "form-control", @accept = "image/*", @extension = ".jpg,.jpeg,.png,.gif", @Ratio = 120.0 / 120.0, required = "required" })
+                            <span asp-validation-for="Photo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label col-md-3">
+                            Name
+                            <span class="text-danger"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" asp-for="Name" required>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Birthplace" class="control-label col-md-3">
+                            Birthplace
+                        </label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" asp-for="Birthplace">
+                            <span asp-validation-for="Birthplace" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Birthdate" class="control-label col-md-3">
+                            Birthdate
+                        </label>
+                        <div class="col-md-4">
+                            @Html.EditorFor(m => m.Birthdate, "DateTimeShort")
+                            <span asp-validation-for="Birthdate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Address" class="control-label col-md-3">
+                            Address
+                        </label>
+                        <div class="col-md-4">
+                            <textarea class="form-control" asp-for="Address" rows="5"></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Phone" class="control-label col-md-3">
+                            Phone
+                        </label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" asp-for="Phone">
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="form-group last">
+                    <div class="col-md-3 col-md-offset-3">
+                        <label class="text-danger">* Field Required</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3">
+                        <a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp; Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section styles{
+    <link rel="stylesheet" href="~/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker.standalone.min.css" />
+}
+
+@section scripts {
+    <script src="~/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/user/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-master-data", "#menu-user-management");
+            FormValidation.init("#UserEdit");
+            $('select').select2();
+        });
+
+        $('#Birthdate').each(function () {
+            var a = $(this).datepicker({
+                Format: "dd/mm/yyyy"
+            });
+        });
+    </script>
+}

@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "Account Name Page | Import";
+}
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Account Name List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Import</span>
+    </li>
+}
+
+<h1 class="page-title">Account Name <small>Import</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Account Name Import Form</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <div class="row">
+
+            <div class="col-lg-12">
+                <form role="form" asp-action="Import" method="post" id="form" class="form-horizontal" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <div class="col-md-6 control-label">
+                            <input type="file" style="margin-left:10px;" class="control-label" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="submit" class="btn btn-primary" value="Upload" />
+                        </div>
+                    </div>
+                </form>
+                <hr />
+            </div>
+
+            <div class="col-lg-12">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <p style="margin-left:10px;" class="pull-left"><strong>Status (  Active ,  Close ) , Format Import ( Example ) :</strong></p>
+						<p style="margin-left:10px;" class="pull-right"><small><i><strong>Note : Owner must be registered</strong></i></small></p>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td></td>
+                                <td>A</td>
+                                <td>B</td>
+                                <td>C</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Account Name</td>
+                                <td>Status</td>
+                                <td>Owner</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Telkomsel</td>
+                                <td>Active</td>
+                                <td>lutfia.rahmanda@gmail.com</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Indosat</td>
+                                <td>Close</td>
+                                <td>young.lex@gmail.com</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" align="left"><strong>Worksheet 1</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-master-data", "#menu-account-name");
+            FormValidation.init("#form");
+        });
+    </script>
+}

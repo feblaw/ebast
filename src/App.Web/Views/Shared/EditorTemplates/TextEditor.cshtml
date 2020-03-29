@@ -1,0 +1,15 @@
+﻿﻿@using App.Web.Models
+@model string
+
+@{
+    dynamic data = new System.Dynamic.ExpandoObject();
+    data.id = ViewData["id"] ?? "editor";
+}
+
+@Html.TextArea("", Model, (object)data)
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        initSample("@data.id");
+    });
+</script>

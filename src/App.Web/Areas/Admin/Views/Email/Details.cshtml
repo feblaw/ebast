@@ -1,0 +1,172 @@
+﻿@model EmailArchieveDto
+@{
+    Layout = null;
+    var fromName = string.IsNullOrWhiteSpace(Model.FromName) ? Model.From : $"{Model.FromName} ({Model.From})";
+    var hasCc = !string.IsNullOrWhiteSpace(Model.Cc);
+    var hasBcc = !string.IsNullOrWhiteSpace(Model.Bcc);
+    var hasReplyTo = !string.IsNullOrWhiteSpace(Model.ReplyTo);
+    var replyToName = string.IsNullOrWhiteSpace(Model.ReplyToName) ? Model.ReplyTo : $"{Model.ReplyToName} ({Model.ReplyTo})";
+    var hasPlainMessage = !string.IsNullOrWhiteSpace(Model.PlainMessage);
+    var yes = "<i class='fa fa-check font-green-jungle'></i>";
+    var no = "<i class='fa fa-times font-red-intense'></i>";
+    var sent = Model.IsSent ? yes : no;
+}
+
+
+<form role="form" class="form">
+    <div class="tabbable-custom ">
+        <ul class="nav nav-tabs ">
+            <li class="active">
+                <a href="#subject" data-toggle="tab">Subject</a>
+            </li>
+            <li>
+                <a href="#body" data-toggle="tab">Body</a>
+            </li>
+            <li>
+                <a href="#metadata" data-toggle="tab">Metadata</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="subject">
+                <div class="form-body">
+                    <div class="form-group">
+                        <label asp-for="From" class="control-label"></label> :
+                        <div class="">
+                            <p class="form-control-static">
+                                <strong>@fromName</strong>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Tos" class="control-label"></label> :
+                        <div class="">
+                            <p class="form-control-static">
+                                <strong>@Model.Tos</strong>
+                            </p>
+                        </div>
+                    </div>
+                    @if (hasCc)
+                    {
+                        <div class="form-group">
+                            <label asp-for="Cc" class="control-label"></label> :
+                            <div class="">
+                                <p class="form-control-static">
+                                    @Model.Cc
+                                </p>
+                            </div>
+                        </div>
+                    }
+                    @if (hasBcc)
+                    {
+                        <div class="form-group">
+                            <label asp-for="Bcc" class="control-label"></label> :
+                            <div class="">
+                                <p class="form-control-static">
+                                    @Model.Bcc
+                                </p>
+                            </div>
+                        </div>
+                    }
+                    @if (hasReplyTo)
+                    {
+                        <div class="form-group">
+                            <label asp-for="ReplyTo" class="control-label">Reply To</label> :
+                            <div class="">
+                                <p class="form-control-static">
+                                    @replyToName
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="tab-pane" id="body">
+                <div class="form-body">
+                    <div class="form-group">
+                        <label asp-for="Subject" class="control-label"></label> :
+                        <div class="">
+                            <p class="form-control-static">
+                                <strong>@Model.Subject</strong>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="HtmlMessage" class="control-label">Html Message</label> :
+                        <div class="">
+                            <p class="form-control-static">
+                                @Html.Raw(Model.HtmlMessage)
+                            </p>
+                        </div>
+                    </div>
+                    @if (hasPlainMessage)
+                    {
+                        <div class="form-group">
+                            <label asp-for="PlainMessage" class="control-label">Plain Message</label> :
+                            <div class="">
+                                <p class="form-control-static">
+                                    @Model.PlainMessage
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="tab-pane" id="metadata">
+                <div class="form-body">
+                    <div class="form-group">
+                        <label asp-for="IsSent" class="control-label">Is Sent?</label> :
+                        <div class="">
+                            <p class="form-control-static">
+                                @Html.Raw(sent)
+                            </p>
+                        </div>
+                    </div>
+                    @if (Model.IsSent)
+                    {
+                        <div class="form-group">
+                            <label asp-for="SentDate" class="control-label">Sent At</label> :
+                            <div class="">
+                                <p class="form-control-static">
+                                    <strong>@CommonHelper.ToLongString(Model.SentDate)</strong>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <label asp-for="TrySentCount" class="control-label">Try Send Count</label> :
+                            <div class="">
+                                <p class="form-control-static">
+                                    <span class="label label-default">@Model.TrySentCount</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="LastTrySentDate" class="control-label">Last Try Sending</label> :
+                            <div class="">
+                                <p class="form-control-static">
+                                    <strong>@CommonHelper.ToLongString(Model.LastTrySentDate)</strong>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ExceptionSendingMessage" class="control-label">Error Message</label> :
+                            <div class="">
+                                <p class="form-control-static well">
+                                    @Model.ExceptionSendingMessage
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-actions">
+        <div class="pull-right">
+            <button type="button" class="btn default bootbox-close-button">Close</button>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</form>

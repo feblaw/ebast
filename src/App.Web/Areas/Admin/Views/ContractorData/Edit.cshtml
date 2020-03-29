@@ -1,0 +1,629 @@
+﻿@using App.Web.Models.ViewModels.Core.Business
+@model ContractorModelForm
+@{
+    ViewData["Title"] = "Contractor Information | "+Model.ContrctorName;
+    var UserProfile = (UserProfile)ViewBag.UserProfile;
+}
+
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Contractor Data</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Edit Contractor Data</span>
+    </li>
+}
+
+<h1 class="page-title">Contractor Data Form <small></small></h1>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger  alert-dismissable">
+        <i class="fa fa-warning"></i>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <b>Messages : </b> @TempData["Error"]
+    </div>
+}
+<div class="row">
+    <div class="col-lg-6">
+        <form role="form" asp-action="Update" method="post" id="FormSubmit" class="form-horizontal">
+            <div class="portlet light portlet-fit portlet-form bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="caption-subject font-blue sbold uppercase">Contractor Data Form</span>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="portlet-body">
+                    <div class="form-body">
+                        <div class="form-group">
+                            <input type="hidden" asp-for="SrfId"/>
+                            <input type="hidden" asp-for="ApplicationUserId" />
+                            <label asp-for="SrfNumber" class="control-label col-md-5">
+                                Assigned SRF Number
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control" asp-for="SrfNumber" required/>
+                                <span asp-validation-for="SrfNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label  asp-for="AhID" class="control-label col-md-5">
+                                Signum
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control" asp-for="AhID" required />
+                                <span asp-validation-for="AhID" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label  asp-for="ContrctorName"  class="control-label col-md-5">
+                                Contractor Name
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control" asp-for="ContrctorName" required />
+                                <span asp-validation-for="ContrctorName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PricelistType" class="control-label col-md-5">
+                                Pricelist Type
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <select class="form-control" asp-for="PricelistType"  asp-items="@(new SelectList(@ViewBag.PricelistType, "Id","Name"))">
+                                    <option disabled selected>-- SelectPricelist Type --</option>
+                                </select>
+                                <span asp-validation-for="PricelistType" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ServicePackCategoryId" class="control-label col-md-5">
+                                Service Work Package
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <select class="form-control" asp-for="ServicePackCategoryId" asp-items="@(new SelectList(@ViewBag.ServiceWorkPackage, "Id","Name"))"  required>
+                                    <option disabled selected>-- Select Service Work Package --</option>
+                                </select>
+                                <span asp-validation-for="ServicePackCategoryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ServicePackId" class="control-label col-md-5">
+                                Position / SSOW
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <select class="form-control" asp-for="ServicePackId" required>
+                                    <option disabled selected>-- Select  Position / SSOW --</option>
+                                </select>
+                                <span asp-validation-for="ServicePackId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SrfBegin" class="control-label col-md-5">
+                                SRF Begin
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <div class="input-group">
+                                    <input type="text" class="form-control form_datetime" id="SrfBeginView" value="@Model.SrfBegin.ToString("dd MMMM yyyy")" readonly />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                                    </span>
+                                </div>
+                                <input type="hidden" class="form-control" asp-for="SrfBegin" readonly required />
+                                <span asp-validation-for="SrfBegin" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SrfEnd" class="control-label col-md-5">
+                                SRF End
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <div class="input-group"> 
+                                    <input type="text" class="form-control form_datetime" id="SrfEndView" value="@Model.SrfEnd.ToString("dd MMMM yyyy")" readonly />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                                    </span>
+                                </div>
+                                <input type="hidden" class="form-control" asp-for="SrfEnd" readonly required />
+                                <span asp-validation-for="SrfEnd" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="HomeBaseId" class="control-label col-md-5">
+                                Homebase
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <select class="form-control" asp-for="HomeBaseId" asp-items="@(new SelectList(@ViewBag.HomeBase, "Id","Name"))" >
+                                    <option disabled selected>-- Select Homebase--</option>
+                                </select>
+                                <span asp-validation-for="HomeBaseId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="LineManagerId" class="control-label col-md-5">
+                                Line Manager
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <select class="form-control" asp-for="LineManagerId" asp-items="@(new SelectList(@ViewBag.LineManager, "Id","Name"))" required>
+                                    <option disabled selected>-- Select Line Manager--</option>
+                                </select>
+                                <span asp-validation-for="LineManagerId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ProjectManagerId" class="control-label col-md-5">
+                                Project Manager
+                                <span class="text-danger"> </span>
+                            </label>
+                            <div class="col-md-7">
+                                <select class="form-control" asp-for="ProjectManagerId" asp-items="@(new SelectList(@ViewBag.ProjectManager, "Id","Name"))" required>
+                                    <option disabled selected>-- Select Project Manager--</option>
+                                </select>
+                                <span asp-validation-for="ProjectManagerId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="MobilePhoneNumber" class="control-label col-md-5">
+                                Phone (Mobile)
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" asp-for="MobilePhoneNumber" class="form-control"/>
+                                <span asp-validation-for="MobilePhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="HomePhoneNumber" class="control-label col-md-5">
+                                Phone (Home)
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" asp-for="HomePhoneNumber" class="form-control" />
+                                <span asp-validation-for="HomePhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="IdNumber" class="control-label col-md-5">
+                                ID Number
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" asp-for="IdNumber" class="form-control" />
+                                <span asp-validation-for="IdNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label col-md-5">
+                                Email
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Nationality" class="control-label col-md-5">
+                                Nationality
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" asp-for="Nationality" class="form-control" />
+                                <span asp-validation-for="Nationality" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PlaceOfBirth" class="control-label col-md-5">
+                                Place of Birth
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" asp-for="PlaceOfBirth" class="form-control" />
+                                <span asp-validation-for="PlaceOfBirth" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="DateOfBirth" class="control-label col-md-5">
+                                Date of Birth
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <div class="input-group">
+                                    <input type="text" class="form-control form_datetime" id="DateOfBirthView" value="@Model.DateOfBirth.ToString("dd MMMM yyyy")" readonly />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                                    </span>
+                                </div>
+                                <input type="hidden" class="form-control" asp-for="DateOfBirth" readonly required />
+                                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Address" class="control-label col-md-5">
+                                Address
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <textarea class="form-control" asp-for="Address" rows="5">
+                                    @Model.Address
+                                </textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Gender" class="control-label col-md-5">
+                                Gender
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <select class="form-control" asp-for="Gender"  asp-items="@(new SelectList(@ViewBag.Gender, "Id","Name"))" required>
+                                    <option disabled selected>-- Select Gender--</option>
+                                </select>
+                                <span asp-validation-for="Gender" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Martial" class="control-label col-md-5">
+                                Marital
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <select class="form-control" asp-for="Martial"  asp-items="@(new SelectList(@ViewBag.Martial, "Id","Name"))" required>
+                                    <option disabled selected>-- Select Martial--</option>
+                                </select>
+                                <span asp-validation-for="Martial" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Username" class="control-label col-md-5">
+                                Username
+                                <span class="text-danger"> * </span>
+                            </label>
+                            <div class="col-md-7">
+                                <input type="text" asp-for="Username" class="form-control" />
+                                <span asp-validation-for="Username" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Password" class="control-label col-md-5">
+                                Password
+                                <span class="text-danger"> * </span>
+                            </label>
+                            <div class="col-md-7">
+                                <input type="password" asp-for="Password" class="form-control" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Notes" class="control-label col-md-5">
+                                Note/About
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                <textarea class="form-control" asp-for="Notes" rows="5">
+                                    @Model.Notes
+                                </textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-5">
+                                Employee Status
+                                <span class="text-danger"></span>
+                            </label>
+                            <div class="col-md-7">
+                                @if (UserProfile.IsBlacklist == true)
+                                {
+                                    <p class="form-control-static">
+                                        <label class='label label-danger'><i class='fa fa-close'></i> Blacklist</label>
+                                    </p>
+
+                                }
+                                else if (UserProfile.IsTerminate == true)
+                                {
+
+                                    <p class="form-control-static">
+                                        <label class='label label-warning'><i class='fa fa-warning'></i> Terminate</label>
+                                    </p>
+                                }
+                                else
+                                {
+                                    if (User.IsInRole("Agency"))
+                                    {
+                                        <a href="javascript:void(0);" id="btn-approve"><i class="fa fa-gavel"></i> Terminate or Blacklist Contract</a>
+
+                                    }
+                                    else
+                                    {
+                                        <p class="form-control-static">
+                                            <label class='label label-primary'><i class='fa fa-check-circle-o'></i> Active</label>
+                                        </p>
+
+                                    }
+
+                                }
+
+                            </div>
+                        </div>
+                        <div class="form-group last">
+                            <div class="col-md-5 col-md-offset-3">
+                                <label class="text-danger">* Field Required</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="portlet light">
+                <div class="portlet-body">
+                    <div class="row">
+                       <div class="col-lg-12">
+                           @if (User.IsInRole("Agency") || User.IsInRole("Administrator"))
+                           {
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp; Save</button>
+                           }
+                           <a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+                       </div>
+                    </div>
+                </div>
+             </div>
+        </form>
+    </div>
+    <div class="col-lg-6">
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption">
+                    <span class="caption-subject font-blue sbold uppercase">SRF Records</span>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="portlet-body">
+                <table id="table" class="table table-striped table-bordered table-hover no-border-bottom">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>SRF Number</th>
+                            <th>SRF Start</th>
+                            <th>SRF End</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+ </div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Terminate / Blacklist Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="FormApprove" asp-controller="ContractorData" asp-action="ApproveTerminate">
+                    <input type="hidden" name="id" id="id" value="@Model.SrfId" required />
+                    <div class="box-body">
+                        <p>Are you sure want to terminate / blacklist this source : <strong id="Name">@Model.ContrctorName</strong></p>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Terminate - Blacklist Note / Remark</label>
+                            <textarea id="notes" name="notes" class="form-control" rows="5" required></textarea>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal" style="margin-left:10px;">Cancel</button>
+                        <button type="submit" value="4" name="submit" class="btn btn-danger">Blacklist</button>
+                        <button type="submit" value="3" name="submit" class="btn btn-danger">Terminate</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@{
+    Html.RenderPartial("_DatatablesAssets");
+}
+
+@section Scripts {
+        <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+        <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+        <script>
+            $(document).ready(function () {
+                $common.setMenu("#menu-master-data", "#menu-contractor-data");
+                FormValidation.init("#FormSubmit");
+
+                var success = @((TempData["Success"] != null).ToString().ToLower());
+
+                if (success == true) {
+                    toastr.options = {
+                        "closeButton": true,
+                        "positionClass": "toast-top-right"
+                    }
+                    toastr.success("Contractor data has been updated");
+                }
+
+                $('select').select2();
+                $('input[name=IdNumber]').keypress(validateNumber);
+                $('input[name=SrfNumber]').keypress(validateNumber);
+
+                $('#btn-approve').click(function(){
+                    $('#myModal').modal('show');
+                });
+
+                $(".form_datetime").datepicker({
+                    autoclose: true,
+                    format: "dd MM yyyy",
+                });
+
+                $('#SrfBeginView').change(function () {
+                    var value = $(this).val();
+                    var val = my_date.date_to_db(value);
+                    $('#SrfBegin').val(val);
+                });
+                $('#SrfBeginView').trigger('change');
+
+                $('#SrfEndView').change(function () {
+                    var value = $(this).val();
+                    var val = my_date.date_to_db(value);
+                    $('#SrfEnd').val(val);
+                });
+                $('#SrfEndView').trigger('change');
+
+                $('#DateOfBirthView').change(function () {
+                    var value = $(this).val();
+                    var val = my_date.date_to_db(value);
+                    $('#DateOfBirth').val(val);
+                });
+                $('#DateOfBirthView').trigger('change');
+
+
+                var datatableOption = {
+                    ajaxMethod: "POST",
+                    listUrl: "/Admin/Api/Srf/ContractorHistory/@ViewBag.ContractorId",
+                    detailUrl: "@Url.Action("Details")/",
+                    editUrl: "@Url.Action("Edit")/",
+                    deleteUrl: "/admin/api/Srf/",
+                    deleteAlertSuccess: "-",
+                    columnDefs: [
+                    {
+                        "targets": 0,  
+                        "orderable": false,
+                        "data": "number",
+                        name: "number",
+                        "render": function (data, type, row, meta) {
+                            var CurrentId = '@Model.SrfId';
+                            if(CurrentId==row.id){
+                                return "<i class='fa fa-check'></i>";
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 1,  
+                        "data": "number",
+                        name: "number",
+                        "render": function (data, type, row, meta) {
+                            if(data){
+                                return data+" EN";
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 2,  
+                        "data": "srfBegin",
+                        name: "srfBegin",
+                        "render": function (data, type, row, meta) {
+                            var date = new Date(data);
+                            return moment(date).format("DD MMM YYYY");
+                        }
+                    },
+                     {
+                         "targets": 3, 
+                         "data": "srfEnd",
+                         name: "srfEnd",
+                         "render": function (data, type, row, meta) {
+                             var date = new Date(data);
+                             return moment(date).format("DD MMM YYYY");
+                         }
+                     },
+                      {
+                          "targets": 4, 
+                          "data": "status",
+                          name: "status",
+                          "render": function (data, type, row, meta) {
+                              var mainStatus = parseInt(data);
+                              if(mainStatus==3){
+                                  return "<span class='font-yellow'><i class='fa fa-warning'></i> Terminate</span>";
+                              }else if(mainStatus==4){
+                                  return "<span class='font-red-mint'><i class='fa fa-close'></i> Blacklist</span>";
+                              }else{
+                                  var Status1 = parseInt(row.approveStatusSix);
+                                  var Status2 = parseInt(row.approveStatusFourEscalation);
+                                  if(Status1 == 2 || Status2 == 2){
+                                      return "<span class='font-blue'><i class='fa fa-check-circle-o'></i> Approved</span>";
+                                  }else{
+                                      return "<span class='font-yellow'><i class='fa fa-clock-o'></i> Waiting Approved</span>";
+                                  }
+                              }
+                          }
+                      },
+                    {
+                        "targets": 5,  
+                        "data": "number",
+                        name: "number",
+                        "render": function (data, type, row, meta) {
+                            return "<a href='/Admin/SrfProfile/Edit/"+row.id+"' title='View Srf Detail'><i class='fa fa-file-text-o'></i></a>&nbsp;&nbsp;&nbsp;";
+                        }
+                    },
+                ]
+            }
+
+                $datatables.init("#table", datatableOption);
+
+                var table = $('#table')
+                    .on('init.dt', function(e, settings, json) { disableImmediateSearchDt(e, settings, json, '#table'); })
+                    .DataTable(); theDataTable = table;
+
+                $('#ServicePackCategoryId').change(function () {
+                    var val = $(this).val();
+                    $.ajax({
+                        url: "/Admin/Api/Vacancy/GetServicePack?id=" + val, success: function (result) {
+                            $('#ServicePackId').html(result.servicePack);
+                            $('#ServicePackId').val('@Model.ServicePackId');
+                        }
+                    });
+                });
+
+                $('#ServicePackCategoryId').trigger('change');
+
+            });
+
+            function validateNumber(event) {
+                var key = window.event ? event.keyCode : event.which;
+                if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9) {
+                    return true;
+                } else if (key < 48 || key > 57) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function SetStatus(val){
+                if(val==0){
+                    return "<span class='font-yellow'><i class='fa fa-clock-o'></i> Waiting Approved</span>";
+                }else if(val==1){
+                    return "<span class='font-blue'><i class='fa fa-check-circle-o'></i> Approved</span>";
+                }else if(val==2){
+                    return "<span class='font-yellow'><i class='fa fa-clock-o'></i> Wating Terminate</span>";
+                }else if(val==3){
+                    return "<span class='font-yellow'><i class='fa fa-warning'></i> Terminate</span>";
+                }else{
+                    return "<span class='font-red-mint'><i class='fa fa-close'></i> Blacklist</span>";
+                }
+            
+            }
+
+        </script>
+    }

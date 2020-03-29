@@ -1,0 +1,380 @@
+﻿@using App.Web.Models.ViewModels.Core.Business
+@model CandidateInfoModelForm
+@{
+    ViewBag.Title = "Edit CV";
+    var InfoData = (CandidateInfo)ViewBag.Info;
+}
+
+@section breadcrumb{
+    <li>
+        <a asp-controller="Vacancy" asp-action="Index">Vacancy</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <a asp-controller="Vacancy" asp-action="Details" asp-route-id="@ViewBag.VacancyId">Job Vacancy Details</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Edit  CV</span>
+    </li>
+}
+
+<h1 class="page-title">Edit Candidate Data<small></small></h1>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger  alert-dismissable">
+        <i class="fa fa-warning"></i>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <b>Messages : </b> @TempData["Error"]
+    </div>
+}
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Candidate Edit Data Submit Form</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" asp-controller="Vacancy" asp-action="Details" asp-route-id="@InfoData.VacancyId"  ><i class="fa fa-arrow-circle-left"></i> Return to detail vacancy</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <form role="form" asp-action="Update" asp-route-id="@ViewBag.Info.Id" method="post" id="FormSubmit" class="form-horizontal">
+            <div class="form-body">
+                <input type="hidden" asp-for="VacancyId" value="@ViewBag.VacancyId" />
+                <div class="alert alert-danger display-hide">
+                    <button class="close" data-close="alert"></button> You have some form errors. Please check below.
+                </div>
+                @Html.ValidationSummary(true, "Failed to submit", new { @class = "alert alert-danger" })
+                <div class="form-group">
+                    <label asp-for="AgencyType" class="control-label col-md-3">
+                        Agency Type
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="AgencyType" asp-items="@(new SelectList(@ViewBag.Agent, "Id","Name"))" required>
+                            <option disabled selected>-- Select  Agency Type --</option>
+                        </select>
+                        <span asp-validation-for="AgencyType" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label col-md-3">
+                        Candidate Name
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" asp-for="Name" class="form-control" required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NickName" class="control-label col-md-3">
+                        Nickname
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" asp-for="NickName" class="form-control" />
+                        <span asp-validation-for="NickName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label col-md-3">
+                        Email Address
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <input type="email" asp-for="Email" class="form-control" required />
+                        <span asp-validation-for="Email" id="EmailValid" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IdNumber" class="control-label col-md-3">
+                        ID Number (KTP)
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" asp-for="IdNumber" class="form-control" maxlength="16" required />
+                        <span asp-validation-for="IdNumber" id="IdNumberValid" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Nationality" class="control-label col-md-3">
+                        Nationality
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" asp-for="Nationality" class="form-control" required />
+                        <span asp-validation-for="Nationality" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PlaceOfBirth" class="control-label col-md-3">
+                        Place of Birth
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control " asp-for="PlaceOfBirth" />
+                        <span asp-validation-for="PlaceOfBirth" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DateOfBirth" class="control-label col-md-3">
+                        Date of Birth
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control form_datetime" id="DateOfBirthView" value="@Model.DateOfBirth.ToString("dd MMMM yyyy")" readonly />
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <input type="hidden" class="form-control" asp-for="DateOfBirth" readonly required />
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Address" class="control-label col-md-3">
+                        Address
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <textarea class="form-control" asp-for="Address" rows="5"></textarea>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Gender" class="control-label col-md-3">
+                        Gender
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="Gender" asp-items="@(new SelectList(@ViewBag.Gender, "Id","Name"))" required>
+                            <option disabled selected value="">-- Select Gender --</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Martial" class="control-label col-md-3">
+                        Martial
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="Martial" asp-items="@(new SelectList(@ViewBag.Martial, "Id","Name"))" required>
+                            <option disabled selected value="">-- Select Martial --</option>
+                        </select>
+                        <span asp-validation-for="Martial" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MobilePhoneNumber" class="control-label col-md-3">
+                        Phone Number(Mobile)
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" asp-for="MobilePhoneNumber" class="form-control" />
+                        <span asp-validation-for="MobilePhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="HomePhoneNumber" class="control-label col-md-3">
+                        Phone Number (Home)
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" asp-for="HomePhoneNumber" class="form-control" />
+                        <span asp-validation-for="HomePhoneNumber" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label col-md-3">
+                        Description
+                    </label>
+                    <div class="col-md-6">
+                        <textarea class="form-control" asp-for="Description" rows="5">
+                            @Model.Description
+                        </textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IsFormerEricsson" class="control-label col-md-3">
+                        Former Ericsson
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="IsFormerEricsson" asp-items="@(new SelectList(@ViewBag.IsEriccson, "Id","Name"))" required>
+                            <option disabled selected>-- Select Former Ericsson --</option>
+                        </select>
+                        <span asp-validation-for="IsFormerEricsson" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Attachments" class="control-label col-md-3">
+                        Attached CV
+                    </label>
+                    <div class="col-md-6">
+                        <input type="hidden" asp-for="Attachments" class="form-control" />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="gallery-wrap">
+                                    <div id="uploaded">
+                                        <div class="shortcuts text-left">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="file_upload" />
+                    </div>
+                </div>
+                <div class="form-group last">
+                    <div class="col-md-3 col-md-offset-3">
+                        <label class="text-info">Max Upload 1 MB</label>
+                    </div>
+                </div>
+                <div class="form-group last">
+                    <div class="col-md-3 col-md-offset-3">
+                        <label class="text-danger">* Field Required</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3">
+                        <a  asp-controller="Vacancy" asp-action="Details" asp-route-id="@InfoData.VacancyId"  class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp; Save</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-vacancy", "#menu-vacancy");
+            $('select').select2();
+            FormValidation.init("#FormSubmit");
+
+            var $inputSourcePath = $('#Attachments');
+            initPlUploadWidget("#file_upload",
+                '@Url.Content("~/")admin/api/candidate/upload?id=@ViewBag.Id',
+                "#attachment-template",
+                "#uploaded .shortcuts",
+                "#Attachments");
+
+            renderExistingFiles('#Attachments', "#uploaded .shortcuts", '@Url.Content("~/")', true);
+
+            $(document).on("click", ".delete-upload", function () {
+                removeAttachment(this, "#uploaded .shortcuts", '#Attachments', "/Admin/Api/Candidate/DeleteFile?file=" + $(this).data("to-delete") + "&id=@ViewBag.Id");
+            });
+
+            $(".form_datetime").datepicker({
+                autoclose: true,
+                format: "dd MM yyyy",
+            });
+
+            $('#DateOfBirthView').change(function () {
+                var value = $(this).val();
+                var val = my_date.date_to_db(value);
+                $('#DateOfBirth').val(val);
+            });
+            $('#DateOfBirthView').trigger('change');
+
+
+            $('input[name=IdNumber]').keypress(validateNumber);
+
+            $("#Email").focusout(function () {
+                var val = $(this).val();
+                var id = $('#VacancyId').val();
+                var candidate = '@ViewBag.Info.Id';
+                $.ajax({
+                    url: "/Admin/Api/Candidate/EmailValidation?email=" + val + "&id=" + id+"&candidate="+candidate, success: function (result) {
+                        if (result.message == false) {
+                            if (val == '') {
+                                $('#EmailValid').text("Email address cannot be empty !!");
+                            } else {
+                                $('#EmailValid').text("Candidate with email " + val + " is already exist !!");
+                            }
+                            $('#Email').attr("aria-invalid", "true");
+                            $('#Email').closest('.form-group').addClass('has-error');
+                            //console.log("abcde");
+                        }
+                        else {
+                            $('#EmailValid').text("");
+                            $('#Email').attr("aria-invalid", "false");
+                        }
+                    }
+                });
+            });
+
+            $("#IdNumber").focusout(function () {
+                var val = $(this).val();
+                var id = $('#VacancyId').val();
+                var candidate = '@ViewBag.Info.Id';
+                $.ajax({
+                    url: "/Admin/Api/Candidate/IdNumberValidation?number=" + val + "&id=" + id+"&candidate="+candidate, success: function (result) {
+                        if (result.message == false) {
+                            if (val == '') {
+                                $('#IdNumberValid').text("Id Number cannot be empty !!");
+                            } else {
+                                $('#IdNumberValid').text(result.notif);
+                            }
+                            $('#IdNumber').attr("aria-invalid", "true");
+                            $('#IdNumber').closest('.form-group').addClass('has-error');
+                            //console.log("abcde");
+                        }
+                        else {
+                            $('#IdNumberValid').text("");
+                            $('#IdNumber').attr("aria-invalid", "false");
+                        }
+                    }
+                });
+            });
+
+        });
+
+        function validateNumber(event) {
+
+            var key = window.event ? event.keyCode : event.which;
+            if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9) {
+                return true;
+            } else if (key < 48 || key > 57) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function GetFilename(url) {
+            if (url) {
+                var m = url.toString().match(/.*\/(.+?)\./);
+                if (m && m.length > 1) {
+                    return m[1];
+                }
+            }
+            return "";
+        }
+
+    </script>
+    <script type="text/template" id="attachment-template">
+        <div class="column">
+            <div class="inner">
+                <div class="img-wrap">
+                    <div class="wrapper-control">
+                        <div class="btn-group" style="margin-bottom:5px !important;">
+                            <a class="btn btn-sm btn-success tools-nav" href="@Url.Content("~/"){{path}}" download><i class="fa fa-paperclip"></i> {{name}} ({{size}}KB)</a>
+                            <a class="btn btn-sm btn-success tools-nav delete-upload" data-to-delete="{{path}}"><i class="fa fa-times"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+}

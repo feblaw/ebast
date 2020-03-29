@@ -1,0 +1,194 @@
+﻿@model ApplicationUserViewModel
+@{
+    ViewData["Title"] = "My Profile";
+    ViewBag.ContentBg = "bg-default";
+    var modelForm = (UpdateProfileForm)ViewBag.ModelForm;
+    var ListRoles = (List<string>)ViewBag.CurretRoles;
+}
+
+@section breadcrumb{
+    <li>
+        <span>Profile</span>
+    </li>
+}
+
+<h1 class="page-title">My Profile</h1>
+<div class="row">
+    <div class="col-md-12">
+        <div class="profile-sidebar">
+            <div class="portlet profile-sidebar-portlet light">
+                <div class="profile-userpic">
+                    <img src="#" class="img-responsive img-circle" id="MyImage" alt="">
+                    @*<img src="~/uploads/temp/c5e0c0e7053543549a876de1fa3d2299no-image.png" class="img-responsive img-circle" id="MyImage" alt="">*@
+                </div>
+                <div class="profile-usertitle">
+                    <div class="profile-usertitle-name">@Model.UserProfile.Name</div>
+                    <div class="profile-usertitle-job">
+                        @if (ListRoles.Count > 0)
+                        {
+                            <ul style="margin:0; padding:0; list-style-type:none;">
+                                @foreach(var row in ListRoles)
+                                {   
+                                    <li>@row</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <strong>@ListRoles.FirstOrDefault()</strong>
+                        }
+                    </div>
+                    <div class="profile-usertitle-username"> @Model.Username </div>
+                    <div class="profile-usertitle-username" id="ContractorLevel"></div>
+                    <div class="portlet light margin-bottom-20">
+                        <div class="profile-desc-text">
+                            <i class="fa fa-home"></i>&nbsp;
+                            @Model.UserProfile.Address
+                        </div>
+                        <div class="profile-desc-text">
+                            <i class="fa fa-birthday-cake"></i>&nbsp;
+                            @Model.UserProfile.Birthplace, @CommonHelper.ToShortString(Model.UserProfile.Birthdate)
+                        </div>
+                        <div class="profile-desc-text">
+                            <i class="fa fa-envelope"></i>&nbsp;
+                            @Model.Email
+                        </div>
+                        <div class="profile-desc-text">
+                            <i class="fa fa-phone"></i>&nbsp;
+                            @Model.UserProfile.MobilePhoneNumber?@Model.UserProfile.HomePhoneNumber
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="profile-content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light">
+                        <div class="portlet-title tabbable-line">
+                            <div class="caption caption-md">
+                                <i class="icon-globe theme-font hide"></i>
+                                <span class="caption-subject font-blue-madison bold uppercase">Profile Account</span>
+                            </div>
+                            <ul class="nav nav-tabs">
+                                @*<li class="">
+                                    <a href="#activity" data-toggle="tab">Activity Overview</a>
+                                </li>
+                                <li>
+                                    <a href="#attendance" data-toggle="tab">Attendance Report</a>
+                                </li>*@
+                                <li class="active">
+                                    <a href="#personal-info" data-toggle="tab">Personal Info</a>
+                                </li>
+                                <li>
+                                    <a href="#change-password" data-toggle="tab">Change Password</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="tab-content">
+                                @*<div id="activity" class="tab-pane ">
+                                    @Html.Partial("_ProfileActivity")
+                                </div>
+                                <div id="attendance" class="tab-pane ">
+                                    @Html.Partial("_ProfileAttendance")
+                                </div>*@
+                                <div id="personal-info" class="tab-pane active">
+                                    @Html.Partial("_ProfileEdit", modelForm)
+                                </div>
+                                <div id="change-password" class="tab-pane">
+                                    @Html.Partial("_ChangePassword", new ChangePasswordForm())
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section styles{
+    <link href="~/assets/pages/css/profile.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="~/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker.standalone.min.css" />
+}
+
+@section scripts {
+    <script src="~/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+            FormValidation.init("#ProfileEdit");
+
+            var changePasswordOption = {
+                rules: {
+                    OldPassword: {
+                        required: true,
+                        minlength: 8
+                    },
+                    NewPassword: {
+                        required: true,
+                        minlength: 8
+                    },
+                    NewConfirmPassword: {
+                        required: true,
+                        minlength: 8,
+                        equalTo: "#NewPassword"
+                    }
+                },
+                messages: {
+                    NewConfirmPassword: {
+                        equalTo: "Password must be the same to New Password"
+                    }
+                }
+            }
+
+            FormValidation.init("#ChangePassword", changePasswordOption);
+
+            @if(string.IsNullOrEmpty(modelForm.Photo))
+            {
+                @:$('#MyImage').attr('src', 'http://placehold.it/200x200?text=No+Avatar');
+            }
+            else
+            {
+                @:var MyPhoto = @Html.Raw(modelForm.Photo);
+                @:$('#MyImage').attr('src', '/' + MyPhoto.Path);
+            }
+
+            if(document.getElementById("SSOWNAME")!=null){
+                var Text = $('#SSOWNAME').text();
+                $('#ContractorLevel').text(Text);
+            }
+
+        });
+
+        $(".form_datetime").datepicker({
+            autoclose: true,
+            format: "dd MM yyyy",
+        });
+
+        $('#BirthdateView').change(function () {
+            var value = $(this).val();
+            var val = my_date.date_to_db(value);
+            $('#Birthdate').val(val);
+        });
+        $('#BirthdateView').trigger('change');
+
+        @if(TempData["Success"] != null && TempData["Success"].ToString() == bool.TrueString)
+        {
+            @:$alert.success("Update profile success");
+        }
+
+        @if(TempData["PasswordSuccess"] != null && TempData["PasswordSuccess"].ToString() == bool.TrueString)
+        {
+            @:$alert.success("Change password success");
+        }
+
+        @if (TempData["PasswordSuccess"] != null && TempData["PasswordSuccess"].ToString() == bool.FalseString)
+        {
+            @:$alert.error("Change password failed");
+        }
+    </script>
+}

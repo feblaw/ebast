@@ -1,0 +1,961 @@
+﻿@{
+    ViewData["Title"] = "BAST Approval Work Package ";
+}
+
+@section breadcrumb{
+    <li>
+        <span>BAST </span>
+    </li>
+}
+
+<h1 class="page-title">BAST Work Package <small>List</small></h1>
+<div class="portlet light portlet-fit portlet-datatable bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase"></span>
+        </div>
+        <div class="pull-right" id="toolbox">
+            &nbsp;&nbsp;&nbsp;
+            @if (User.IsInRole("Administrator"))
+            {
+                <span id="IsAdmin"></span>
+                <a class="btn btn-success" href="@Url.Action("lmrtemplate")" style="margin-left:5px!important"><i class="fa fa-download"></i> Download</a>
+            }
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <table id="table" class="table table-striped table-bordered table-hover no-border-bottom">
+            <thead>
+                <tr>
+                    <th rowspan="2">
+                        @if (User.IsInRole("Regional Project Manager")|| User.IsInRole("Head Of Service Line"))
+                        {
+                            <input type="checkbox" id="check-all" />
+                        }
+                        else
+                        {
+                            <label>-</label>
+                        }
+                    </th>
+                    <th rowspan="2">Name</th>
+                    <th rowspan="2">ASP</th>
+                    <th rowspan="2">Account</th>
+                    <th rowspan="2">Project</th>
+                    <th rowspan="2">Start Date</th>
+                    <th rowspan="2">End Date</th>
+                    <th rowspan="2">PO Number</th>
+                    <th rowspan="2">RPM</th>
+                    <th colspan="2" class="text-center">RPM Check List Month 1</th>
+                    <th colspan="2" class="text-center">SL Check List Month 1</th>
+                    <th colspan="2" class="text-center">RPM Check List Month 2</th>
+                    <th colspan="2" class="text-center">SL Check List Month 2</th>
+                    <th colspan="2" class="text-center">RPM Check List Month 3</th>
+                    <th colspan="2" class="text-center">SL Check List Month 3</th>
+                </tr>
+                <tr>
+                    <th class="text-center">Status</th>
+                    <th>Approve Date</th>
+                    <th class="text-center">Status</th>
+                    <th>Approve Date</th>
+                    <th class="text-center">Status</th>
+                    <th>Approve Date</th>
+                    <th class="text-center">Status</th>
+                    <th>Approve Date</th>
+                    <th class="text-center">Status</th>
+                    <th>Approve Date</th>
+                    <th class="text-center">Status</th>
+                    <th>Approve Date</th>
+                </tr>
+                <tr class="hidden">
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    @*@if (
+                        User.IsInRole("Head Of Service Line") ||
+                        User.IsInRole("Regional Project Manager") ||
+                        User.IsInRole("Head Of Operation"))
+    {
+        <div class="portlet-body">
+            <div class="box-footer clearfix">
+                <form role="form" id="FormApprove" asp-controller="vacancy" asp-action="ApproveBastMultiple">
+                    <input type="hidden" class="ListId" name="data" value="" required />
+                    <button type="submit" name="status" value=3 class="btn btn-primary pull-right" style="margin-left:10px;">Approve Month 3</button>
+                    <button type="submit" name="status" value=2 class="btn btn-primary pull-right" style="margin-left:10px;">Approve Month 2</button>
+                    <button type="submit" name="status" value=1 class="btn btn-primary pull-right" style="margin-left:10px;">Approve Month 1</button>
+                </form>
+            </div>
+        </div>
+    }*@
+
+</div>
+
+<div id="ModalReject" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Rejected Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="FormApprove" asp-controller="Vacancy" asp-action="MultiReject">
+                    <input type="hidden" class="ListId" name="data" value="" required />
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="remarks">Remarks</label>
+                            <textarea id="remarks" name="remarks" class="form-control" rows="5" required></textarea>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal" style="margin-left:10px;">Cancel</button>
+                        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Terminate / Blacklist Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="FormApprove" asp-controller="Vacancy" asp-action="ApproveTerminate">
+                    <input type="hidden" name="id" id="id" required />
+                    <div class="box-body">
+                        <p>Are you sure want to terminate / blacklist this source : <strong id="Name"></strong></p>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Terminate - Blacklist Note / Remark</label>
+                            <textarea id="notes" name="notes" class="form-control" rows="5" required></textarea>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal" style="margin-left:10px;">Cancel</button>
+                        <button type="submit" value="4" name="submit" class="btn btn-danger">Blacklist</button>
+                        <button type="submit" value="3" name="submit" class="btn btn-danger">Terminate</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@{
+    Html.RenderPartial("_DatatablesAssets");
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            $common.setMenu("#menu-rpm", "#menu-rpm");
+
+            var saved = @((TempData["Saved"] != null).ToString().ToLower());
+            if (saved == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("WP request has been saved");
+            }
+
+            var submitted = @((TempData["Submitted"] != null).ToString().ToLower());
+            if (submitted == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("WP request has been submitted");
+            }
+
+            var approved = @((TempData["Approved"] != null).ToString().ToLower());
+            if (approved == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("WP request has been approved");
+            }
+
+            var terminated = @((TempData["Terminated"] != null).ToString().ToLower());
+            if (terminated == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("Terminated has been submitted");
+            }
+
+            var rejected = @((TempData["Rejected"] != null).ToString().ToLower());
+            if (rejected == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.error("WP request has been rejected");
+            }
+
+            var success = @((TempData["Success"] != null).ToString().ToLower());
+            if (success == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("WP request has been approved");
+            }
+
+
+            $('#check-all').hide();
+            var datatableOption = {
+                ajaxMethod: "POST",
+                listUrl: "/Admin/Api/Vacancy/BASTView",
+                detailUrl: "@Url.Action("Details")/",
+                editUrl: "@Url.Action("Edit")/",
+                deleteUrl: "/admin/api/vacancy/",
+                deleteAlertSuccess: "WP request has been removed",
+                columnDefs: [
+                    {
+                        "targets": 0, // Checkbox Approve
+                        "data": "name",
+                        name: "name",
+                        "render": function (data, type, row, meta) {
+                            return CheckBox(row);
+                        }
+                    },
+                   {
+                       "targets": 1, // name
+                       "data": "name",
+                       name: "Name",
+                   },
+                    {
+                        "targets": 2, // name
+                        "data": "vendor",
+                        name: "Vendor.Name",
+                    },
+                    {
+                        "targets": 3, // Request By
+                        "data": "account",
+                        name: "Departement.Name",
+                    },
+                    {
+                        "targets": 4, // Request By
+                        "data": "project",
+                        name: "DepartementSub.SubName",
+                    },
+                    {
+                        "targets": 5, // Request By
+                        "data": "startDate",
+                        name: "StartDate",
+                        "render": function (data, type, row, meta) {
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 6, // Request By
+                        "data": "endDate",
+                        name: "EndDate",
+                        "render": function (data, type, row, meta) {
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 7, // name
+                        "data": "poNumber",
+                        name: "PONumber",
+                    },
+                    {
+                        "targets": 8, // Request By
+                        "data": "rpm",
+                        name: "Rpm.Name",
+                    },
+                    {
+                        "targets": 9, // Status Approve Line Manager
+                        "data": "bastStatus1",
+                        name: "BastStatus1",
+                        "render": function (data, type, row, meta) {
+                            var LineManager = parseInt(data);
+                            return Status(LineManager,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 10, // Submitted Date
+                        "data": "dateBastApproved1",
+                        name: "DateBastApproved1",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 11, // Status Approve Line Manager
+                        "data": "bastStatusSL1",
+                        name: "BastStatusSL1",
+                        "render": function (data, type, row, meta) {
+                            var LineManager = parseInt(data);
+                            return Status(LineManager,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 12, // Submitted Date
+                        "data": "dateBastApprovedSL1",
+                        name: "DateBastApprovedSL1",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 13, // Status Approve Line Manager
+                        "data": "bastStatus2",
+                        name: "BastStatus2",
+                        "render": function (data, type, row, meta) {
+                            var LineManager = parseInt(data);
+                            return Status(LineManager,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 14, // Submitted Date
+                        "data": "dateBastApproved2",
+                        name: "DateBastApproved2",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 15, // Status Approve Line Manager
+                        "data": "bastStatusSL2",
+                        name: "BastStatusSL2",
+                        "render": function (data, type, row, meta) {
+                            var LineManager = parseInt(data);
+                            return Status(LineManager,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 16, // Submitted Date
+                        "data": "dateBastApprovedSL2",
+                        name: "DateBastApprovedSL2",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 17, // Status Approve Line Manager
+                        "data": "bastStatus3",
+                        name: "BastStatus3",
+                        "render": function (data, type, row, meta) {
+                            var LineManager = parseInt(data);
+                            return Status(LineManager,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 18, // Submitted Date
+                        "data": "dateBastApproved3",
+                        name: "DateBastApproved3",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 19, // Status Approve Line Manager
+                        "data": "bastStatusSL3",
+                        name: "BastStatusSL3",
+                        "render": function (data, type, row, meta) {
+                            var LineManager = parseInt(data);
+                            return Status(LineManager,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 20, // Submitted Date
+                        "data": "dateBastApprovedSL3",
+                        name: "DateBastApprovedSL3",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                ]
+            };
+
+            $datatables.init("#table", datatableOption);
+            var table = $('#table')
+                .on('init.dt', function(e, settings, json) { disableImmediateSearchDt(e, settings, json, '#table'); })
+                .DataTable(); theDataTable = table;
+            table.order( [[1,'name']] );
+
+            $('#table tbody').on( 'click', 'tr', function () {
+                ele = $(this).find('td input:checkbox')[0];
+                ele.checked = ! ele.checked;
+                var checkedVals = $('.vacancy:checkbox:checked').map(function() {
+                    return this.value;
+                }).get();
+                var result = checkedVals.join(",");
+                $('.ListId').val(result);
+            } );
+
+
+            // Check Event Trigger
+
+            table.on('click','.vacancy',function(){
+                var checkedVals = $('.vacancy:checkbox:checked').map(function() {
+                    return this.value;
+                }).get();
+                var result = checkedVals.join(",");
+                $('.ListId').val(result);
+            });
+
+            $('#check-all').click(function(e){
+                if($(this).prop('checked')){
+                    $('#table tbody tr td input[type="checkbox"]').each(function(){
+                        $(this).prop('checked', true);
+                    });
+                }else{
+                    $('#table tbody tr td input[type="checkbox"]').each(function(){
+                        $(this).prop('checked', false);
+                    });
+                }
+                var checkedVals = $('.vacancy:checkbox:checked').map(function() {
+                    return this.value;
+                }).get();
+                var result = checkedVals.join(",");
+                $('.ListId').val(result);
+            });
+
+            $('#btn-reject').click(function(){
+                $('#remarks').val('');
+                var DataId = $('#ModalReject .ListId').val();
+                if(DataId){
+                    $('#ModalReject').modal('show');
+                }
+            });
+
+            // Filter Trigger
+
+            yadcf.init(table, [
+                {
+                    column_number: 1, // Srf Number
+                    filter_type:'text',
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+                    column_number: 2, // Srf Number
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+                    column_number: 3, // Srf Number
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+                    column_number: 4, // Srf Number
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+
+                    column_number: 5, // Contract Begin
+                    filter_type: "date",
+                    date_format: 'dd-mm-yy',
+                    filter_reset_button_text: false,
+                },
+                {
+
+                    column_number: 6, // Contract Begin
+                    filter_type: "date",
+                    date_format: 'dd-mm-yy',
+                    filter_reset_button_text: false,
+                },
+                {
+                    column_number: 7, // Srf Number
+                    filter_type:'text',
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+                    column_number: 8, // Srf Number
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+                    column_number: 9, // Line Manger Status
+                    filter_reset_button_text: false,
+                    filter_default_label:'Select Filter',
+                    data: [
+                        {
+                            value: 'Submitted',
+                            label: 'Submitted'
+                        },
+                        {
+                            value: 'Waiting',
+                            label: 'Waiting Submitted'
+                        },
+                        {
+                            value: 'Approved',
+                            label: 'Approved'
+                        },
+                        {
+                            value: 'Reject',
+                            label: 'Rejected'
+                        }
+                    ]
+                },
+                {
+
+                    column_number: 10, // Contract Begin
+                    filter_type: "date",
+                    date_format: 'dd-mm-yy',
+                    filter_reset_button_text: false,
+                },
+                {
+                    column_number: 11, // Line Manger Status
+                    filter_reset_button_text: false,
+                    filter_default_label:'Select Filter',
+                    data: [
+                        {
+                            value: 'Submitted',
+                            label: 'Submitted'
+                        },
+                        {
+                            value: 'Waiting',
+                            label: 'Waiting Submitted'
+                        },
+                        {
+                            value: 'Approved',
+                            label: 'Approved'
+                        },
+                        {
+                            value: 'Reject',
+                            label: 'Rejected'
+                        }
+                    ]
+                },
+                {
+
+                    column_number: 12, // Contract Begin
+                    filter_type: "date",
+                    date_format: 'dd-mm-yy',
+                    filter_reset_button_text: false,
+                },
+                {
+                    column_number: 13, // Line Manger Status
+                    filter_reset_button_text: false,
+                    filter_default_label:'Select Filter',
+                    data: [
+                        {
+                            value: 'Submitted',
+                            label: 'Submitted'
+                        },
+                        {
+                            value: 'Waiting',
+                            label: 'Waiting Submitted'
+                        },
+                        {
+                            value: 'Approved',
+                            label: 'Approved'
+                        },
+                        {
+                            value: 'Reject',
+                            label: 'Rejected'
+                        }
+                    ]
+                },
+                {
+
+                    column_number: 14, // Contract Begin
+                    filter_type: "date",
+                    date_format: 'dd-mm-yy',
+                    filter_reset_button_text: false,
+                },
+                {
+                    column_number: 15, // Line Manger Status
+                    filter_reset_button_text: false,
+                    filter_default_label:'Select Filter',
+                    data: [
+                        {
+                            value: 'Submitted',
+                            label: 'Submitted'
+                        },
+                        {
+                            value: 'Waiting',
+                            label: 'Waiting Submitted'
+                        },
+                        {
+                            value: 'Approved',
+                            label: 'Approved'
+                        },
+                        {
+                            value: 'Reject',
+                            label: 'Rejected'
+                        }
+                    ]
+                },
+                {
+
+                    column_number: 16, // Contract Begin
+                    filter_type: "date",
+                    date_format: 'dd-mm-yy',
+                    filter_reset_button_text: false,
+                },
+                {
+                    column_number: 17, // Line Manger Status
+                    filter_reset_button_text: false,
+                    filter_default_label:'Select Filter',
+                    data: [
+                        {
+                            value: 'Submitted',
+                            label: 'Submitted'
+                        },
+                        {
+                            value: 'Waiting',
+                            label: 'Waiting Submitted'
+                        },
+                        {
+                            value: 'Approved',
+                            label: 'Approved'
+                        },
+                        {
+                            value: 'Reject',
+                            label: 'Rejected'
+                        }
+                    ]
+                },
+                {
+
+                    column_number: 18, // Contract Begin
+                    filter_type: "date",
+                    date_format: 'dd-mm-yy',
+                    filter_reset_button_text: false,
+                },
+                {
+                    column_number: 19, // Line Manger Status
+                    filter_reset_button_text: false,
+                    filter_default_label:'Select Filter',
+                    data: [
+                        {
+                            value: 'Submitted',
+                            label: 'Submitted'
+                        },
+                        {
+                            value: 'Waiting',
+                            label: 'Waiting Submitted'
+                        },
+                        {
+                            value: 'Approved',
+                            label: 'Approved'
+                        },
+                        {
+                            value: 'Reject',
+                            label: 'Rejected'
+                        }
+                    ]
+                },
+                {
+
+                    column_number: 20, // Contract Begin
+                    filter_type: "date",
+                    date_format: 'dd-mm-yy',
+                    filter_reset_button_text: false,
+                },
+            ],'footer');
+
+        });
+
+        // Common Function
+
+        function InputCheckBox(val){
+            return "<input type='checkbox' class='vacancy' value='"+val+"'>";
+        }
+
+        function ShowDialog(id,name){
+            $('#id').val(id);
+            $('#Name').text(name);
+            $('#notes').val('');
+            $('#myModal').modal('show');
+        }
+
+        function CheckBox(object){
+
+                // 0 = Not Submit ,1 = Submitted,  2 = Approved,  3 = Rejected
+                //var UserCoordinator = object.serviceCoordinator;
+                var StatusLineManager = parseInt(object.statusOne);
+                var StatusServiceLine = parseInt(object.statusTwo);
+                var StatusHeadOp = parseInt(object.statusThree);
+                //var StatusHeadNonOp = parseInt(object.approveStatusFour);
+                //var StatusHeadSourc = parseInt(object.approveStatusFive);
+                //var StatusSercord = parseInt(object.approveStatusSix);
+
+                var ProfileId = parseInt('@ViewBag.PreofileId');
+                var LineManager = parseInt (object.approverOneId);
+                var ServiceLine = parseInt (object.approverTwoId);
+                var HeadOperation = parseInt (object.approverThreeId);
+                var rpm = parseInt (object.rpmId)
+                //var HeadNonOperation = parseInt (object.approveFourId);
+                //var HeadSourcing = parseInt (object.approveFiveId);
+                //var ServiceCoordinator = parseInt (object.approveSixId);
+
+                //if(ProfileId == LineManager)
+                //{
+                //    if((StatusLineManager == 0 || StatusLineManager == 3) && UserCoordinator!=null)
+                //    {
+                //        $('#check-all').show();
+                //        return InputCheckBox(object.id);
+                //    }
+
+                //}
+
+                if(ProfileId == rpm || ProfileId == ServiceLine)
+                {
+                    //if((StatusServiceLine==0 || StatusServiceLine==3) && (StatusLineManager == 1 || StatusLineManager == 2))
+                    //{
+                        $('#check-all').show();
+                        return InputCheckBox(object.id);
+                    //}
+
+                }
+
+                //if(ProfileId == HeadOperation)
+                //{
+                //    if((StatusHeadOp==0 || StatusHeadOp==3) && StatusServiceLine == 2)
+                //    {
+                //        $('#check-all').show();
+                //        return InputCheckBox(object.id);
+                //    }
+
+                //}
+
+                //if(ProfileId == HeadNonOperation)
+                //{
+                //    if((StatusHeadNonOp==0 || StatusHeadNonOp==3) && (StatusLineManager == 1 || StatusLineManager == 2))
+                //    {
+                //        $('#check-all').show();
+                //        return InputCheckBox(object.id);
+                //    }
+
+                //}
+
+                //if( ProfileId == ServiceCoordinator)
+                //{
+                //    if(((StatusSercord==0 || StatusSercord==3) && StatusHeadNonOp == 2) || (StatusSercord==0 && StatusHeadOp == 2))
+                //    {
+                //        $('#check-all').show();
+                //        return InputCheckBox(object.id);
+                //    }
+
+                //}
+
+
+            
+            return "-";
+                //$('#check-all').show();
+                //return InputCheckBox(object.id);
+        }
+
+        function Action(object){
+            var StatusSercord = parseInt(object.approveStatusSix);
+            var StatusSercordEscalation = parseInt(object.statusEscalationServiceCoordinator);
+
+
+            @if(User.IsInRole("Line Manager") || User.IsInRole("Administrator")){
+                  @:if(object.isEscalation==false){
+                    @:if(parseInt(StatusSercord)==2){ // Complete WithNo Escalation
+                        @:return "<a class='edit' title='View Srf Detail'><i class='fa fa-files-o'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a href='/Admin/Srf/Extends/" + object.id + "' title='Extend SRF Requets'><i class='fa fa-tags'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a class='' id='btn-teriminate' OnClick='ShowDialog(\""+object.id+"\",\""+object.employeeName+"\")' title='Terminate - Blacklist Confirmation'><i class='fa fa-warning'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a class='remove' title='Delete Employee Name " + object.employeeName + "'><i class='fa fa-trash'></i></a>";
+                    @:}else{ // Not Complete WithNo Escalation
+                        @:return "<a class='edit' title='View Srf Detail'><i class='fa fa-files-o'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a class='remove' title='Delete Employee Name " + object.employeeName + "'><i class='fa fa-trash'></i></a>";
+                    @:}
+                @:}else{
+                    @:if(parseInt(StatusSercord)==2 || parseInt(StatusSercordEscalation)==2){ // Complete WithEscalation
+                        @:return "<a href='/Admin/Escalation/Edit/"+object.id+"' title='View Srf Detail WithEscalation'><i class='fa fa-file-text-o'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a href='/Admin/Srf/Extends/" + object.id + "' title='Extend SRF Requets'><i class='fa fa-tags'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a class='' id='btn-teriminate' OnClick='ShowDialog(\""+object.id+"\",\""+object.employeeName+"\")' title='Terminate - Blacklist Confirmation'><i class='fa fa-warning'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a class='remove' title='Delete Employee Name " + object.employeeName + "'><i class='fa fa-trash'></i></a>";
+                    @:}else{ // Not Complete WithEscalation
+                        @:return "<a href='/Admin/Escalation/Edit/"+object.id+"' title='View Srf Detail WithEscalation'><i class='fa fa-file-text-o'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a class='remove' title='Delete Employee Name " + object.employeeName + "'><i class='fa fa-trash'></i></a>";
+                    @:}
+                @:}
+            }else{
+                if (User.IsInRole("HR Agency")){
+                    @:if (parseInt(object.status) == 3 || parseInt(object.status) == 2){
+                       @:if(object.isEscalation==false){
+                          @:return  "<a class='edit' title='View Srf Detail'><i class='fa fa-files-o'></i></a>&nbsp;&nbsp;&nbsp;"+
+                          @:"<a class='' id='btn-teriminate' OnClick='ShowDialog(\"" + object.id + "\",\"" + object.employeeName + "\")' title='Terminate - Blacklist Confirmation'><i class='fa fa-warning'></i></a>&nbsp;&nbsp;&nbsp";
+                       @:}else{
+                           @:return "<a href='/Admin/Escalation/Edit/"+object.id+"' title='View Srf Detail WithEscalation'><i class='fa fa-file-text-o'></i></a>&nbsp;&nbsp;&nbsp;"+
+                           @:"<a class='' id='btn-teriminate' OnClick='ShowDialog(\"" + object.id + "\",\"" + object.employeeName + "\")' title='Terminate - Blacklist Confirmation'><i class='fa fa-warning'></i></a>&nbsp;&nbsp;&nbsp";
+                       @:}
+
+                    @:}else{
+                       @:if(object.isEscalation==false){
+                          @:return  "<a class='edit' title='View Srf Detail'><i class='fa fa-files-o'></i></a>&nbsp;&nbsp;&nbsp;";
+                       @:}else{
+                           @:return "<a href='/Admin/Escalation/Edit/"+object.id+"' title='View Srf Detail WithEscalation'><i class='fa fa-file-text-o'></i></a>&nbsp;&nbsp;&nbsp;";
+                       @:}
+                    @:}
+                }else{
+                    @:if(object.isEscalation==false){
+                        @:return  "<a class='edit' title='View Srf Detail'><i class='fa fa-files-o'></i></a>&nbsp;&nbsp;&nbsp;";
+                    @:}else{
+                        @:return "<a href='/Admin/Escalation/Edit/"+object.id+"' title='View Srf Detail WithEscalation'><i class='fa fa-file-text-o'></i></a>&nbsp;&nbsp;&nbsp;";
+                    @:}
+                }
+            }
+            return "-";
+        }
+
+        function Status(val,IsLm){
+            if(parseInt(val)==0){
+                if(IsLm){
+                    return "<label class='label label-srf'><i class='fa fa-clock-o'></i> Waiting Submitted</label>";
+                }else{
+                    return "<label class='label label-srf'><i class='fa fa-clock-o'></i> Waiting</label>";
+                }
+            }else if(parseInt(val)==1){
+                return "<label class='label label-primary'><i class='fa fa-check-circle-o'></i> Submitted</label>";
+            }else if(parseInt(val)==2){
+                return "<label class='label label-primary'><i class='fa fa-check'></i> Approved </label>";
+            }else if(parseInt(val)==3){
+                return "<label class='label label-danger'><i class='fa fa-times'></i> Reject </label>";
+            }else{
+                return "-";
+            }
+        }
+
+        function StatusEscalation(val,IsLm,IsHos){
+            if(IsLm){
+                if(parseInt(val)==1){
+                    return "<label class='label label-srf'><i class='fa fa-clock-o'></i> Waiting Submitted</label>";
+                }else{
+                    return "<label class='label label-primary'><i class='fa fa-check-circle-o'></i> Submitted </label>";
+                }
+            }else{
+                if(parseInt(val)==0){
+                    return "<label class='label label-srf'><i class='fa fa-clock-o'></i> Waiting </label>";
+                }else if(parseInt(val)==1){
+                    return "<label class='label label-primary'><i class='fa fa-check-circle-o'></i> Submitted </label>";
+                }else if(parseInt(val)==2){
+                    return "<label class='label label-primary'><i class='fa fa-check'></i> Approved </label>";
+                }else if(parseInt(val)==3){
+                    return "<label class='label label-danger'><i class='fa fa-times'></i> Reject </label>";
+                }else{
+                    return "-";
+                }
+            }
+        }
+
+    </script>
+}

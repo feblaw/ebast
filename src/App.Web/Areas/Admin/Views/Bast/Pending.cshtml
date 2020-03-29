@@ -1,0 +1,865 @@
+﻿@{
+    ViewData["Title"] = "Pending BAST Approval";
+}
+
+@section breadcrumb{
+    <li>
+        <span>Pending List </span>
+    </li>
+}
+
+<h1 class="page-title">Pending BAST <small>List</small></h1>
+<div class="portlet light portlet-fit portlet-datatable bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase"></span>
+        </div>        
+            <div class="portlet-body">
+                <div class="box-footer clearfix">
+                    <a class="btn btn-success" href="@Url.Action("Export")" style="margin-left:5px!important"><i class="fa fa-download"></i> Export Detail</a>
+                </div>
+            </div>
+        
+
+        <div class="pull-right" id="toolbox"></div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <table id="table" class="table table-striped table-bordered table-hover no-border-bottom">
+            <thead>
+                <tr>
+                    <th rowspan="2">
+                        @if (User.IsInRole("IM") ||
+              User.IsInRole("PA") || User.IsInRole("CPM") || User.IsInRole("ASP PM"))
+                        {
+                            <input type="checkbox" id="check-all" />
+                        }
+                        else
+                        {
+                            <label>-</label>
+                        }
+                    </th>
+                    <th rowspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                    <th rowspan="2">BAST Req No</th>
+                    <th rowspan="2">TOP</th>
+                    <th rowspan="2">Value</th>
+                    <th rowspan="2">Submit Date</th>
+                    <th rowspan="2">Project</th>
+                    <th rowspan="2">ASP</th>
+                    <th colspan="3" class="text-center">ASP PM Approval</th>
+                    <th colspan="3" class="text-center">Project Admin Approval</th>
+                    <th colspan="3" class="text-center">IM/CPM Approval</th>
+                    <th colspan="3" class="text-center">TPM Approval</th>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <th class="text-center">Status</th>
+                    <th>Approve Date</th>
+                    <th>Name</th>
+                    <th class="text-center">Status</th>
+                    <th>Approve Date</th>
+                    <th>Name</th>
+                    <th class="text-center">Status</th>
+                    <th>Approve Date</th>
+                    <th>Name</th>
+                    <th class="text-center">Status</th>
+                    <th>Approve Date</th>
+                </tr>
+                <tr class="hidden">
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    @if (
+                        User.IsInRole("ASP PM") ||
+                        User.IsInRole("PA") || User.IsInRole("IM") || User.IsInRole("CPM"))
+    {
+        <div class="portlet-body">
+            <div class="box-footer clearfix">
+                <form role="form" id="FormApprove" asp-controller="bast" asp-action="ApproveMultiple">
+                    <input type="hidden" class="ListId" name="data" value="" required />
+                    <a href="javascript:void(0);" class="btn btn-danger pull-right" id="btn-reject" style="margin-left:10px;">Reject</a>
+                    <button type="submit" name="status" value="true" class="btn btn-primary pull-right">Giving Approval</button>
+                </form>
+            </div>
+        </div>
+    }
+
+</div>
+
+<div id="ModalReject" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Rejected Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="FormApprove" asp-controller="bast" asp-action="MultiReject">
+                    <input type="hidden" class="ListId" name="data" value="" required />
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="remarks">Remarks</label>
+                            <textarea id="remarks" name="remarks" class="form-control" rows="5" required></textarea>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal" style="margin-left:10px;">Cancel</button>
+                        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+@{
+    Html.RenderPartial("_DatatablesAssets");
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+
+            var saved = @((TempData["Saved"] != null).ToString().ToLower());
+            if (saved == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("BAST has been saved");
+            }
+
+            var submitted = @((TempData["Submitted"] != null).ToString().ToLower());
+            if (submitted == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("BAST has been submitted");
+            }
+
+            var approved = @((TempData["Approved"] != null).ToString().ToLower());
+            if (approved == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("BAST has been approved");
+            }
+
+            
+            var rejected = @((TempData["Rejected"] != null).ToString().ToLower());
+            if (rejected == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.error("BAST has been rejected");
+            }
+
+            var success = @((TempData["Success"] != null).ToString().ToLower());
+            if (success == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("BAST has been approved");
+            }
+
+
+            $('#check-all').hide();
+            var datatableOption = {
+                ajaxMethod: "POST",
+                listUrl: "/Admin/Api/Bast/PostPending",
+                detailUrl: "@Url.Action("Details")/",
+                editUrl: "@Url.Action("Edit")/",
+                deleteUrl: "/admin/api/Bast/",
+                deleteAlertSuccess: "BAST has been removed",
+                columnDefs: [
+                    {
+                        "targets": 0, // Checkbox Approve
+                        "data": "id",
+                        name: "id",
+                        "render": function (data, type, row, meta) {
+                            return CheckBox(row);
+                        }
+                    },
+                    {
+                        "targets": 1, // Action Button
+                        "data": "id",
+                        name: "id",
+                        "render": function(data, type, row, meta){
+                            return  "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;";
+                            //if(document.getElementById("IsAdmin")!=null){
+                            //     return  "<a class='detail' title='Detail'><i class='fa fa-user'></i></a>&nbsp;&nbsp;&nbsp;" + 
+                            //                 "<a class='edit' title='Edit'><i class='fa fa-edit'></i></a>&nbsp;&nbsp;&nbsp;" +
+                            //                "<a class='remove' title='Remove'><i class='fa fa-trash'></i></a>";
+                                 
+                                    
+                                 
+                            // }else{
+                            //     if (row.approvalOneStatus == 1 ) 
+                            //     {
+                            //         return  "<a class='detail' title='Details'><i class='fa fa-user'></i></a>&nbsp;&nbsp;&nbsp;";
+                                     
+                            //     }else{
+                            //         return "<a class='edit' title='Edit Vacancy'><i class='fa fa-edit'></i></a>&nbsp;&nbsp;&nbsp;" +
+                            //              "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;" +
+                            //             "<a class='remove' title='Remove " + row.id + "'><i class='fa fa-trash'></i></a>";
+                            //     }
+                            // }
+
+                        },
+                    },
+                   {
+                       "targets": 2, // name
+                       "data": "bastReqNo",
+                       name: "BastReqNo",
+                   },
+                    {
+                        "targets": 3, // name
+                        "data": "top",
+                        name: "top",
+                    },
+                    {
+                        "targets": 4, // Request By
+                        "data": "totalValue",
+                        name: "TotalValue",
+                        "render":$.fn.dataTable.render.number( '.', ',', 0 )
+                    },
+
+                    {
+                        "targets": 5, // Request By
+                        "data": "approvalOneDate",
+                        name: "ApprovalOneDate",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                     {
+                         "targets": 6, // name
+                         "data": "project",
+                         name: "project",
+                     },
+                     {
+                         "targets": 7, // name
+                         "data": "asp",
+                         name: "Asp.Name",
+                     },
+                    {
+                        "targets": 8, // Request By
+                        "data": "approvalOne",
+                        name: "ApprovalOne.Name",
+                    },
+                    {
+                        "targets": 9, // Status Approve Line Manager
+                        "data": "approvalOneStatus",
+                        name: "ApprovalOneStatus",
+                        "render": function (data, type, row, meta) {
+                            var statussDB = parseInt(data);
+                            return Status(statussDB,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 10, // Submitted Date
+                        "data": "approvalOneDate",
+                        name: "ApprovalOneDate",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 11, // Request By
+                        "data": "approvalTwo",
+                        name: "ApprovalTwo.Name",
+                    },
+                    {
+                        "targets": 12, // Status Approve Line Manager
+                        "data": "approvalTwoStatus",
+                        name: "ApprovalTwoStatus",
+                        "render": function (data, type, row, meta) {
+                            var statussDB = parseInt(data);
+                            return Status(statussDB,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 13, // Submitted Date
+                        "data": "approvalTwoDate",
+                        name: "ApprovalTwoDate",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 14, // Request By
+                        "data": "approvalThree",
+                        name: "ApprovalThree.Name",
+                    },
+                    {
+                        "targets": 15, // Status Approve Line Manager
+                        "data": "approvalThreeStatus",
+                        name: "ApprovalThreeStatus",
+                        "render": function (data, type, row, meta) {
+                            var statussDB = parseInt(data);
+                            return Status(statussDB,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 16, // Submitted Date
+                        "data": "approvalThreeDate",
+                        name: "ApprovalThreeDate",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 17, // Request By
+                        "data": "approvalFour",
+                        name: "ApprovalFour.Name",
+                    },
+                    {
+                        "targets": 18, // Status Approve Line Manager
+                        "data": "approvalFourStatus",
+                        name: "ApprovalFourStatus",
+                        "render": function (data, type, row, meta) {
+                            var statussDB = parseInt(data);
+                            return Status(statussDB,true);
+                            
+                        }
+                    },
+                    {
+                        "targets": 19, // Submitted Date
+                        "data": "approvalFourDate",
+                        name: "ApprovalFourDate",
+                        "orderable": true,
+                        "render": function(data, type, row, meta){
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+
+                ]
+            };
+
+            $datatables.init("#table", datatableOption);
+            var table = $('#table')
+                .on('init.dt', function(e, settings, json) { disableImmediateSearchDt(e, settings, json, '#table'); })
+                .DataTable(); theDataTable = table;
+            //table.order( [[5,'createdAt']] );
+
+            $('#table tbody').on( 'click', 'tr', function () {
+                ele = $(this).find('td input:checkbox')[0];
+                ele.checked = ! ele.checked;
+                var checkedVals = $('.bast:checkbox:checked').map(function() {
+                    return this.value;
+                }).get();
+                var result = checkedVals.join(",");
+                $('.ListId').val(result);
+            } );
+
+
+            // Check Event Trigger
+
+            table.on('click','.bast',function(){
+                var checkedVals = $('.bast:checkbox:checked').map(function() {
+                    return this.value;
+                }).get();
+                var result = checkedVals.join(",");
+                $('.ListId').val(result);
+            });
+
+            $('#check-all').click(function(e){
+                if($(this).prop('checked')){
+                    $('#table tbody tr td input[type="checkbox"]').each(function(){
+                        $(this).prop('checked', true);
+                    });
+                }else{
+                    $('#table tbody tr td input[type="checkbox"]').each(function(){
+                        $(this).prop('checked', false);
+                    });
+                }
+                var checkedVals = $('.bast:checkbox:checked').map(function() {
+                    return this.value;
+                }).get();
+                var result = checkedVals.join(",");
+                $('.ListId').val(result);
+            });
+
+            $('#btn-reject').click(function(){
+                $('#remarks').val('');
+                var DataId = $('#ModalReject .ListId').val();
+                if(DataId){
+                    $('#ModalReject').modal('show');
+                }
+            });
+
+            // Filter Trigger
+
+            yadcf.init(table, [
+                {
+                    column_number: 2, // Srf Number
+                    filter_type:'text',
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+                    column_number: 3, // Srf Number
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+                    column_number: 4, // Srf Number
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+
+                    column_number: 5, // Contract Begin
+                    filter_type: "date",
+                    date_format: 'dd-mm-yyyy',
+                    filter_reset_button_text: false,
+                },
+                {
+                    column_number: 6, // Srf Number
+                    filter_type:'text',
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+                    column_number: 7, // Srf Number
+                    filter_type:'text',
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+
+                    column_number: 8, // Contract Begin
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+                    column_number: 9, // Srf Number
+                    filter_reset_button_text: false,
+                    filter_default_label:'Select Filter',
+                    data: [
+                        {
+                            value: 'Submitted',
+                            label: 'Submitted'
+                        },
+                        {
+                            value: 'Waiting',
+                            label: 'Waiting Submitted'
+                        },
+                        {
+                            value: 'Approved',
+                            label: 'Approved'
+                        },
+                        {
+                            value: 'Reject',
+                            label: 'Rejected'
+                        }
+                    ]
+                },
+                {
+                    column_number: 10, // Srf Number
+                    filter_type: "date",
+                    date_format: 'dd-mm-yy',
+                    filter_reset_button_text: false,
+                },
+                {
+                    column_number: 11, // Srf Number
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+                    column_number: 12, // Line Manger Status
+                    filter_reset_button_text: false,
+                    filter_default_label:'Select Filter',
+                    data: [
+                        {
+                            value: 'Submitted',
+                            label: 'Submitted'
+                        },
+                        {
+                            value: 'Waiting',
+                            label: 'Waiting Submitted'
+                        },
+                        {
+                            value: 'Approved',
+                            label: 'Approved'
+                        },
+                        {
+                            value: 'Reject',
+                            label: 'Rejected'
+                        }
+                    ]
+                },
+                {
+
+                    column_number: 13, // Contract Begin
+                    filter_type: "date",
+                    date_format: 'dd-mm-yy',
+                    filter_reset_button_text: false,
+                },
+                {
+                    column_number: 14, // Srf Number
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+                    column_number: 15, // Line Manger Status
+                    filter_reset_button_text: false,
+                    filter_default_label:'Select Filter',
+                    data: [
+                        {
+                            value: 'Submitted',
+                            label: 'Submitted'
+                        },
+                        {
+                            value: 'Waiting',
+                            label: 'Waiting Submitted'
+                        },
+                        {
+                            value: 'Approved',
+                            label: 'Approved'
+                        },
+                        {
+                            value: 'Reject',
+                            label: 'Rejected'
+                        }
+                    ]
+                },
+                {
+
+                    column_number: 16, // Contract Begin
+                    filter_type: "date",
+                    date_format: 'dd-mm-yy',
+                    filter_reset_button_text: false,
+                },
+                {
+                    column_number: 17, // Srf Number
+                    filter_reset_button_text: false,
+                    filter_default_label: 'Select Filter'
+                },
+                {
+                    column_number: 18, // Line Manger Status
+                    filter_reset_button_text: false,
+                    filter_default_label:'Select Filter',
+                    data: [
+                        {
+                            value: 'Submitted',
+                            label: 'Submitted'
+                        },
+                        {
+                            value: 'Waiting',
+                            label: 'Waiting Submitted'
+                        },
+                        {
+                            value: 'Approved',
+                            label: 'Approved'
+                        },
+                        {
+                            value: 'Reject',
+                            label: 'Rejected'
+                        }
+                    ]
+                },
+                {
+
+                    column_number: 19, // Contract Begin
+                    filter_type: "date",
+                    date_format: 'dd-mm-yy',
+                    filter_reset_button_text: false,
+                },
+                
+            ],'footer');
+
+        });
+
+        // Common Function
+
+        function InputCheckBox(val){
+            return "<input type='checkbox' class='bast' value='"+val+"'>";
+        }
+
+        function ShowDialog(id,name){
+            $('#id').val(id);
+            $('#Name').text(name);
+            $('#notes').val('');
+            $('#myModal').modal('show');
+        }
+
+        function CheckBox(object){
+
+                // 0 = Not Submit ,1 = Submitted,  2 = Approved,  3 = Rejected
+                //var UserCoordinator = object.serviceCoordinator;
+                var StatusASPPM = parseInt(object.approvalOneStatus);
+                var StatusPA = parseInt(object.approvalTwoStatus);
+                var StatusIM = parseInt(object.approvalThreeStatus);
+                var StatusTPM = parseInt(object.approvalFourStatus);
+                //var StatusHeadNonOp = parseInt(object.approveStatusFour);
+                //var StatusHeadSourc = parseInt(object.approveStatusFive);
+                //var StatusSercord = parseInt(object.approveStatusSix);
+
+                var ProfileId = parseInt('@ViewBag.PreofileId');
+                var ASPPM = parseInt (object.approvalOneID);
+                var PA = parseInt (object.approvalTwoID);
+                var IM = parseInt (object.approvalThreeID);
+                var TPM = parseInt (object.approvalFourID);
+                //var HeadNonOperation = parseInt (object.approveFourId);
+                //var HeadSourcing = parseInt (object.approveFiveId);
+                //var ServiceCoordinator = parseInt (object.approveSixId);
+
+                //if(ProfileId == LineManager)
+                //{
+                //    if((StatusLineManager == 0 || StatusLineManager == 3) && UserCoordinator!=null)
+                //    {
+                //        $('#check-all').show();
+                //        return InputCheckBox(object.id);
+                //    }
+
+                //}
+
+                if(ProfileId == ASPPM)
+                {
+                    if(StatusASPPM==0 && StatusPA==0 && StatusIM==0 && StatusTPM==0)
+                    {
+                        $('#check-all').show();
+                        return InputCheckBox(object.id);
+                    }
+
+                }
+
+                if(ProfileId == PA)
+                {
+                    if(StatusASPPM==1 && StatusPA==0 && StatusIM==0 && StatusTPM==0)
+                    {
+                        $('#check-all').show();
+                        return InputCheckBox(object.id);
+                    }
+
+                }
+
+                if(ProfileId == IM)
+                {
+                    if(StatusASPPM==1 && StatusPA==1 && StatusIM==0 && StatusTPM==0)
+                    {
+                        $('#check-all').show();
+                        return InputCheckBox(object.id);
+                    }
+
+                }
+
+                if(ProfileId == TPM)
+                {
+                    if(StatusASPPM==1 && StatusPA==1 && StatusIM==1 && StatusTPM==0)
+                    {
+                        $('#check-all').show();
+                        return InputCheckBox(object.id);
+                    }
+
+                }
+
+                //if(ProfileId == HeadNonOperation)
+                //{
+                //    if((StatusHeadNonOp==0 || StatusHeadNonOp==3) && (StatusLineManager == 1 || StatusLineManager == 2))
+                //    {
+                //        $('#check-all').show();
+                //        return InputCheckBox(object.id);
+                //    }
+
+                //}
+
+                //if( ProfileId == ServiceCoordinator)
+                //{
+                //    if(((StatusSercord==0 || StatusSercord==3) && StatusHeadNonOp == 2) || (StatusSercord==0 && StatusHeadOp == 2))
+                //    {
+                //        $('#check-all').show();
+                //        return InputCheckBox(object.id);
+                //    }
+
+                //}
+
+
+            
+            return "-";
+        }
+
+        function Action(object){
+            var StatusSercord = parseInt(object.approveStatusSix);
+            var StatusSercordEscalation = parseInt(object.statusEscalationServiceCoordinator);
+
+
+            @if(User.IsInRole("Line Manager") || User.IsInRole("Administrator")){
+                  @:if(object.isEscalation==false){
+                    @:if(parseInt(StatusSercord)==2){ // Complete WithNo Escalation
+                        @:return "<a class='edit' title='View Srf Detail'><i class='fa fa-files-o'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a href='/Admin/Srf/Extends/" + object.id + "' title='Extend SRF Requets'><i class='fa fa-tags'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a class='' id='btn-teriminate' OnClick='ShowDialog(\""+object.id+"\",\""+object.employeeName+"\")' title='Terminate - Blacklist Confirmation'><i class='fa fa-warning'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a class='remove' title='Delete Employee Name " + object.employeeName + "'><i class='fa fa-trash'></i></a>";
+                    @:}else{ // Not Complete WithNo Escalation
+                        @:return "<a class='edit' title='View Srf Detail'><i class='fa fa-files-o'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a class='remove' title='Delete Employee Name " + object.employeeName + "'><i class='fa fa-trash'></i></a>";
+                    @:}
+                @:}else{
+                    @:if(parseInt(StatusSercord)==2 || parseInt(StatusSercordEscalation)==2){ // Complete WithEscalation
+                        @:return "<a href='/Admin/Escalation/Edit/"+object.id+"' title='View Srf Detail WithEscalation'><i class='fa fa-file-text-o'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a href='/Admin/Srf/Extends/" + object.id + "' title='Extend SRF Requets'><i class='fa fa-tags'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a class='' id='btn-teriminate' OnClick='ShowDialog(\""+object.id+"\",\""+object.employeeName+"\")' title='Terminate - Blacklist Confirmation'><i class='fa fa-warning'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a class='remove' title='Delete Employee Name " + object.employeeName + "'><i class='fa fa-trash'></i></a>";
+                    @:}else{ // Not Complete WithEscalation
+                        @:return "<a href='/Admin/Escalation/Edit/"+object.id+"' title='View Srf Detail WithEscalation'><i class='fa fa-file-text-o'></i></a>&nbsp;&nbsp;&nbsp;"+
+                        @:"<a class='remove' title='Delete Employee Name " + object.employeeName + "'><i class='fa fa-trash'></i></a>";
+                    @:}
+                @:}
+            }else{
+                if (User.IsInRole("HR Agency")){
+                    @:if (parseInt(object.status) == 3 || parseInt(object.status) == 2){
+                       @:if(object.isEscalation==false){
+                          @:return  "<a class='edit' title='View Srf Detail'><i class='fa fa-files-o'></i></a>&nbsp;&nbsp;&nbsp;"+
+                          @:"<a class='' id='btn-teriminate' OnClick='ShowDialog(\"" + object.id + "\",\"" + object.employeeName + "\")' title='Terminate - Blacklist Confirmation'><i class='fa fa-warning'></i></a>&nbsp;&nbsp;&nbsp";
+                       @:}else{
+                           @:return "<a href='/Admin/Escalation/Edit/"+object.id+"' title='View Srf Detail WithEscalation'><i class='fa fa-file-text-o'></i></a>&nbsp;&nbsp;&nbsp;"+
+                           @:"<a class='' id='btn-teriminate' OnClick='ShowDialog(\"" + object.id + "\",\"" + object.employeeName + "\")' title='Terminate - Blacklist Confirmation'><i class='fa fa-warning'></i></a>&nbsp;&nbsp;&nbsp";
+                       @:}
+
+                    @:}else{
+                       @:if(object.isEscalation==false){
+                          @:return  "<a class='edit' title='View Srf Detail'><i class='fa fa-files-o'></i></a>&nbsp;&nbsp;&nbsp;";
+                       @:}else{
+                           @:return "<a href='/Admin/Escalation/Edit/"+object.id+"' title='View Srf Detail WithEscalation'><i class='fa fa-file-text-o'></i></a>&nbsp;&nbsp;&nbsp;";
+                       @:}
+                    @:}
+                }else{
+                    @:if(object.isEscalation==false){
+                        @:return  "<a class='edit' title='View Srf Detail'><i class='fa fa-files-o'></i></a>&nbsp;&nbsp;&nbsp;";
+                    @:}else{
+                        @:return "<a href='/Admin/Escalation/Edit/"+object.id+"' title='View Srf Detail WithEscalation'><i class='fa fa-file-text-o'></i></a>&nbsp;&nbsp;&nbsp;";
+                    @:}
+                }
+            }
+            return "-";
+        }
+
+        function Status(val,IsLm){
+            if(parseInt(val)==0){
+                if(IsLm){
+                    return "<label class='label label-srf'><i class='fa fa-clock-o'></i> Waiting Submitted</label>";
+                }else{
+                    return "<label class='label label-srf'><i class='fa fa-clock-o'></i> Waiting</label>";
+                }
+            }else if(parseInt(val)==1){
+                return "<label class='label label-primary'><i class='fa fa-check'></i> Approved </label>";
+            }else if(parseInt(val)==2){
+                return "<label class='label label-danger'><i class='fa fa-times'></i> Reject </label>";
+            }else{
+                return "-";
+            }
+        }
+
+        function StatusEscalation(val,IsLm,IsHos){
+            if(IsLm){
+                if(parseInt(val)==1){
+                    return "<label class='label label-srf'><i class='fa fa-clock-o'></i> Waiting Submitted</label>";
+                }else{
+                    return "<label class='label label-primary'><i class='fa fa-check-circle-o'></i> Submitted </label>";
+                }
+            }else{
+                if(parseInt(val)==0){
+                    return "<label class='label label-srf'><i class='fa fa-clock-o'></i> Waiting </label>";
+                }else if(parseInt(val)==1){
+                    return "<label class='label label-primary'><i class='fa fa-check'></i> Approved </label>";
+                }else if(parseInt(val)==2){
+                    return "<label class='label label-danger'><i class='fa fa-times'></i> Reject </label>";
+                }else{
+                    return "-";
+                }
+            }
+        }
+
+    </script>
+}

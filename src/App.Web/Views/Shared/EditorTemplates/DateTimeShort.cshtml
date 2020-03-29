@@ -1,0 +1,34 @@
+﻿@using App.Helper
+@inject CommonHelper CommonHelper
+@model DateTime?
+
+@{
+    dynamic data = new System.Dynamic.ExpandoObject();
+    var fieldName = ViewData.TemplateInfo.HtmlFieldPrefix;
+}
+
+<input type="hidden" value="@Model" name="@fieldName"/>
+<div class="input-group input-medium date @fieldName-date-picker" data-date-format="@CommonHelper.GetShortDatePickerFormat()">
+    <input type="text" name="@fieldName-picker" id="@fieldName" class="form-control" value="@CommonHelper.ToShortString(Model)" readonly>
+    <span class="input-group-btn">
+        <button class="btn default" type="button">
+            <i class="fa fa-calendar"></i>
+        </button>
+    </span>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.@fieldName-date-picker').datepicker({
+            startView: 2,
+            clearBtn: true
+        })
+        .on("changeDate", function (e) {
+            if (e.date != undefined) {
+                $("input[name='@fieldName']").val(moment(e.date).format("@CommonHelper.GetShortMomentSystemFormat()"));
+            } else {
+                $("input[name='@fieldName']").val("");
+            }
+        });
+    });
+</script>

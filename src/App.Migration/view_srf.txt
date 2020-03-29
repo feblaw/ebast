@@ -1,0 +1,764 @@
+﻿-- ----------------------------
+-- View structure for account_name
+-- ----------------------------
+DROP VIEW IF EXISTS `account_name`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `account_name` AS select
+anname as Name,
+IF(anstatus IS NULL or anstatus = 0, 'true', 'false') as Status, 
+IF(sys_user.emailadd IS NOT null, sys_user.emailadd, "") as EmailUser
+from accountname
+left join sys_user on sys_user.eid = accountname.COM 
+ORDER BY anid ;
+
+-- ----------------------------
+-- View structure for activity_code
+-- ----------------------------
+DROP VIEW IF EXISTS `activity_code`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `activity_code` AS select 
+activitycode as Code,
+activitydesc as Description,
+activitystatus as Status
+from activitycode 
+order by activityid ;
+
+-- ----------------------------
+-- View structure for allowance_form
+-- ----------------------------
+DROP VIEW IF EXISTS `allowance_form`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `allowance_form` AS select 
+allow_name as Name,
+allow_value as Value
+from allowanceform 
+ORDER BY allow_id ;
+
+-- ----------------------------
+-- View structure for allowance_list
+-- ----------------------------
+DROP VIEW IF EXISTS `allowance_list`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `allowance_list` AS select 
+allowancelist.allowancenote as Note,
+oncall_normal as OnCallNormal,
+allowancelist.shift_normal as ShiftNormal,
+allowancelist.oncall_holiday as OnCallHoliday,
+allowancelist.shift_holiday as ShiftHoliday,
+grantedholiday_14 as GrantedHoliday14,
+IF(allowancestatus IS NULL or allowancestatus = '', 0, allowancestatus) as Status, 
+servicepack.servicename as ServicePackName
+from allowancelist 
+left join servicepack on servicepack.servicepackid = allowancelist.fr_servicepackid
+ORDER BY allowancelist.allowanceid ;
+
+-- ----------------------------
+-- View structure for candidate
+-- ----------------------------
+DROP VIEW IF EXISTS `candidate`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `candidate` AS select 
+IF(sys_user.emailadd IS NOT null, sys_user.emailadd, "") as Account,
+caddress as Address,
+(
+	SELECT sys_user.emailadd from sys_user where sys_user.eid = candidate_info.updateby
+) as Agency,
+candidate_info.agencytype as AgencyType,
+IF(candidate_info.approver_onedate='0000-00-00 00:00:00' OR candidate_info.approver_onedate IS NULL,"",candidate_info.approver_onedate) ApproverOneDate,
+(SELECT("")) as ApproverOneNotesText,
+approverstatus_one as ApproveOneStatus,
+(SELECT("")) as ApproverTwoNotesText,
+IF(candidate_info.approver_twodate='0000-00-00 00:00:00' OR candidate_info.approver_twodate IS NULL,"",candidate_info.approver_twodate) ApproverTwoDates,
+candidate_info.updatedate as CreatedAtCandidate,
+candidate_info.candidatenote as DescriptionCandidate,
+candidate_info.cemail as Email,
+cgender as Gender,
+chomephone as HomePhoneNumber,
+cidnumber as IdNumber,
+IF(sys_user.emailadd IS NOT null, "false", "true") as IsCandidate,
+IF(sys_user.emailadd IS NOT null, "true", "false") as IsContractor,
+IF(sys_user.emailadd IS NOT null, "true", "false") as IsUser,
+candidate_info.cmarital as Martial,
+cmobilephone as MobilePhoneNumber,
+candidatename as Name,
+cnationality as Nationality,
+candidatenickname as NickName,
+cplaceofbirth as PlaceOfBirth,
+IF(candidate_info.cdateofbirth='0000-00-00 00:00:00' OR candidate_info.cdateofbirth IS NULL,"",candidate_info.cdateofbirth) DateOfBirth,
+(
+	SELECT sys_user.emailadd from sys_user where sys_user.eid = candidate_info.updateby
+) as RequestByCandidate,
+candidate_info.approverstatus_two as ApproveTwoStatus,
+IF(
+	(SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = candidate_info.candidatetoken)  IS NULL ,"",
+  (SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = candidate_info.candidatetoken)
+) as AttachmentsCandidate,
+IF(
+	(SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = sys_user.usertoken)  IS NULL ,"",
+  (SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = sys_user.usertoken)
+) as PhotoUser,
+vacancy.*
+from candidate_info 
+LEFT JOIN sys_user on sys_user.emailadd = candidate_info.cemail 
+INNER JOIN vacancy on vacancy.TOKEN = candidate_info.fr_vacanttoken
+GROUP BY candidate_info.candidateid ;
+
+-- ----------------------------
+-- View structure for city
+-- ----------------------------
+DROP VIEW IF EXISTS `city`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `city` AS SELECT 
+cityname as Name,
+IF(citystatus IS NULL or citystatus = '', 0, citystatus) as Status 
+FROM citylist 
+ORDER BY cityid ;
+
+-- ----------------------------
+-- View structure for claim
+-- ----------------------------
+DROP VIEW IF EXISTS `claim`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `claim` AS SELECT 
+activitycode.activitycode as ActivityCode,
+claimlist.adddate as AddDate,
+IF(claimlist.allowanceoption IS NULL OR claimlist.allowanceoption = '','0',claimlist.allowanceoption) as AllowanceOption,
+claimlist.approvedonedate as ApproverDateOne,
+claimlist.approvedtwodate as ApproverDateTwo,
+(select ("0")) as ApproverOne,
+(select ("")) as ApproverOneNotes,
+(select ("0")) as ApproverTwo,
+(select ("")) as ApproverTwoNotes,
+(
+  SELECT emailadd from sys_user where sys_user.eid = claimlist.claimapprover_one
+) as ClaimApprverOneId,
+(
+  SELECT emailadd from sys_user where sys_user.eid = claimlist.claimapprover_two
+) as ClaimApprverTwoId,
+claimcategory.categoryname,
+claimlist.claimdate as ClaimDate,
+claimlist.claimstatus as ClaimStatus,
+claimlist.claim_type as ClaimType,
+costcenter.costcode as CostCenter,
+claimlist.adddate as CreatedAt,
+claimlist.daytype as DayType,
+Depature.cityname as Depature,
+claimlist.claimdesc as Description,
+Destination.cityname as Destination,
+claimlist.domallo_1 as DomAllo1,
+claimlist.domallo_2 as DomAllo2,
+claimlist.domallo_3 as DomAllo3,
+claimlist.domallo_4 as DomAllo4,
+claimlist.domallo_5 as DomAllo5,
+claimlist.domallo_6 as DomAllo6, 
+claimlist.employeelevel as EmployeeLevel,
+claimlist.claimenddate as EndDate,
+claimlist.claimendtime as EndTime,
+claimlist.intallo_1 as IntAllo1,
+claimlist.intallo_2 as IntAllo2,
+claimlist.intallo_3 as IntAllo3,
+claimlist.intallo_4 as IntAllo4,
+claimlist.intallo_5 as IntAllo5,
+claimlist.intallo_6 as IntAllo6,
+networknumber.networkcode as NetworkCode,
+claimlist.oncallshift as OnCallSift,
+IF(projects.projectname IS NULL OR projects.projectname = '','',projects.projectname) as ProjectName,
+claimlist.`schedule` as `Schedule`,
+claimlist.claimstartdate as StartDate,
+claimlist.claimstarttime as StartTime,
+claimlist.claimstatusone as StatusOne,
+claimlist.claimstatustwo as StatusTwo,
+claimlist.triptype as TripType,
+claimlist.claimvalue as Value,
+(
+  SELECT emailadd from sys_user where sys_user.eid = claimlist.claimby
+) as Contrator,
+(
+  SELECT emailadd from sys_user where sys_user.eid = ticket_info.updateby
+) as Agency,
+ticket_info.ticketnote as TicketNote,
+ticket_info.ticketprice as TicketPrice,
+ticket_info.ticketstatus as TicketStatus,
+ticket_info.updatedate as TicketSubmit,
+IF(
+	(SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = claimlist.claim_token)  IS NULL ,"",
+  (SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = claimlist.claim_token)
+) as Attachments,
+IF(
+	(SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = ticket_info.tickettoken)  IS NULL ,"",
+  (SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = ticket_info.tickettoken)
+) as AttachmentTicket
+FROM claimlist
+left join activitycode on activitycode.activityid = claimlist.claim_activityid 
+left join claimcategory on claimcategory.claimcateid = claimlist.claimfor 
+left join costcenter on costcenter.costid = costcenter.costid 
+left join citylist as Depature on Depature.cityid = claimlist.departure 
+left join citylist as Destination on Destination.cityid = claimlist.destination 
+left join networknumber on networknumber.networkid = claimlist.claim_networkid
+left join projects on projects.projectid = claimlist.fr_projectid 
+left join ticket_info on ticket_info.fr_claimtoken = claimlist.claim_token
+GROUP BY claimlist.claimid ;
+
+-- ----------------------------
+-- View structure for claim_category
+-- ----------------------------
+DROP VIEW IF EXISTS `claim_category`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `claim_category` AS select 
+claimcategory.categoryname as Name
+from claimcategory ORDER BY claimcateid ;
+
+-- ----------------------------
+-- View structure for cost_center_list
+-- ----------------------------
+DROP VIEW IF EXISTS `cost_center_list`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `cost_center_list` AS select 
+costcode as Code,
+costdesc as Description,
+IF(coststatus IS NULL or coststatus = '', 0, coststatus) as Status,
+department.departmentname as DepartmentName
+from costcenter 
+INNER JOIN department on department.departmentid = costcenter.fr_departmentid
+ORDER BY costid ;
+
+-- ----------------------------
+-- View structure for departmentsub_list
+-- ----------------------------
+DROP VIEW IF EXISTS `departmentsub_list`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `departmentsub_list` AS select 
+departmentsubname as SubName,
+departmentsub.dsstatus as DsStatus,
+department.departmentname as DepartmentName,
+sys_user.emailadd as Email
+from departmentsub 
+inner join department on department.departmentid = departmentsub.departmentid
+inner join sys_user on sys_user.eid = departmentsub.lmid 
+ORDER BY departmentsubid ;
+
+-- ----------------------------
+-- View structure for department_list
+-- ----------------------------
+DROP VIEW IF EXISTS `department_list`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `department_list` AS select 
+department.departmentname as Name,
+department.dpstatus as OperateOrNon,
+department.departmentdesc as Description,
+sys_user.emailadd as Email
+from department
+inner join sys_user on sys_user.eid = department.headid 
+ORDER BY departmentid ;
+
+-- ----------------------------
+-- View structure for esclation
+-- ----------------------------
+DROP VIEW IF EXISTS `esclation`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `esclation` AS select 
+srf_escalation_request.otlevel as EscOtLevel, 
+IF(srf_escalation_request.isworkstation = 1,"true","false") EscIsWorkstation,
+IF(srf_escalation_request.iscommunication = 1,"true","false") EscIsCommuniaction,
+srf_escalation_request.spratevalue as EscSparateValue,
+IF(
+	(SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = srf_escalation_request.escalationtoken)  IS NULL ,"",
+  (SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = srf_escalation_request.escalationtoken)
+) as EscAttachments,
+srf_escalation_request.escalation_note as EscNote,
+servicepack.servicename as EscServiceName,
+srf.*
+from srf_escalation_request 
+inner join srf on srf.SRF_ID = srf_escalation_request.fr_srf_id 
+left join servicepack on servicepack.servicepackid = srf_escalation_request.ssowid ;
+
+-- ----------------------------
+-- View structure for jobstage
+-- ----------------------------
+DROP VIEW IF EXISTS `jobstage`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `jobstage` AS select 
+IF(jobstage IS NOT null, jobstage, "") as Stage,
+IF(jobstagedesc IS NOT null, jobstagedesc, "") as Description
+from jobstagelist 
+ORDER BY jobstageid ;
+
+-- ----------------------------
+-- View structure for network_number_list
+-- ----------------------------
+DROP VIEW IF EXISTS `network_number_list`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `network_number_list` AS select 
+IF(networkcode IS NULL or networkcode = '', '', networkcode) as Code,
+IF(networkdesc IS NULL or networkdesc = '', '', networkdesc) as Description,
+IF(networkstatus IS NULL or networkstatus = '', '', networkstatus) as Status,
+projects.projectname as ProjectName,
+(
+	Select IF(emailadd IS NULL or emailadd = '','',emailadd) from sys_user where sys_user.eid = networknumber.fr_projectmanager
+) as ProjectManager,
+IF(accountname.anname IS NULL or accountname.anname = '', 0, accountname.anname) as AccountName,
+department.departmentname as DepartmentName,
+(
+	Select IF(emailadd IS NULL or emailadd = '','',emailadd) from sys_user where sys_user.eid = networknumber.fr_linemanager
+) as LineManager
+from networknumber 
+INNER JOIN projects on projects.projectid = networknumber.fr_projectid
+INNER JOIN accountname on accountname.anid = networknumber.fr_anid
+INNER JOIN department on department.departmentid = networknumber.fr_departmentid
+ORDER BY networknumber.networkid ;
+
+-- ----------------------------
+-- View structure for package_type
+-- ----------------------------
+DROP VIEW IF EXISTS `package_type`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `package_type` AS select 
+packetname as Name
+from packet_type
+ORDER BY packetid ;
+
+-- ----------------------------
+-- View structure for project
+-- ----------------------------
+DROP VIEW IF EXISTS `project`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `project` AS select 
+projectname as Name,
+projectdesc as Description
+from projects 
+ORDER BY projectid ;
+
+-- ----------------------------
+-- View structure for srf
+-- ----------------------------
+DROP VIEW IF EXISTS `srf`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `srf` AS select 
+IF(General.adddate='0000-00-00 00:00:00' OR General.adddate IS NULL,"",General.adddate) CreatedAt,
+IF(General.srf_number IS NULL or General.srf_number = '', '',General.srf_number) as Number,
+IF(General.srf_note IS NULL or General.srf_note = '', '',General.srf_note) as Description,
+IF(General.srf_type = 1,"0","1") Type,
+IF(AppOne.emailadd IS NULL or AppOne.emailadd = '', '', AppOne.emailadd) as LineManager,
+IF(AppTwo.emailadd IS NULL or AppTwo.emailadd = '', '', AppTwo.emailadd) as HeadOfNonOperation,
+IF(AppThree.emailadd IS NULL or AppThree.emailadd = '', '', AppThree.emailadd) as HeadOfServiceLine,
+IF(AppFour.emailadd IS NULL or AppFour.emailadd = '', '', AppFour.emailadd) as HeadOfOperation,
+IF(AppFive.emailadd IS NULL or AppFive.emailadd = '', '', AppFive.emailadd) as ServiceCoordinator,
+IF(AppSix.emailadd IS NULL or AppSix.emailadd = '', '', AppSix.emailadd) as HeadOfSourcing,
+General.approverstatus_one as StatusLineManager,
+General.approverstatus_two as StatusHeadOfNonOperation,
+General.approverstatus_three as StatusHeadOfServiceLine,
+General.approverstatus_four as StatusHeadOfOperation,
+General.approverstatus_five as StatusServiceCoordinator,
+General.approverstatus_six as StatusHeadOfSourcing,
+Request.employee_name as RequestBy,
+IF(General.srf_begin='0000-00-00 00:00:00' OR General.srf_begin IS NULL,"",General.srf_begin) SrfBegin,
+IF(General.srf_end='0000-00-00 00:00:00' OR General.srf_end IS NULL,"",General.srf_end) SrfEnd,
+General.servicelevel as ServiceLevel,
+IF(General.isworkstation = 1,"true","false") IsWorkstation,
+IF(General.iscommunication = 1,"true","false") IsCommuniaction,
+IF(General.hrms_or_non = 1,"true","false") IsHrms,
+IF(General.ops_or_non = 1,"true","false") IsOps,
+IF(General.ismanager = 1,"true","false") IsManager,
+General.ratetype as RateType,
+IF(Terminate.employee_name IS NULL or Terminate.employee_name = '', '', Terminate.employee_name) as TerminateBy,
+IF(General.terminatedate='0000-00-00 00:00:00' OR General.terminatedate IS NULL,"",General.terminatedate) TerminatedDate,
+IF(General.terminatenote IS NULL or General.terminatenote = '', '', General.terminatenote) as TeriminateNote,
+IF(General.isextended = 1,"true","false") IsExtended,
+General.srfstatus as Status,
+IF(
+	(
+	SELECT srf_escalation_request.spratevalue
+  from srf_escalation_request where 
+  srf_escalation_request.fr_srf_id = General.srfrow
+) IS NULL OR 
+(
+	SELECT srf_escalation_request.spratevalue
+  from srf_escalation_request where 
+  srf_escalation_request.fr_srf_id = General.srfrow
+) = '',0,
+(
+	SELECT srf_escalation_request.spratevalue
+  from srf_escalation_request where 
+  srf_escalation_request.fr_srf_id = General.srfrow
+)
+) AS SpectValue,
+servicepack.servicename as ServicePack,
+networknumber.networkcode as NetworkCode,
+costcenter.costcode as CostCenter,
+activitycode.activitycode as Activity,
+department.departmentname as department,
+departmentsub.departmentsubname as DepartmentSub,
+ProjectManager.emailadd as ProjectManager,
+CandidateInfo.cemail as Candidate,
+accountname.anname as AccountName,
+(
+	SELECT COUNT(*) from srf_escalation_request WHERE
+	srf_escalation_request.fr_srf_id = General.srfrow
+) as IsEscalation,
+IF(ESC.otlevel IS NULL OR ESC.otlevel = '','',ESC.otlevel) as OtLevelEsc,
+IF(ESC.isworkstation = 1,"true","false") IsWorkstationESC,
+IF(ESC.iscommunication = 1,"true","false") IsCommuniactionESC,
+IF(
+	(SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = ESC.escalationtoken)  IS NULL ,"",
+  (SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = ESC.escalationtoken)
+) as AttachmentEscalation,
+IF(ESC.escalation_status IS NULL OR  ESC.escalation_status = '','',ESC.escalation_status) as StatusEsc,
+IF(ESC.escalation_note IS NULL OR ESC.escalation_note = '','',ESC.escalation_note) as NoteEsc,
+IF(ESC_SSOW.servicename IS NULL OR ESC_SSOW.servicename = '','',ESC_SSOW.servicename) as SSOW_ESCALATION,
+General.srfrow as ID_SRF,
+IF(General.extendfrom_srf IS NULL OR General.extendfrom_srf = '','',General.extendfrom_srf) as ID_EXTEND_FORM
+from srf_request AS General
+left join costcenter on costcenter.costid = General.fr_costcenterid
+left join department on department.departmentid = General.fr_departmentid
+left join departmentsub on departmentsub.departmentsubid = General.fr_departmentsubid 
+left join networknumber on networknumber.networkid = General.fr_networkid
+left join servicepack on servicepack.servicepackid = General.fr_ssowid 
+left join sys_user as AppOne on AppOne.eid = General.srfapprover_one 
+left join sys_user as AppTwo on AppTwo.eid = General.srfapprover_two
+left join sys_user as AppThree on AppThree.eid = General.srfapprover_three
+left join sys_user as AppFour on AppFour.eid = General.srfapprover_four
+left join sys_user as AppFive on AppFive.eid = General.srfapprover_five 
+left join sys_user as AppSix on AppSix.eid = General.srfapprover_six 
+left join sys_user as Request on Request.eid = General.requestby 
+left join sys_user as Terminate on Terminate.eid = General.terminateby 
+left join sys_user as ProjectManager on ProjectManager.eid = networknumber.fr_projectmanager
+left join accountname on accountname.anid = networknumber.fr_anid
+left join sys_user as SrfUser on SrfUser.usertoken = General.fr_usertoken
+inner join candidate_info as CandidateInfo on CandidateInfo.candidateid = SrfUser.fr_candidateid
+left join vacancylist on vacancylist.vacancy_token = CandidateInfo.fr_vacanttoken
+left join activitycode on activitycode.activityid = vacancylist.fr_anid
+left join srf_escalation_request as ESC on ESC.fr_srf_id = General.srfrow
+left join servicepack as ESC_SSOW on ESC_SSOW.servicepackid = ESC.ssowid
+GROUP BY General.srfrow ;
+
+-- ----------------------------
+-- View structure for srf_extend
+-- ----------------------------
+DROP VIEW IF EXISTS `srf_extend`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `srf_extend` AS SELECT 
+Extend.CreatedAt as extend_created,
+Extend.Number as extend_number,
+Extend.Description as extend_description,
+Extend.Type as extend_type,
+Extend.LineManager as extend_linemanager,
+Extend.HeadOfNonOperation as extend_head_non,
+Extend.HeadOfServiceLine as extend_service_line,
+Extend.HeadOfOperation as extend_head_op,
+Extend.ServiceCoordinator as extend_service_coord,
+Extend.HeadOfSourcing as extend_head_of,
+Extend.StatusLineManager as extend_status_lm,
+Extend.StatusHeadOfNonOperation as extend_status_non,
+Extend.StatusHeadOfServiceLine as extend_status_head_line,
+Extend.StatusHeadOfOperation as exted_status_head_op,
+Extend.StatusServiceCoordinator as extend_status_service_coord,
+Extend.StatusHeadOfSourcing as extend_status_sourc,
+Extend.RequestBy as extend_request,
+Extend.SrfBegin as extend_begin,
+Extend.SrfEnd as extend_end,
+Extend.ServiceLevel as extend_service_level,
+Extend.IsWorkstation as extend_iswork,
+Extend.IsCommuniaction as extend_iscommnication,
+Extend.IsHrms as extend_ishrms,
+Extend.IsOps as extend_isops,
+Extend.IsManager as extend_ismanager,
+Extend.RateType as extend_ratetype,
+Extend.TerminateBy as extend_terminated,
+Extend.TerminatedDate as extend_terminate_date,
+Extend.TeriminateNote as extend_terminate_note,
+Extend.IsExtended as extend_is_extend,
+Extend.Status as extend_status,
+Extend.SpectValue as extend_sp_val,
+Extend.ServicePack as extend_ssow,
+Extend.NetworkCode as extend_network,
+Extend.CostCenter as extend_cost,
+Extend.ACtivity as extend_act,
+Extend.Department as extend_dept,
+Extend.DepartmentSub as extend_dept_sub,
+Extend.ProjectManager as extend_pm,
+Extend.Candidate as extend_candidate,
+Extend.AccountName as extend_account,
+Extend.ID_SRF as extend_id_srf,
+Parent.*
+from srf as Extend inner join srf as Parent on Parent.ID_SRF = Extend.ID_EXTEND_FORM
+GROUP BY  Extend.ID_SRF ;
+
+-- ----------------------------
+-- View structure for ssow
+-- ----------------------------
+DROP VIEW IF EXISTS `ssow`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `ssow` AS select 
+servicepack.packet_type as Type,
+servicepack.servicename as Name,
+servicecode as Code,
+servicerate as Rate,
+servicerate_hourly as Hourly,
+otp20 as Otp20,
+otp30 as Otp30,
+otp40 as Otp40,
+laptop as Laptop,
+usim as Usin,
+servicepack_category.spcatename as ServicePackCategory
+from servicepack
+INNER JOIN servicepack_category on servicepack_category.spcateid = servicepack.fr_spcateid 
+ORDER BY servicepack.servicepackid ;
+
+-- ----------------------------
+-- View structure for ssow_category
+-- ----------------------------
+DROP VIEW IF EXISTS `ssow_category`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `ssow_category` AS select 
+servicepack_category.spcatename as Name,
+servicepack_category.thelevel as Level,
+servicepack_category.spcatestatus as Status
+from servicepack_category 
+ORDER BY servicepack_category.spcateid ;
+
+-- ----------------------------
+-- View structure for subopscode
+-- ----------------------------
+DROP VIEW IF EXISTS `subopscode`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `subopscode` AS select 
+subopscode as Code,
+subopsdesc as Description
+from subops  
+ORDER BY subopsid ;
+
+-- ----------------------------
+-- View structure for timesheet
+-- ----------------------------
+DROP VIEW IF EXISTS `timesheet`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `timesheet` AS select 
+timesheet_type.sheettype as Name
+from timesheet_type 
+ORDER BY  timesheet_type.sheettypeid ;
+
+-- ----------------------------
+-- View structure for timesheet_activity
+-- ----------------------------
+DROP VIEW IF EXISTS `timesheet_activity`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `timesheet_activity` AS select 
+accountname.anname as AccountName,
+activitycode.activitycode as ActivityCode,
+IF(attexceptionlist.adddate='0000-00-00 00:00:00' OR attexceptionlist.adddate IS NULL,NOW(),attexceptionlist.adddate) as AddDate,
+IF(attexceptionlist.approvedonedate='0000-00-00 00:00:00' OR attexceptionlist.approvedonedate IS NULL,NOW(),attexceptionlist.approvedonedate) as ApproveOneDate,
+IF(attexceptionlist.approvedtwodate='0000-00-00 00:00:00' OR attexceptionlist.approvedtwodate IS NULL,NOW(),attexceptionlist.approvedtwodate) as ApproveTwoDate,
+(
+  SELECT emailadd from sys_user where sys_user.eid = attexceptionlist.exceptapprover_one
+) as ApproverOne,
+(
+  SELECT emailadd from sys_user where sys_user.eid = attexceptionlist.exceptapprover_two
+) as ApproverTwo,
+costcenter.costcode,
+(
+  SELECT employee_name from sys_user where sys_user.eid = attexceptionlist.exceptcreateby
+) as CreatedBy,
+IF(attexceptionlist.exceptdate='0000-00-00 00:00:00' OR attexceptionlist.exceptdate IS NULL,NOW(),attexceptionlist.exceptdate) as DateStart,
+IF(attexceptionlist.exceptdate_end='0000-00-00 00:00:00' OR attexceptionlist.exceptdate_end IS NULL,NOW(),attexceptionlist.exceptdate_end) as DateEnd,
+IF(department.departmentname IS NULL OR department.departmentname = '','',department.departmentname) as Department,
+IF(departmentsub.departmentsubname IS NULL OR departmentsub.departmentsubname = '','',departmentsub.departmentsubname) as DepartmentSub,
+attexceptionlist.exceptdesc as Description,
+citylist.cityname as Location,
+networknumber.networkcode as Network,
+projects.projectname as Project,
+attexceptionlist.requeststatus as RequestStatus,
+attexceptionlist.exceptstatusone as StatusOne,
+attexceptionlist.exceptstatustwo as StatusTwo,
+subops.subopscode as SubOps,
+attexceptionlist.exception_type as Type,
+timesheet_type.sheettype as TimeSheet,
+(
+  SELECT emailadd from sys_user where sys_user.eid = attexceptionlist.exceptcreateby
+) as Contractor,
+IF(
+	(SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = attexceptionlist.except_token)  IS NULL ,"",
+  (SELECT GROUP_CONCAT(u.bigphoto)
+   FROM uploadedphotos u 
+   WHERE u.phototoken = attexceptionlist.except_token)
+) as Attachments
+from attexceptionlist
+left join accountname on accountname.anid = attexceptionlist.fr_accountname_att
+left join activitycode on activitycode.activityid = attexceptionlist.fr_activity 
+left join costcenter on costcenter.costid = attexceptionlist.fr_costid 
+left join department on department.departmentid = attexceptionlist.fr_departmentsubid_att
+left join departmentsub on departmentsub.departmentsubid  =attexceptionlist.fr_departmentsubid_att
+left join citylist on citylist.cityid = attexceptionlist.fr_location
+left join networknumber on  networknumber.networkid = attexceptionlist.fr_networkid
+left join projects on projects.projectid = attexceptionlist.fr_projectid_att
+left join subops on subops.subopsid = attexceptionlist.fr_subopsid_att
+left join timesheet_type on timesheet_type.sheettypeid = attexceptionlist.exception_type 
+GROUP BY attexceptionlist.exceptid ;
+
+-- ----------------------------
+-- View structure for vacancy
+-- ----------------------------
+DROP VIEW IF EXISTS `vacancy`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `vacancy` AS select 
+accountname.anname as AcoountName,
+(
+  SELECT emailadd from sys_user where sys_user.eid = vacancylist.vacantapprover_one
+) as ApproverOne,
+(
+  SELECT emailadd from sys_user where sys_user.eid = vacancylist.vacantapprover_two
+) as ApproverTwo,
+costcenter.costcode as CostCenter,
+IF(vacancylist.adddate='0000-00-00 00:00:00',"",vacancylist.adddate) CreatedAt,
+departmentname as Department,
+departmentsubname as DepartmentSub,
+vacancylist.vacancydesc as Description,
+IF(jobstagelist.jobstage IS NOT null, jobstagelist.jobstage, "") as JobStage,
+vacancylist.jdate as JoinDate,
+networknumber.networkcode as NetworkNumber,
+normalrate as NormalRate,
+otlevel as OtLevel,
+(
+  SELECT sys_user.emailadd from sys_user where sys_user.eid = vacancylist.addby
+) as RequestBy,
+IF(servicepack.packet_type IS NOT null, servicepack.packet_type, "") as PackageType,
+IF(servicepack_category.spcatename IS NOT null, servicepack_category.spcatename, "") as ServicepackCategory,
+IF(servicepack.servicename IS NOT null, servicepack.servicename, "") as Servicepack,
+(SELECT "0") as Status,
+vacancylist.vacantstatusone as StatusOne,
+vacancylist.vacantstatustwo as StatusTwo,
+vacancylist.vacantstatus as vacancyStatus,
+IF(vacancylist.ishrms = 1,"true","false") IsHrms,
+IF(vacancylist.islaptop = 1,"true","false") IsLaptop,
+IF(vacancylist.manager_or_non = 1,"true","false") IsManager,
+IF(vacancylist.isusim = 1,"true","false") IsUsim,
+GROUP_CONCAT(IF(uploadedphotos.bigphoto is null, '', uploadedphotos.bigphoto)) AS Attachments,
+vacancylist.vacancy_token as TOKEN
+from vacancylist 
+LEFT JOIN accountname on accountname.anid  = vacancylist.fr_anid 
+LEFT JOIN costcenter on costcenter.costid = vacancylist.fr_costcodeid 
+LEFT JOIN department on department.departmentid = vacancylist.fr_departmentid
+LEFT JOIN departmentsub on departmentsub.departmentsubid = vacancylist.fr_departmentsubid
+LEFT JOIN jobstagelist on jobstagelist.jobstageid = vacancylist.vacancy_jobstageid 
+LEFT JOIN networknumber on networknumber.networkid = vacancylist.fr_networkid 
+LEFT JOIN servicepack on servicepack.servicepackid = vacancylist.fr_packetid 
+LEFT JOIN servicepack_category on servicepack_category.spcateid = servicepack.fr_spcateid 
+LEFT JOIN uploadedphotos on uploadedphotos.phototoken = vacancylist.vacancy_token 
+GROUP BY vacancylist.vacancyid ;
+
+-- ----------------------------
+-- View structure for _roles
+-- ----------------------------
+DROP VIEW IF EXISTS `_roles`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `_roles` AS select 
+IF(authority = 'System Administrator', 'Administrator', authority) as ROLE
+from tbl_authority  GROUP BY authority ASC ;
+
+-- ----------------------------
+-- View structure for _users_approver
+-- ----------------------------
+DROP VIEW IF EXISTS `_users_approver`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER  VIEW `_users_approver` AS select 
+emailadd as Email,
+IF(user_name IS NULL or user_name = '', emailadd, user_name) as Username, 
+GROUP_CONCAT(IF(tbl_authority.authority = 'System Administrator', 'Administrator', tbl_authority.authority)) AS Roles,
+IF(address IS NOT null, address, "") as Address,
+IF(dateofbirth IS null or dateofbirth='0000-00-00 00:00:00', NOW(), dateofbirth) as BirthDate,
+IF(ahid IS NOT null, ahid, "") as AhId,
+IF(gender = 'F', 1, 0) as Gender,
+IF(phone_home IS NOT null, phone_home, "") as PhoneHome,
+IF(phone_mobile IS NOT null, phone_mobile, "") as PhoneMobile,
+IF(idnumber IS NOT null, idnumber, "") as IdNumber,
+IF(employee_name IS NOT null, employee_name, "") as Name,
+IF(uploadedphotos.bigphoto IS NULL or uploadedphotos.bigphoto = '', "", uploadedphotos.bigphoto) as Photo
+from sys_user 
+inner join tbl_authority on tbl_authority.aid = sys_user.role
+left join uploadedphotos on uploadedphotos.phototoken = sys_user.usertoken
+where role !=2
+AND emailadd is not null  AND emailadd !=""
+GROUP BY emailadd
+ORDER BY emailadd ASC ;
+
+-- ----------------------------
+-- Procedure structure for GetSrfExtend
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `GetSrfExtend`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetSrfExtend`(IN SrfId INT(11))
+BEGIN
+ 
+select 
+IF(General.srf_number IS NULL or General.srf_number = '', '',General.srf_number) as Number,
+IF(General.srf_note IS NULL or General.srf_note = '', '',General.srf_note) as Description,
+IF(General.srf_type = 1,"0","1") Type,
+IF(AppOne.emailadd IS NULL or AppOne.emailadd = '', '', AppOne.emailadd) as LineManager,
+IF(AppTwo.emailadd IS NULL or AppTwo.emailadd = '', '', AppTwo.emailadd) as HeadOfNonOperation,
+IF(AppThree.emailadd IS NULL or AppThree.emailadd = '', '', AppThree.emailadd) as HeadOfServiceLine,
+IF(AppFour.emailadd IS NULL or AppFour.emailadd = '', '', AppFour.emailadd) as HeadOfOperation,
+IF(AppFive.emailadd IS NULL or AppFive.emailadd = '', '', AppFive.emailadd) as ServiceCoordinator,
+IF(AppSix.emailadd IS NULL or AppSix.emailadd = '', '', AppSix.emailadd) as HeadOfSourcing,
+General.approverstatus_one as StatusLineManager,
+General.approverstatus_two as StatusHeadOfNonOperation,
+General.approverstatus_three as StatusHeadOfServiceLine,
+General.approverstatus_four as StatusHeadOfOperation,
+General.approverstatus_five as StatusServiceCoordinator,
+General.approverstatus_six as StatusHeadOfSourcing,
+Request.employee_name as RequestBy,
+IF(General.srf_begin='0000-00-00 00:00:00' OR General.srf_begin IS NULL,NOW(),General.srf_begin) SrfBegin,
+IF(General.srf_end='0000-00-00 00:00:00' OR General.srf_end IS NULL,NOW(),General.srf_end) SrfEnd,
+General.servicelevel as ServiceLevel,
+IF(General.isworkstation = 1,"true","false") IsWorkstation,
+IF(General.iscommunication = 1,"true","false") IsCommuniaction,
+IF(General.hrms_or_non = 1,"true","false") IsHrms,
+IF(General.ops_or_non = 1,"true","false") IsOps,
+IF(General.ismanager = 1,"true","false") IsManager,
+General.ratetype as RateType,
+IF(Terminate.employee_name IS NULL or Terminate.employee_name = '', '', Terminate.employee_name) as TerminateBy,
+IF(General.terminatedate='0000-00-00 00:00:00' OR General.terminatedate IS NULL,NOW(),General.terminatedate) TerminatedDate,
+IF(General.terminatenote IS NULL or General.terminatenote = '', '', General.terminatenote) as TeriminateNote,
+IF(General.isextended = 1,"true","false") IsExtended,
+(SELECT "false") as IsLocked,
+General.srfstatus as Status,
+IF(Escalation.spratevalue IS NULL or Escalation.spratevalue = '', '0',Escalation.spratevalue) as SpectValue,
+(SELECT "false") as IsActive,
+servicepack.servicename as ServicePack,
+networknumber.networkcode as NetworkCode,
+costcenter.costcode as CostCenter,
+activitycode.activitycode as Activity,
+department.departmentname as department,
+departmentsub.departmentsubname as DepartmentSub,
+ProjectManager.emailadd as ProjectManager,
+CandidateInfo.cemail as Candidate,
+accountname.anname as AccountName,
+IF(General.isextended = 1,"true","false") IsExtend
+from srf_request AS General
+left join costcenter on costcenter.costid = General.fr_costcenterid
+left join department on department.departmentid = General.fr_departmentid
+left join departmentsub on departmentsub.departmentsubid = General.fr_departmentsubid 
+left join networknumber on networknumber.networkid = General.fr_networkid
+left join servicepack on servicepack.servicepackid = General.fr_ssowid 
+left join sys_user as AppOne on AppOne.eid = General.srfapprover_one 
+left join sys_user as AppTwo on AppTwo.eid = General.srfapprover_two
+left join sys_user as AppThree on AppThree.eid = General.srfapprover_three
+left join sys_user as AppFour on AppFour.eid = General.srfapprover_four
+left join sys_user as AppFive on AppFive.eid = General.srfapprover_five 
+left join sys_user as AppSix on AppSix.eid = General.srfapprover_six 
+left join sys_user as Request on Request.eid = General.requestby 
+left join sys_user as Terminate on Terminate.eid = General.terminateby 
+left join sys_user as ProjectManager on ProjectManager.eid = networknumber.fr_projectmanager
+left join srf_escalation_request as Escalation on Escalation.escalationtoken = General.srf_token
+left join accountname on accountname.anid = networknumber.fr_anid
+left join sys_user as SrfUser on SrfUser.usertoken = General.fr_usertoken
+inner join candidate_info as CandidateInfo on CandidateInfo.candidateid = SrfUser.fr_candidateid
+inner join vacancylist on vacancylist.vacancy_token = CandidateInfo.fr_vacanttoken
+left join activitycode on activitycode.activityid = vacancylist.fr_anid
+where General.extendfrom_srf = SrfId
+GROUP BY General.srfrow;
+
+
+
+ END
+;;
+DELIMITER ;
+SET FOREIGN_KEY_CHECKS=1;

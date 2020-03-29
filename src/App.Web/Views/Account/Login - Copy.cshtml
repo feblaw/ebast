@@ -1,0 +1,75 @@
+﻿@using System.Collections.Generic
+@using System.Threading.Tasks
+@using App.Domain.Models.Identity
+@using App.Web.Models.ViewModels.Identity.AccountViewModels
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Authentication
+@using Microsoft.AspNetCore.Identity
+@model LoginViewModel
+@*@inject SignInManager<ApplicationUser> SignInManager*@
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_LayoutMember.cshtml";
+}
+
+<div class="row">
+   <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="login-form col-md-8 col-md-offset-2">
+        <h4 class="form-title font-white margin-bottom-5">Sign In</h4>
+        <p class="font-white margin-bottom-20" style="margin-top:0!important">Login to access your account.</p>
+        @if (!ViewData.ModelState.IsValid)
+        {
+        <div class="alert alert-danger">
+            <button class="close" data-close="alert"></button>
+            <div asp-validation-summary="All" class="text-danger"></div>
+        </div>
+        }
+        @if (TempData.ContainsKey("Success"))
+        {
+        <div class="alert alert-success">
+            <i class="fa fa-exclamation-circle"></i><small> @TempData["Success"]</small>
+            <button type="button" class="close" data-dismiss="alert">
+                �
+            </button>
+        </div>
+            TempData.Remove("message");
+            TempData.Remove("cls");
+        }
+        <div class="alert alert-danger display-hide">
+            <button class="close" data-close="alert"></button>
+            <span> Enter any username and password. </span>
+        </div>
+        <div class="form-group">
+            <label class="control-label visible-ie8 visible-ie9">Username</label>
+            <div class="input-group">
+                <input asp-for="Username" class="form-control form-control-solid placeholder-no-fix" placeholder="Username" />
+                <span class="input-group-addon">
+                    <i class="fa fa-user "></i>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label visible-ie8 visible-ie9">Password</label>
+            <div class="input-group">
+                <input asp-for="Password" class="form-control form-control-solid placeholder-no-fix" placeholder="Password" />
+                <span class="input-group-addon">
+                    <i class="fa fa-lock "></i>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <input type="submit" class="btn btn-success btn-block" value="Sign In" />
+        </div>
+
+        <div class="form-actions">
+            <a href="@Url.Action("ForgotPassword","Account")" id="forget-password" class="font-white" hidden>Forgot Password?</a>
+        </div>
+    </form>
+</div>
+
+@section scripts{
+    <script src="~/assets/pages/scripts/account/login.js"></script>
+}
+

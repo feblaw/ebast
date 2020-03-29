@@ -1,0 +1,245 @@
+﻿@using App.Web.Models.ViewModels.Core.Business
+@model TravelRequestModelForm
+@{
+    ViewBag.Title = "Flight Request | Create";
+}
+
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Travel List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Create</span>
+    </li>
+}
+
+<h1 class="page-title">Flight Request Submission <small></small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">FLIGHT REQUEST FORM</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <form role="form" asp-action="Create" method="post" id="FormSubmit" class="form-horizontal">
+            <div class="form-body">
+                <div class="alert alert-danger display-hide">
+                    <button class="close" data-close="alert"></button> You have some form errors. Please check below.
+                </div>
+                @Html.ValidationSummary(true, "Failed to submit", new { @class = "alert alert-danger" })
+                @*<div class="form-group">
+        <label asp-for="CostCenterId" class="control-label col-md-3">
+            Cost Center
+            <span class="text-danger"> * </span>
+        </label>
+        <div class="col-md-6">
+            <select class="form-control" asp-for="CostCenterId" asp-items="@(new SelectList(@ViewBag.CostCenter, "Id","DisplayName"))" required>
+                <option disabled selected>-- Select Cost Center --</option>
+            </select>
+            <span asp-validation-for="CostCenterId" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="NetworkNumberId" class="control-label col-md-3">
+            Network / Other Assignment
+            <span class="text-danger"> * </span>
+        </label>
+        <div class="col-md-6">
+            <select class="form-control" asp-for="NetworkNumberId" asp-items="@(new SelectList(@ViewBag.NetworkNumber, "Id","DisplayName"))" required>
+                <option disabled selected>-- Select Network --</option>
+            </select>
+            <span asp-validation-for="NetworkNumberId" class="text-danger"></span>
+        </div>
+    </div>*@
+                <div class="form-group">
+                    <label  class="control-label col-md-3">
+                        Travel Req No
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        @*<select class="form-control" asp-for="TravelReqNo" asp-items="@(new SelectList(@ViewBag.TravelReqNumber))" required>
+                            <option disabled selected>-- Select WP Name --</option>
+                        </select>*@
+                        @*<label class="form-control" asp-for="TravelReqNo">@ViewBag.TravelReqNumber</label>*@
+                        <input type="text" class="form-control"  disabled value=@ViewBag.TravelReqNumber />
+                        @*<span asp-validation-for="TravelReqNo" class="text-danger"></span>*@
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="VacancyId" class="control-label col-md-3">
+                        WP Name
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="VacancyId" asp-items="@(new SelectList(@ViewBag.ContractorName, "Id","Name"))" required>
+                            <option disabled selected>-- Select WP Name --</option>
+                        </select>
+                        <span asp-validation-for="VacancyId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="StartDate" class="control-label col-md-3">
+                        Start Date
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control form_datetime" id="StartDateView" readonly />
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <input type="hidden" class="form-control" asp-for="StartDate" readonly required />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EndDate" class="control-label col-md-3">
+                        End Date
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control form_datetime" id="EndDateView" readonly />
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <input type="hidden" class="form-control" asp-for="EndDate" readonly required />
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DepartureId" class="control-label col-md-3">
+                        Departure
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="DepartureId" asp-items="@(new SelectList(@ViewBag.Departure, "Id","Name"))" required>
+                            <option disabled selected>-- Select Departure --</option>
+                        </select>
+                        <span asp-validation-for="DepartureId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DestinationId" class="control-label col-md-3">
+                        Main Destination
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="DestinationId" asp-items="@(new SelectList(@ViewBag.Destination, "Id","Name"))" required>
+                            <option disabled selected>-- Select Destination --</option>
+                        </select>
+                        <span asp-validation-for="DestinationId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @*<label asp-for="DestinationId" class="control-label col-md-3>*@
+                    <label  class="control-label col-md-3">
+                        Schedule
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select asp-for="Schedule" asp-items="@(new SelectList(@ViewBag.Schedule, "Id","Name"))" class="form-control" style="width:100%">
+                            <option disabled selected>-- Select Type --</option>
+                        </select>
+                        <span asp-validation-for="DayType" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label col-md-3">
+                        Description
+                        <span class="text-danger">  </span>
+                    </label>
+                    <div class="col-md-6">
+                        <textarea class="form-control" asp-for="Description" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ClaimApproverOneId" class="control-label col-md-3">
+                        Regional Project Manager
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="ClaimApproverOneId" asp-items="@(new SelectList(@ViewBag.ProjectManager, "Id","Name"))" required>
+                            <option disabled selected>-- Select RPM  --</option>
+                        </select>
+                        <span asp-validation-for="ClaimApproverOneId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ClaimApproverTwoId" class="control-label col-md-3">
+                       Line Manager
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="ClaimApproverTwoId" asp-items="@(new SelectList(@ViewBag.LineManager, "Id","Name"))" required>
+                            <option disabled selected>-- Select Line Manager --</option>
+                        </select>
+                        <span asp-validation-for="ClaimApproverTwoId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group last">
+                    <div class="col-md-3 col-md-offset-3">
+                        <label class="text-danger">* Field Required</label>
+                        <!--Other Items Data-->
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3">
+                        <a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp; Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-travel", "#menu-travel");
+            $('select').select2();
+            FormValidation.init("#FormSubmit");
+
+            $(".form_datetime").datepicker({
+                autoclose: true,
+                format: "dd MM yyyy",
+            }).datepicker("setDate", new Date());
+
+            $('#StartDateView').change(function () {
+                var value = $(this).val();
+                var val = my_date.date_to_db(value);
+                $('#StartDate').val(val);
+            });
+            $('#StartDateView').trigger('change');
+
+            $('#EndDateView').change(function () {
+                var value = $(this).val();
+                var val = my_date.date_to_db(value);
+                $('#EndDate').val(val);
+            });
+            $('#EndDateView').trigger('change');
+
+            $('#CostCenterId').val('@ViewBag.CostCenterId').trigger('change');
+            $('#NetworkNumberId').val('@ViewBag.NetworkNumberId').trigger('change');
+
+            $('#ClaimApproverOneId').change(function () {
+                var val = $(this).val();
+                $('#ClaimApproverTwoId').val(val).trigger('change');
+            });
+
+        });
+    </script>
+}

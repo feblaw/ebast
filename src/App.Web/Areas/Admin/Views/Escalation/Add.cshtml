@@ -1,0 +1,956 @@
+﻿@using App.Web.Models.ViewModels.Core.Business
+@model EscalationModelForm
+@{
+    ViewData["Title"] = "Escalation Request";
+    var Vacancy = (VacancyList)ViewBag.Vacancy;
+    var Departement = (Departement)ViewBag.Departement;
+    var SSOW = (ServicePack)ViewBag.SSOW;
+    var SCategory = (ServicePackCategory)ViewBag.SCategory;
+    var JbStage = (JobStage)ViewBag.JobsStage;
+    var Candidate = (CandidateInfo)ViewBag.Candidate;
+    var IsOp = "Operational";
+    var ContractStart = Model.Srf.SrfBegin == null || Model.Srf.SrfBegin == DateTime.MinValue ? DateTime.Now.Date : Model.Srf.SrfBegin;
+    var ContractEnd = Model.Srf.SrfEnd == null || Model.Srf.SrfEnd == DateTime.MinValue ? DateTime.Now.Date : Model.Srf.SrfEnd;
+    if (Departement.OperateOrNon == 0)
+    {
+        IsOp = "Non Operational";
+    }
+}
+
+@section breadcrumb{
+    <li>
+        <a asp-controller="Srf" asp-action="Index">Service Request List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <a asp-controller="Srf" asp-action="Edit" asp-route-id="@Model.SrfId">Service Request Form</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Escalation</span>
+    </li>
+}
+
+
+<h1 class="page-title">Escalation<small></small></h1>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger  alert-dismissable">
+        <i class="fa fa-warning"></i>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <b>Messages : </b> @TempData["Error"]
+    </div>
+}
+
+<form role="form" asp-action="Add" method="post" id="Form" class="form-horizontal">
+    <div class="portlet light portlet-fit portlet-datatable bordered">
+        <div class="portlet-title">
+            <div class="caption">
+                <span class="caption-subject font-blue sbold uppercase">Justification Form</span>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="portlet-body">
+
+            <div class="form-body">
+                <div class="alert alert-danger display-hide">
+                    <button class="close" data-close="alert"></button> You have some form errors. Please check below.
+                </div>
+                @Html.ValidationSummary(true, "Failed to submit", new { @class = "alert alert-danger" })
+                <div class="form-group">
+                    @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                    <label class="control-label col-md-3">
+                        <strong>Type Of Request</strong>
+                    </label>
+                    <div class="col-md-9">
+                        @if (Model.Srf.Type == App.Domain.Models.Enum.SrfType.New)
+                        {
+                            <p class="form-control-static">Normal ( @IsOp )</p>
+                        }
+                        else
+                        {
+                            <p class="form-control-static">Operational ( @IsOp )</p>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                    <label class="control-label col-md-3">
+                        <strong>Request Name</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @Candidate.Name
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                    <label class="control-label col-md-3">
+                        <strong>HRMS/NON</strong>
+                    </label>
+                    <div class="col-md-9">
+                        @if (Model.Srf.IsHrms)
+                        {
+                            <p class="form-control-static">HRMS</p>
+                        }
+                        else
+                        {
+                            <p class="form-control-static">Non-HRMS</p>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                    <label class="control-label col-md-3">
+                        <strong>Price Type</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @SSOW.Type
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                    <label class="control-label col-md-3">
+                        <strong>Service Work Pack</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @SCategory.Name
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                    <label class="control-label col-md-3">
+                        <strong>SSOW</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @SSOW.Name
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                    <label class="control-label col-md-3">
+                        <strong>Service Code</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @SSOW.Code
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                    <label class="control-label col-md-3">
+                        <strong>Manager / Non Manager</strong>
+                    </label>
+                    <div class="col-md-9">
+                        @if (Model.Srf.IsManager)
+                        {
+                            <p class="form-control-static">Manager Level</p>
+                        }
+                        else
+                        {
+                            <p class="form-control-static">Staff Level</p>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    <label asp-for="Srf.SrfBegin" class="control-label col-md-3">
+                        <strong>Service Start Date</strong>
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control form_datetime" id="SrfBeginView" value="@ContractStart.ToString("dd MMMM yyyy")" readonly />
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <input type="hidden" class="form-control" asp-for="Srf.SrfBegin" readonly required />
+                        <span asp-validation-for="Srf.SrfBegin" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    <label asp-for="Srf.SrfEnd" class="control-label col-md-3">
+                        <strong>Service End Date</strong>
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control form_datetime" id="SrfEndView" value="@ContractEnd.ToString("dd MMMM yyyy")" readonly />
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <input type="hidden" class="form-control" asp-for="Srf.SrfEnd" readonly required />
+                        <span asp-validation-for="Srf.SrfEnd" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                    <label class="control-label col-md-3">
+                        <strong>Annual Leave</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static" id="Annual">
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+
+                <div class="form-group">
+                    @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                    <label class="control-label col-md-3">
+                        <strong>Duration Of Service</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static" id="Duration"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    <label class="control-label col-md-3" asp-for="Srf.DepartmentId">
+                        <strong>Organizational Unit</strong>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-control" asp-for="Srf.DepartmentId" asp-items="@(new SelectList(@ViewBag.ListDepartement, "Id","Name"))" required>
+                            <option disabled selected>-- Select Department --</option>
+                        </select>
+                        <span asp-validation-for="Srf.DepartmentId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    <label asp-for="Srf.DepartmentSubId" class="control-label col-md-3">
+                        <strong> Sub Organizational Unit</strong>
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-control" asp-for="Srf.DepartmentSubId" asp-items="@(new SelectList(@ViewBag.ListSubDepartment, "Id","SubName"))" required>
+                            <option disabled selected>-- Select Sub Organizational Unit --</option>
+                        </select>
+                        <span asp-validation-for="Srf.DepartmentSubId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        <strong>Cost Center</strong>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-control" asp-for="Srf.CostCenterId" asp-items="@(new SelectList(@ViewBag.ListCostCenter, "Id","DisplayName"))" required>
+                            <option disabled selected>-- Select Cost Center --</option>
+                        </select>
+                        <span asp-validation-for="Srf.CostCenterId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        <strong>Account Name</strong>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-control" asp-for="Srf.AccountId" asp-items="@(new SelectList(@ViewBag.ListAccount, "Id","Name"))" required>
+                            <option disabled selected>-- Select Account Name --</option>
+                        </select>
+                        <span asp-validation-for="Srf.AccountId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        <strong>Network Number</strong>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-control" asp-for="Srf.NetworkId" asp-items="@(new SelectList(@ViewBag.ListNetwork, "Id","DisplayName"))" required>
+                            <option disabled selected>-- Select Network Number --</option>
+                        </select>
+                        <span asp-validation-for="Srf.NetworkId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                    <label class="control-label col-md-3">
+                        <strong>Rate Difference</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <input type="hidden" id="DifferenceInput" value="0" class="numeric" />
+                        <p class="form-control-static" style="color:blue" id="TextDifference">
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                    <label class="control-label col-md-3">
+                        <strong>Percentage</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static" style="color:blue" id="TextPercentage">
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-body">
+                <div class="form-group">
+                    <div class="col-md-10 col-md-offset-1" style="border-bottom:dashed 2px black; margin-top:20px;margin-bottom:20px"></div>
+                </div>
+            </div>
+
+            @if (Departement.OperateOrNon == 1)
+            {
+                <div class="form-body">
+                    <div class="form-group ">
+                        <!--ApproveStatusTwo-->
+                        <label asp-for="Srf.ApproveTwoId" class="control-label col-md-3">
+                            <strong> Head Of Service Line</strong>
+                            <span class="text-danger"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            <select class="form-control" asp-for="Srf.ApproveTwoId" asp-items="@(new SelectList(@ViewBag.ListServiceLine, "Id","Name"))">
+                                <option disabled selected>-- Select Head Of Service Line  --</option>
+                            </select>
+                            <span asp-validation-for="Srf.ApproveTwoId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-body">
+                    <div class="form-group ">
+                        <label asp-for="Srf.ApproveThreeId" class="control-label col-md-3">
+                            <strong> Head Of Operation </strong>
+                            <span class="text-danger"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            <select class="form-control" asp-for="Srf.ApproveThreeId" asp-items="@(new SelectList(@ViewBag.ListHeadOperation , "Id","Name"))">
+                                <option disabled selected>-- Select Head Operation  --</option>
+                            </select>
+                            <span asp-validation-for="Srf.ApproveThreeId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+            }
+            else
+            {
+                <div class="form-body">
+                    <div class="form-group">
+                        <label asp-for="Srf.ApproveFourId" class="control-label col-md-3">
+                            <strong> Head Of Non Operation </strong>
+                            <span class="text-danger"> * </span>
+                        </label>
+                        <div class="col-md-4">
+                            <select class="form-control" asp-for="Srf.ApproveFourId" asp-items="@(new SelectList(@ViewBag.ListHeadNonOperation, "Id","Name"))">
+                                <option disabled selected>-- Select Head Of Non Operation  --</option>
+                            </select>
+                            <span asp-validation-for="Srf.ApproveFourId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+            }
+
+            
+            <div class="form-body">
+                <div class="form-group">
+                    <label asp-for="Srf.ApproveFiveId" class="control-label col-md-3">
+                       <strong> Head Of Sourcing </strong>
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-control" asp-for="Srf.ApproveFiveId" asp-items="@(new SelectList(@ViewBag.ListHeadSourcing, "Id","Name"))">
+                            <option disabled selected>-- Select Head Of Sourcing  --</option>
+                        </select>
+                        <span asp-validation-for="Srf.ApproveFiveId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-body">
+                <div class="form-group">
+                    <label asp-for="Srf.ApproveSixId" class="control-label col-md-3">
+                        <strong>Service Cordinator  </strong>
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-control" asp-for="Srf.ApproveSixId" asp-items="@(new SelectList(@ViewBag.ListServiceCordinator, "Id","Name"))">
+                            <option disabled selected>-- Select Service Coordinator  --</option>
+                        </select>
+                        <span asp-validation-for="Srf.ApproveSixId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-body">
+                <div class="form-group">
+                    <label asp-for="Srf.Description" class="control-label col-md-3">
+                        <strong>Description</strong>
+                    </label>
+                    <div class="col-md-4">
+                        <textarea class="form-control" asp-for="Srf.Description" rows="5">
+                            @Model.Srf.Description
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-body">
+                <div class="form-group last">
+                    <div class="col-md-3 col-md-offset-3">
+                        <label class="text-danger">* Field Required</label>
+                    </div>
+                </div>
+            </div>
+
+            @*</form>*@
+        </div>
+    </div>
+
+    <div class="container" style="width:100%; padding:0!important">
+        <div class="col-md-6" style="padding:0; padding-right:10px">
+            <div class="portlet light portlet-fit portlet-datatable bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="caption-subject font-blue sbold uppercase">Current Rate</span>
+                    </div>
+                    <span class="control-label pull-right">
+                        Rp.<label class="number">@Vacancy.NoarmalRate</label>
+                    </span>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="portlet-body">
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label class="control-label col-md-4">
+                                Pricelist Type
+                            </label>
+                            <div class="col-md-8">
+                                <select class="form-control" required disabled>
+                                    <option selected>@SSOW.Type</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label class="control-label col-md-4">
+                                Service Work Package
+                            </label>
+                            <div class="col-md-8">
+                                <select class="form-control" required disabled>
+                                    <option selected>@SCategory.Name</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label class="control-label col-md-4">
+                                SSOW
+                            </label>
+                            <div class="col-md-8">
+                                <select class="form-control" required disabled>
+                                    <option selected>@SSOW.Name</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label class="control-label col-md-4">
+                                Service Code
+                            </label>
+                            <div class="col-md-8">
+                                <p class="form-control-static">
+                                    @SSOW.Code
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label class="control-label col-md-4">
+                                Basic Service Level
+                            </label>
+                            <div class="col-md-8">
+                                <select class="form-control" disabled>
+                                    <option selected>@Vacancy.OtLevel</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label class="control-label col-md-4">
+                                Laptop Allowance
+                            </label>
+                            <div class="col-md-8">
+                                <select class="form-control" disabled>
+                                   @if (Model.Srf.isWorkstation == true)
+                                   {
+                                    <option selected>Yes</option>
+                                   }
+                                   else
+                                   {
+                                    <option selected>No</option>
+                                   }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label class="control-label col-md-4">
+                                USIM
+                            </label>
+                            <div class="col-md-8">
+                                <select class="form-control" disabled>
+                                   @if (Model.Srf.isCommunication == true)
+                                   {
+                                    <option selected>Yes</option>
+                                   }
+                                   else
+                                   {
+                                    <option selected>No</option>
+                                   }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" style="padding:0; padding-left:10px">
+            <div class="portlet light portlet-fit portlet-datatable bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="caption-subject font-blue sbold uppercase">Proposed Rate</span>
+                    </div>
+                    <input type="hidden" class="numeric" id="NormalRate" />
+                    <input type="hidden" class="numeric" value="0" id="ProposedRate" />
+                    <span class="control-label pull-right" id="ProposedRateView"></span>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="portlet-body">
+                    <input type="hidden" asp-for="SrfId" required/>
+                    <input type="hidden" asp-for="HeadSourcingId" required />
+                    <div class="form-group">
+                        <label asp-for="PackageTypeId" class="control-label col-md-4">
+                            Pricelist Type
+                            <span class="text-danger"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            <select class="form-control" asp-for="PackageTypeId" asp-items="@(new SelectList(@ViewBag.PackageType, "Id","Name"))" required>
+                                <option disabled selected>-- Select Pricelist Type --</option>
+                            </select>
+                            <span asp-validation-for="PackageTypeId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ServicePackCategoryId" class="control-label col-md-4">
+                            Service Work Package
+                            <span class="text-danger"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            <input type="hidden" asp-for="IsManager" />
+                            <select class="form-control" asp-for="ServicePackCategoryId" asp-items="@(new SelectList(@ViewBag.ServicePackCategory, "Id","Name"))" required>
+                                <option disabled selected>-- Select Service Work Package --</option>
+                            </select>
+                            <span asp-validation-for="ServicePackCategoryId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label asp-for="ServicePackId" class="control-label col-md-4">
+                                SSOW
+                                <span class="text-danger"> * </span>
+                            </label>
+                            <div class="col-md-8">
+                                <select class="form-control" asp-for="ServicePackId" required>
+                                    <option disabled selected>-- Select SSOW--</option>
+                                </select>
+                                <span asp-validation-for="ServicePackId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label class="control-label col-md-4">
+                                Service Code
+                            </label>
+                            <div class="col-md-8">
+                                <p class="form-control-static" id="SSOWCODE"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label asp-for="OtLevel" class="control-label col-md-4">
+                                Basic Service Level
+                            </label>
+                            <div class="col-md-8">
+                                <select class="form-control" asp-for="OtLevel" asp-items="@(new SelectList(@ViewBag.BasicServiceLevel, "Id","Id"))" required>
+                                    <option disabled selected>-- Select  Basic Service Level (OT) --</option>
+                                </select>
+                                <span asp-validation-for="OtLevel" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label asp-for="IsWorkstation" class="control-label col-md-4">
+                                Laptop Allowance
+                            </label>
+                            <div class="col-md-8">
+                                <select class="form-control" asp-for="IsWorkstation" asp-items="@(new SelectList(@ViewBag.WorkstationService, "Id","Name"))" required>
+                                    <option disabled selected>-- Select Workstation Services --</option>
+                                </select>
+                                <span asp-validation-for="IsWorkstation" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label asp-for="IsCommnunication" class="control-label col-md-4">
+                                USIM
+                            </label>
+                            <div class="col-md-8">
+                                <select class="form-control" asp-for="IsCommnunication" asp-items="@(new SelectList(@ViewBag.CommunicationService, "Id","Name"))" required>
+                                    <option disabled selected>-- Select Communication Services --</option>
+                                </select>
+                                <span asp-validation-for="IsCommnunication" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label asp-for="SparateValue" class="control-label col-md-4">
+                                Additional Rate
+                            </label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control numeric" id="SparateValueView" value="@ViewBag.Rate" required>
+                                <input type="hidden" value="0" asp-for="SparateValue" required />
+                                <span asp-validation-for="SparateValue" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label asp-for="Note" class="control-label col-md-4">
+                                Note
+                            </label>
+                            <div class="col-md-8">
+                                <textarea rows="3" asp-for="Note" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-body">
+                        <div class="form-group">
+                            @*<label asp-for="AgencyType" class="control-label col-md-3">*@
+                            <label class="control-label col-md-4">
+                                Supported Document
+                            </label>
+                            <div class="col-md-8">
+                                <input type="hidden" asp-for="Files" class="form-control" />
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="gallery-wrap">
+                                            <div id="uploaded">
+                                                <div class="shortcuts text-left">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="file_upload" />
+                            </div>
+                        </div>
+                        <div class="form-group last">
+                            <div class="col-md-4 col-md-offset-3">
+                                <label class="text-info">Max Upload 1 MB</label>
+                            </div>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container form-actions" style="width:100%;background-color:white">
+        <div class="col-md-12" style="padding:10px 0">
+            <a asp-action="Edit" asp-controller="Srf" asp-route-id="@Model.SrfId" class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+            <button type="submit" id="btn-save" name="Status" value="1" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp; Save</button>
+            <button type="submit" id="btn-submit" name="Status" value="0" class="btn btn-success"><i class="fa fa-envelope-o"></i>&nbsp; Submit</button>
+            @*<a href="javascript:;" onclick="document.getElementById('Form').submit();" id="btn-save" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp; Save</a>*@
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            FormValidation.init("#Form");
+
+            $(".form_datetime").datepicker({
+                autoclose: true,
+                format: "dd MM yyyy",
+            });
+
+            $('#SrfBeginView').change(function () {
+                var value = $(this).val();
+                var val = my_date.date_to_db(value);
+                var End = $('#Srf_SrfEnd').val();
+                $('#Srf_SrfBegin').val(val);;
+                Duration(val, End);
+            });
+            $('#SrfBeginView').trigger('change');
+
+            $('#SrfEndView').change(function () {
+                var value = $(this).val();
+                var val = my_date.date_to_db(value);
+                var First = $('#Srf_SrfBegin').val();
+                $('#Srf_SrfEnd').val(val);
+                Duration(First, val);
+            });
+            $('#SrfEndView').trigger('change');
+
+            var UpdateSelection = function () {
+                var Type = $("#PackageTypeId option:selected").text();
+                var Package = $("#ServicePackCategoryId").val();
+                var x = -1;
+                if (Type == 'A' || Type == 'a') x = 0;
+                else if (Type == 'B' || Type == 'b') x = 1;
+                else if (Type == 'FSO' || Type == 'fso') x = 2;
+                else if (Type == 'EXPAT' || Type == 'expat') x = 3;
+                else x = -1;
+
+                if (x == -1 || !Package) return;
+
+                $.ajax({
+                    url: "/Admin/Api/Vacancy/GetServicePackByTypeAndCategory?type=" + x + '&packageId=' + Package,
+                    success: function (result) {
+                        $('#ServicePackId').html(result.servicePack);
+                        $("#ServicePackId").trigger('change');
+                    }
+                });
+            }
+
+            $('#PackageTypeId').change(UpdateSelection);
+            $('#ServicePackCategoryId').change(UpdateSelection);
+
+            var Trigger = {
+                GetDuration: function () {
+                    var first = $('#Srf_SrfBegin').val();
+                    var end = $('#Srf_SrfEnd').val();
+                    $.ajax({
+                        url: "/Admin/Api/Srf/GetDuration?start=" + first + "&end=" + end, success: function (result) {
+                            $('#Duration').text(result.srfduration + ' Months')
+                        }
+                    });
+                },
+
+                GetNormalRate2: function () {
+                    //reset
+                    $("#NormalRate").val('').trigger('focusout');
+                    $('#SSOWCODE').text('');
+                    Trigger.Calculate();
+
+                    var ssow = $('#ServicePackId').val();
+                    if (ssow === null) return;
+
+                    var OtLevel = $('#OtLevel').val() || 0;
+                    var isLaptop = $('#IsWorkstation').val() || 0;
+                    var isUsim = $('#IsCommnunication').val() || false;
+                    var dataString = "id=" + ssow;
+                    dataString += "&OtLevel=" + OtLevel;
+                    dataString += "&isLaptop=" + isLaptop;
+                    dataString += "&isUsim=" + isUsim;
+                    $.ajax({
+                        url: "/Admin/Api/Vacancy/GetNormalRate2?" + dataString, success: function (result) {
+                            $('#SSOWCODE').text(result.serviceCode);
+                            $("#NormalRate").val(result.normalRate).trigger('focusout');
+                            Trigger.Calculate();
+                        }
+                    });
+                },
+
+                Calculate: function () {
+                    var NormalRate = parseInt($('#NormalRate').autoNumeric('get') || 0);
+                    var SparateValueView = parseInt($('#SparateValueView').autoNumeric('get') || 0);
+                    var Result = NormalRate + SparateValueView;
+                    $('#ProposedRate').val(Result).trigger('focusout');
+                    $('#ProposedRateView').text("Rp " + $('#ProposedRate').val() || $('#NormalRate').val());
+                    if (parseInt($('#ProposedRate').autoNumeric('get')) > 0) {
+                        var VacancyNormalRate = parseInt('@Vacancy.NoarmalRate') || 0;
+                        var Difference = (Result - VacancyNormalRate);// + SparateValueView;
+                        if (Difference < 0) {
+                            Difference = Difference * -1;
+                        }
+                        var Percentage = (Difference / VacancyNormalRate) * 100 || 0;
+                        $('#DifferenceInput').val(Difference).trigger('focusout');
+                        $('#TextDifference').text("Rp " + $('#DifferenceInput').val());
+                        $('#TextPercentage').text(Math.floor(Percentage) + ' %');
+                    } else {
+                        var Percentage = 0;
+                        $('#DifferenceInput').val(Difference).trigger('focusout');
+                        $('#TextDifference').text("Rp  0");
+                        $('#TextPercentage').text(Math.floor(Percentage) + ' %');
+                    }
+                }
+
+            };
+
+            $common.setMenu("#menu-srf", "#menu-srf");
+            $('select').select2();
+            $(".number").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });
+            Trigger.GetDuration();
+
+            var $inputSourcePath = $('#Files');
+            initPlUploadWidget("#file_upload",
+                '@Url.Content("~/")file/plupload',
+                "#attachment-template",
+                "#uploaded .shortcuts",
+                "#Files",
+                function (elem) {
+                    $(elem).find(".plupload_container").css("width", "80%");
+                });
+
+            $(document).on("click", ".delete-upload", function () {
+                removeAttachment(this, "#uploaded .shortcuts", '#Files');
+            });
+
+            $(".numeric").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });
+
+            $("input#SparateValueView").on("focusout", function () {
+                $("input#SparateValue").val($(this).autoNumeric('get'));
+            });
+
+            $('#Srf_ApproveFiveId').change(function () {
+                var val = $(this).val();
+                $('#HeadSourcingId').val(val);
+            });
+
+            $('#ServicePackId').change(function () {
+                Trigger.GetNormalRate2();
+            });
+
+            $('#OtLevel').change(function () {
+                Trigger.GetNormalRate2();
+            });
+
+            $('#IsWorkstation').change(function () {
+                Trigger.GetNormalRate2();
+            });
+
+            $('#IsCommnunication').change(function () {
+                Trigger.GetNormalRate2();
+            });
+
+            $('#SparateValueView').on('keyup change', function (e) {
+                Trigger.Calculate();
+            });
+
+            Trigger.Calculate();
+
+            var ProfileId = '@ViewBag.ProfileId';
+            var AppTwo = $('#Srf_ApproveTwoId').val();
+            var AppThree = $('#Srf_ApproveThreeId').val();
+            var AppFive = $('#Srf_ApproveFiveId').val();
+            var AppFour = $('#Srf_ApproveFourId').val();
+            var AppSix = $('#Srf_ApproveSixId').val();
+
+            if (parseInt(AppTwo) == parseInt(ProfileId)) {
+                $('#Srf_ApproveTwoId').val('@ViewBag.PreofileId').trigger('change');
+            } else if (parseInt(AppThree) == parseInt(ProfileId)) {
+                $('#Srf_ApproveThreeId').val('@ViewBag.PreofileId').trigger('change');
+            } else if (parseInt(AppFour) == parseInt(ProfileId)) {
+                $('#Srf_ApproveFourId').val('@ViewBag.PreofileId').trigger('change');
+            } else if (parseInt(AppFive) == parseInt(ProfileId)) {
+                $('#Srf_ApproveFiveId').val('@ViewBag.PreofileId').trigger('change');
+            } else if (parseInt(AppSix) == parseInt(ProfileId)) {
+                $('#Srf_ApproveSixId').val('@ViewBag.PreofileId').trigger('change');
+            }
+
+
+        });
+
+        function Duration(first, end) {
+            $.ajax({
+                url: "/Admin/Api/Srf/GetDuration?id=@Model.Srf.ExtendFrom&start=" + first + "&end=" + end, success: function (result) {
+                    $('#Duration').text(result.srfduration);
+                    $('#Annual').text(result.srfannual + " Days");
+                }
+            });
+        }
+
+    </script>
+    <script type="text/template" id="attachment-template">
+    <div class="column">
+        <div class="inner">
+            <div class="img-wrap">
+                <div class="wrapper-control">
+                    <div class="btn-group" style="margin-bottom:5px !important;">
+                        <a class="btn btn-sm btn-success tools-nav" href="@Url.Content("~/"){{path}}" download><i class="fa fa-paperclip"></i> {{name}} ({{size}}KB)</a>
+                        <a class="btn btn-sm btn-success tools-nav delete-upload" data-to-delete="{{path}}"><i class="fa fa-times"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+}

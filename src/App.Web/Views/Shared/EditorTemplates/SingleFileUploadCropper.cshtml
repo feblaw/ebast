@@ -1,0 +1,129 @@
+﻿@using Newtonsoft.Json
+@model string
+
+@{
+    var fieldName = ViewData.TemplateInfo.HtmlFieldPrefix;
+    var _accept = "images/*";
+    double? ratio = ViewBag.Ratio;
+    var hidden = "hidden";
+    var preview = ViewData["Preview"]?.ToString().ToLower();
+    var attachment = Model.ConvertToAttachment();
+}
+
+<link href="~/css/uploadify/uploadify.css" rel="stylesheet" />
+<link href="~/css/cropper.min.css" rel="stylesheet" />
+@*<script src="~/css/coco/assets/libs/jquery/jquery-1.11.1.min.js"></script>*@
+<script src="~/css/uploadify/jquery.uploadify.js"></script>
+<script src="~/js/cropper.min.js"></script>
+
+@Html.Hidden("", Model)
+@if (!string.IsNullOrWhiteSpace(Model))
+{
+    var file = Model;
+    hidden = "";
+}
+
+<div class="clearfix"></div>
+<div class="col-md-12 row">
+    <div id="img-wrapper-@fieldName" class="p-b-20 @hidden">
+        @if (preview == "true" && hidden == "")
+        {
+            if (attachment == null)
+            {
+                <img id='img-upload-@fieldName' class='img-upload img-responsive' src="/@Model" />
+            }
+            else
+            {
+                <img id='img-upload-@fieldName' class='img-upload img-responsive' src="/@(attachment.CropedPath ?? attachment.Path)" />
+            }
+        }
+    </div>
+</div>
+<div class="clearfix"></div>
+<input type="file" name="upload-@fieldName" id="upload-@fieldName" class="singleFileUpload" accept="@_accept" />
+<span class="text-danger img-avatar-validation"><em>Max. file size is 2MB</em></span>
+@*<button id="btn-remove-image" class="btn warning">Remove Photo</button>*@
+
+<script>
+    $(function () {
+        var $imgPreview = $('#img-preview');
+        var $btnRemoveImage = $('#btn-remove-image');
+        function onCropperChange(e) {
+            var data = {
+                X1: parseInt(e.x),
+                Y1: parseInt(e.y),
+                X2: parseInt(e.x) + parseInt(e.width),
+                Y2: parseInt(e.y) + parseInt(e.height),
+                Width: parseInt(e.width),
+                Height: parseInt(e.height)
+            }
+            files.Crop = data;
+            var $upload = $("#img-wrapper-@fieldName").parent().parent().find("input[type=hidden]");
+            $upload.val(JSON.stringify(files));
+        }
+
+        $("#upload-@(fieldName)").uploadify({
+            buttonText: '<i class="fa fa-upload"></i>&nbsp; Upload Image',
+            width: 200,
+            height: 34,
+            fileSizeLimit: '2MB',
+            swf: '/css/uploadify/uploadify.swf',
+            uploader: '/file/upload',
+            fileTypeExts: '*.gif; *.jpg; *.jpeg; *.png',
+            fileType: 'image/*',
+            onUploadSuccess: function (results, data, response) {
+                result = JSON.parse(data);
+                var $upload = $("#img-wrapper-@fieldName").parent().parent().find("input[type=hidden]");
+                var file = {};
+                console.log(arguments);
+                file.Name = result.data.name;
+                file.Path = result.data.path;
+                file.Size = result.data.size;
+                file.FileType = result.data.fileType;
+                file.Type = "@Attachment.FILE_TYPE_UPLOAD";
+
+                $upload.val(JSON.stringify(file));
+
+                if (!result.data.path.startsWith("/")) {
+                    result.data.path = "/" + result.data.path;
+                }
+
+                $("#img-wrapper-@fieldName").empty();
+                var $image = $("#img-upload-@fieldName");
+                $("#img-wrapper-@fieldName").removeClass("hidden");
+                $("#img-wrapper-@fieldName").append("<img id='img-upload-@fieldName' class='img-upload img-responsive' src='" + result.data.path + "'/>");
+                var $image = $("#img-upload-@fieldName");
+                $image.cropper({
+                    viewMode: 2,
+                    @if (ratio.HasValue)
+                            {
+                                @:aspectRatio: '@ratio'
+                                                                                                                                }
+                });
+
+                if ($imgPreview.length > 0 && $btnRemoveImage.length > 0) {
+                    $imgPreview.attr('src', result.data.path);
+                    $btnRemoveImage.removeClass('hidden');
+
+                }
+
+                files = file;
+
+                $image.on("crop.cropper", onCropperChange);
+            }
+        });
+
+        $btnRemoveImage.click(function () {
+            var $upload = $("#img-wrapper-@fieldName").parent().parent().find("input[type=hidden]");
+            bootbox.confirm('Are you sure want to remove this image ?', function (result) {
+                if (result) {
+                    $imgPreview.attr('src', 'http://placehold.it/600x400?text=Image Not Found');
+
+                    $btnRemoveImage.addClass('hidden');
+                    $("#img-wrapper-@fieldName").empty();
+                    $upload.val("");
+                }
+            });
+        });
+    });
+</script>

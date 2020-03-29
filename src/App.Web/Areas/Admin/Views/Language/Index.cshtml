@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Job Stage Page";
+}
+
+@section breadcrumb{
+    <li>
+        <span>Jobstage List</span>
+    </li>
+}
+
+<h1 class="page-title">Jobstage <small>List</small></h1>
+<div class="portlet light portlet-fit portlet-datatable bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Jobstage List</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-primary" href="@Url.Action("Create")"><i class="fa fa-plus-circle"></i> Add new</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <table id="table" class="table table-striped table-bordered table-hover no-border-bottom" cellspacing="0" width="100%">
+            <colgorup>
+                <col width="30%">
+                <col width="60%">
+                <col width="10%">
+            </colgorup>
+            <thead>
+                <tr>
+                    <th data-column="stage">Stage</th>
+                    <th data-column="description">Description</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@{
+    Html.RenderPartial("_DatatablesAssets");
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-role-management");
+
+            var datatableOption = {
+                listUrl: "/admin/api/jobstages/datatables",
+                detailUrl: "@Url.Action("Details")/",
+                editUrl: "@Url.Action("Edit")/",
+                deleteUrl: "/admin/api/jobstages/",
+                deleteAlertSuccess: "Jobstage has been removed",
+                columnDefs: [
+                         {
+                             "targets": -1,
+                             "data": null,
+                             "defaultContent": "<a class='detail' title='Detail Account'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                 "<a class='edit' title='Edit Entry'><i class='fa fa-edit'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                 "<a class='remove' title='Remove Entry'><i class='fa fa-trash'></i></a>",
+                             "orderable": false
+                         },
+                          {
+                              "targets": -2,
+                              "data": "description",
+                              name: "Description"
+                          },
+                         {
+                             "targets": 0,
+                             "data": "stage",
+                             name: "Stage"
+                         }
+                ]
+            }
+
+            $datatables.init("#table", datatableOption);
+
+            var table = $('#table')
+                .on('init.dt', function(e, settings, json) { disableImmediateSearchDt(e, settings, json, '#table'); })
+                .DataTable(); theDataTable = table;
+
+            var success = @((TempData["Success"] != null).ToString().ToLower());
+
+            if (success == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("Jobstage has been added");
+            }
+        });
+    </script>
+}

@@ -1,0 +1,19 @@
+﻿@model List<ResourceValue>
+@{
+    var fieldName = ViewData.TemplateInfo.HtmlFieldPrefix;
+}
+<div class="form-group">
+    <h4>Values</h4>
+    <hr />
+</div>
+@for (var i = 0; i < Model.Count; i++)
+{
+    <div class="form-group">
+        @Html.HiddenFor(m => Model[i].LocaleResourceId)
+        @Html.HiddenFor(m => Model[i].LanguageId)
+        <label for="@(fieldName)_@(i)__Value">@Model[i].LanguageName</label>
+        <div>
+            @Html.TextBoxFor(m => Model[i].Value, new { @class = "form-control" })
+        </div>
+    </div>
+}

@@ -1,0 +1,91 @@
+﻿@using App.Web.Models.ViewModels.Core.Business
+@model AllowanceFormModelForm
+@{
+    ViewBag.Title = "Travel Data | Create";
+}
+
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Travel Data List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Create</span>
+    </li>
+}
+
+<h1 class="page-title">Travel Data <small>Create</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Travel Data Form</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <form role="form" asp-action="Create" method="post" id="form" class="form-horizontal">
+            <div class="form-body">
+                <div class="alert alert-danger display-hide">
+                    <button class="close" data-close="alert"></button> You have some form errors. Please check below.
+                </div>
+                @Html.ValidationSummary(true, "Failed to submit", new { @class = "alert alert-danger" })
+                
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label col-md-3">
+                        Travel Data Name
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" asp-for="Name" required>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Value" class="control-label col-md-3">
+                        Travel Data Value
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control numeric" id="ValueFormat" value="" required>
+                        <input type="hidden" value="0" asp-for="Value" />
+                        <span asp-validation-for="Value" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group last">
+                    <div class="col-md-3 col-md-offset-3">
+                        <label class="text-danger">* Field Required</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3">
+                        <a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp; Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-master-data", "#menu-allowance-form");
+            FormValidation.init("#form");
+
+            $(".numeric").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });
+
+            $("input#ValueFormat").on("focusout", function () {
+                $("input#Value").val($(this).autoNumeric('get'));
+            });
+        });
+    </script>
+}

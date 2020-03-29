@@ -1,0 +1,120 @@
+﻿@{
+    ViewData["Title"] = "Notification Page";
+}
+
+@section breadcrumb{
+    <li>
+        <span>Notification List</span>
+    </li>
+}
+
+<h1 class="page-title">Notification <small>List</small></h1>
+<div class="portlet light portlet-fit portlet-datatable bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Notification List</span>
+        </div>
+        <div class="pull-right" id="toolbox">
+          
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <table id="table" class="table table-striped table-bordered table-hover no-border-bottom">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+@{
+    Html.RenderPartial("_DatatablesAssets");
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+           
+            var datatableOption = {
+                ajaxMethod: "POST",
+                listUrl: "/admin/api/notification/postdatatables",
+                deleteUrl: "/admin/api/citylists/",
+                deleteAlertSuccess: "Notification has been removed",
+                columnDefs: [
+                    {
+                        "targets": 0,
+                        "data": "emailArchieve.plainMessage",
+                        name: "emailArchieve.plainMessage"
+                    },
+                    {
+                        "targets": 1,
+                        "data": "activity",
+                        name: "activity",
+                        "render": function (data, type, row, meta) {
+                            return Type(data);
+                        }
+                    },
+                    {
+                        "targets": 2,
+                        "data": "emailArchieve.createdAt",
+                        name: "emailArchieve.createdAt"
+                    },
+                    {
+                        "targets": 3,
+                        "data": "status",
+                        name: "status",
+                        "render": function (data, type, row, meta) {
+                            return Status(data);
+                        }
+                    },
+                    {
+                        "targets": 4,
+                        "data": "linkTo",
+                        name: "linkTo",
+                        "render": function (data, type, row, meta) {
+                            return "<a class='' href='" + data + "' title='Read Notification'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                   "<a class='remove' title='Remove Notification'><i class='fa fa-trash'></i></a>";
+                        }
+                    },
+
+                ]
+           }
+           $datatables.init("#table", datatableOption);
+
+           var table = $('#table')
+               .on('init.dt', function (e, settings, json) { disableImmediateSearchDt(e, settings, json, '#table'); })
+               .DataTable(); theDataTable = table;
+
+        });
+
+        function Type(val) {
+            var Arr = new Array();
+            Arr[0] = "Claim";
+            Arr[1] = "Flight";
+            Arr[2] = "Request";
+            Arr[3] = "SRF";
+            Arr[4] = "Timesheet";
+            Arr[5] = "Travel";
+            Arr[6] = "Vacant";
+            return Arr[val];
+        }
+
+        function Status(val) {
+            var Arr = new Array();
+            Arr[0] = "Error";
+            Arr[1] = "Request";
+            Arr[2] = "Approval";
+            Arr[3] = "Reject";
+            return "<strong><i class='fa fa-bell'></i> " + Arr[val] + "</strong>";
+        }
+
+    </script>
+}

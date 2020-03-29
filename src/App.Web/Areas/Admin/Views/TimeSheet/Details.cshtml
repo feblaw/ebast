@@ -1,0 +1,70 @@
+﻿@model App.Web.Models.ViewModels.Core.Business.TimeSheetTypeViewModel
+@{
+    ViewBag.Title = "Time Sheet Type | Details";
+}
+
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Time Sheet Type List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Details</span>
+    </li>
+}
+
+<h1 class="page-title">Time Sheet Type <small>Details</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Time Sheet Type Details</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <form role="form" class="form-horizontal">
+            <div class="form-body">
+                <div class="form-group">
+                    <label asp-for="Type" class="control-label col-md-3">
+                        <strong>Time Sheet Type Name</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @Model.Type
+                        </p>
+                    </div>
+                </div>
+               
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3">
+                        <a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa fa-edit"></i>&nbsp; Edit</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-master-data", "#menu-time-sheet-type");
+
+            var success = @((TempData["Success"] != null).ToString().ToLower());
+
+            if (success == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("Time sheet type has been updated");
+            }
+        });
+    </script>
+}

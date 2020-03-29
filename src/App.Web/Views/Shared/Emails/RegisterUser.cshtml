@@ -1,0 +1,49 @@
+﻿@{
+    var additionalData = (Dictionary<string, string>)ViewBag.AdditionalData;
+}
+
+<p>Dear , <span style="margin:0;padding:0">@additionalData["Name"]</span></p>
+<table bgcolor="transparent" style="max-width:100%;border-collapse:collapse;border-spacing:0;width:100%;background-color:transparent;margin:0;padding:0">
+    <tbody>
+        <tr style="margin:0;padding:0">
+            <td style="margin:0;padding:0">
+                <h5 style="line-height:24px;color:#000;font-weight:900;font-size:17px;margin:0 0 20px;padding:0">You have been registered to E-Servicebased.net with details:</h5>
+                <div style="margin-bottom:20px">
+                    <table style="width:100%;max-width:100%;border-collapse:collapse;border-spacing:0;background-color:transparent;margin:5px 0;padding:0" bgcolor="transparent">
+                        <tbody style="margin:0;padding:0">
+                            <tr style="margin:0;padding:0">
+                                <td style="width:25%;font-size:13px;vertical-align:top;line-height:18px;margin:0;padding:0 10px 0 0" valign="top">Username:</td>
+                                <td style="margin:0;padding:0">@additionalData["Email"]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    @*<div style="border-bottom-width:1px;border-bottom-color:#eee;border-bottom-style:solid;margin:0;padding:0"></div>
+                    <table style="width:100%;max-width:100%;border-collapse:collapse;border-spacing:0;background-color:transparent;margin:5px 0;padding:0" bgcolor="transparent">
+                        <tbody style="margin:0;padding:0">
+                            <tr style="margin:0;padding:0">
+                                <td style="width:25%;font-size:13px;vertical-align:top;line-height:18px;margin:0;padding:0 10px 0 0" valign="top">Email:</td>
+                                <td style="font-size:13px;vertical-align:top;line-height:18px;margin:0;padding:0 10px 0 0" valign="top">@additionalData["Email"]</td>
+                            </tr>
+                        </tbody>
+                    </table>*@
+                    <div style="border-bottom-width:1px;border-bottom-color:#eee;border-bottom-style:solid;margin:0;padding:0"></div>
+                    <table style="width:100%;max-width:100%;border-collapse:collapse;border-spacing:0;background-color:transparent;margin:5px 0;padding:0" bgcolor="transparent">
+                        <tbody style="margin:0;padding:0">
+                            <tr style="margin:0;padding:0">
+                                <td style="width:25%;font-size:13px;vertical-align:top;line-height:18px;margin:0;padding:0 10px 0 0" valign="top">Password:</td>
+                                <td style="font-size:13px;vertical-align:top;line-height:18px;margin:0;padding:0 10px 0 0" valign="top"><b>@additionalData["Password"]</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br />
+                    <p style="font-weight:normal;font-size:14px;line-height:1.6;margin:0 0 20px;padding:0">Please confirm your account by clicking this <strong><a style="color:#333;text-decoration:none;margin: 0;padding: 0;" rel="nofollow" href="@additionalData["CallbackUrl"]">link</a></strong></p>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<p><small>Thank You</small></p>
+<p><small>Admin E-Servicebased.net</small></p>
+<br>
+<p>Please Login to <a href="http://www.E-Servicebased.net" />E-Servicebased.net</a> for further actions. Have nice day :)

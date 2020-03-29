@@ -1,0 +1,325 @@
+﻿<!-- BEGIN SIDEBAR -->
+<div class="page-sidebar-wrapper">
+    <!-- BEGIN SIDEBAR -->
+    <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+    <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+    <div class="page-sidebar navbar-collapse collapse">
+        <!-- BEGIN SIDEBAR MENU -->
+        <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+        <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+        <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+        <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+        <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+        <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+
+        @* edited *@
+        <ul class="page-sidebar-menu  page-header-fixed " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px; background-color:white;">
+
+            <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+            <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+            <li class="sidebar-toggler-wrapper hide">
+                <div class="sidebar-toggler">
+                    <span></span>
+                </div>
+            </li>
+            <!-- END SIDEBAR TOGGLER BUTTON -->
+            <!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
+            <li class="sidebar-search-wrapper">
+                <!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
+                <!-- DOC: Apply "sidebar-search-bordered" class the below search form to have bordered search box -->
+                <!-- DOC: Apply "sidebar-search-bordered sidebar-search-solid" class the below search form to have bordered & solid search box -->
+                @*<form class="sidebar-search  " action="page_general_search_3.html" method="POST">
+                    <a href="javascript:;" class="remove">
+                        <i class="icon-close"></i>
+                    </a>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search...">
+                        <span class="input-group-btn">
+                            <a href="javascript:;" class="btn submit">
+                                <i class="icon-magnifier"></i>
+                            </a>
+                        </span>
+                    </div>
+                </form>*@
+                <!-- END RESPONSIVE QUICK SEARCH FORM -->
+            </li>
+            <li class="heading">
+                <h3 class="uppercase" style="color:white!important"><strong></strong></h3>
+            </li>
+            @if (!User.IsInRole("Contractor"))
+            {
+                <li class="nav-item" id="menu-home">
+                    <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="nav-link nav-toggle">
+                        <i class='fa fa-line-chart font-purple-medium icon'></i> &nbsp;
+                        <span class="title">Dashboard</span>
+                    </a>
+                </li>
+
+            }
+            @*<li class="nav-item" id="menu-registation" style="display:none">
+                <a asp-area="Admin" asp-controller="Registration" asp-action="Index" class="nav-link nav-toggle">
+                    <img src="~/images/timesheeticon.png" /> &nbsp;
+                    <span class="title">Activity Registration</span>
+                </a>
+            </li>*@
+            @if (User.IsInRole("ASP Admin") || User.IsInRole("Administrator"))
+            {
+                <li class="nav-item" id="menu-assignment">
+                    <a asp-area="Admin" asp-controller="Assignment" asp-action="Index" class="nav-link nav-toggle">
+                        <i class='fa fa-check-square-o font-purple-medium icon'></i>&nbsp;
+                        <span class="title">ASP Assignment</span>
+                    </a>
+                </li>
+            }
+            
+
+            <li class="nav-item" id="menu-bast">
+                <a asp-area="Admin" asp-controller="Bast" asp-action="Index" class="nav-link nav-toggle">
+                    <i class='fa fa-file font-purple-medium icon'></i>&nbsp;
+                    <span class="title">BAST List</span>
+                </a>
+            </li>
+
+            <li class="nav-item" id="menu-log">
+                <a asp-area="Admin" asp-controller="MapAsgBast" asp-action="Index" class="nav-link nav-toggle">
+                    <i class='fa fa-search font-purple-medium icon'></i>&nbsp;
+                    <span class="title">Assignment Log</span>
+                </a>
+            </li>
+          
+            @*<li class="nav-item" id="menu-travel" style="display:none">
+                <a asp-area="Admin" asp-controller="Travel" asp-action="Index" class="nav-link nav-toggle">
+                    <img src="~/images/travelicon.png" class="font-blue icon" /> &nbsp;
+                    <span class="title">Travel Request</span>
+                </a>
+            </li>
+            <li class="nav-item" id="menu-claim" style="display:none">
+                <a asp-area="Admin" asp-controller="Claim" asp-action="Index" class="nav-link nav-toggle">
+                    <img src="~/images/claimicon.png" /> &nbsp;
+                    <span class="title">Expense Claim</span>
+                </a>
+            </li>*@
+
+            @if (!User.IsInRole("Contractor"))
+            {
+                @if (User.IsInRole("Head Of Service Line") || User.IsInRole("Head Of Operation") || User.IsInRole("Administrator"))
+                {
+                <li class="nav-item" id="menu-vacancy" style="display:none">
+                    <a asp-area="Admin" asp-controller="Vacancy" asp-action="Index" class="nav-link nav-toggle">
+                        <img src="~/images/hiringicon1.png" style="width:28px; height:25px" />
+                        <span class="title">SRF Status</span>
+                    </a>
+                </li>
+                }
+                @if (User.IsInRole("Line Manager"))
+                {
+                    <li class="nav-item" id="menu-vacancy" style="display:none">
+                        <a asp-area="Admin" asp-controller="Vacancy" asp-action="Lmview" class="nav-link nav-toggle">
+                            <img src="~/images/hiringicon1.png" style="width:28px; height:25px" />
+                            <span class="title">SRF Status</span>
+                        </a>
+                    </li>
+                }
+                @if (User.IsInRole("HR Agency"))
+                {
+                    <li class="nav-item" id="menu-vacancy" style="display:none">
+                        <a asp-area="Admin" asp-controller="Vacancy" asp-action="Aspview" class="nav-link nav-toggle">
+                            <img src="~/images/hiringicon1.png" style="width:28px; height:25px" />
+                            <span class="title">SRF Status</span>
+                        </a>
+                    </li>
+                }
+
+                <li class="nav-item" id="menu-vacancy2" style="display:none">
+                    <a asp-area="Admin" asp-controller="Vacancy" asp-action="Pending" class="nav-link nav-toggle">
+                        <img src="~/images/requesticon2.png " style="width:29px; height:29px"/>
+                        <span class="title">Work Package Approval</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="menu-rpm" style="display:none">
+                    <a asp-area="Admin" asp-controller="Vacancy" asp-action="Rpm" class="nav-link nav-toggle">
+                        <img src="~/images/requesticon1.png" style="width:29px; height:29px"/>
+                        <span class="title">BAST Status</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="menu-srf" style="display:none">
+                    <a asp-area="Admin" asp-controller="Srf" asp-action="Index" class="nav-link nav-toggle">
+                        <img src="~/images/requesticon.png" />
+                        <span class="title">Service Request Form</span>
+                    </a>
+                </li>
+
+                
+                @if (User.IsInRole("Administrator"))
+                {
+                <li class="nav-item" id="menu-master-data">
+                    <a href="javascript:void(0);" class="nav-link nav-toggle">
+                        <i class='fa fa-cog font-purple-medium icon'></i> &nbsp;
+                        <span class="title">Master Data</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu">
+                        @if (User.IsInRole("Administrator"))
+                        {
+
+                            <li class="nav-item" id="menu-user-management">
+                                <a asp-area="Admin" asp-controller="UserManagement" asp-action="Index" class="nav-link ">
+                                    <span class="title">User Role</span>
+                                </a>
+                            </li>
+                        }
+                        <li class="nav-item" id="menu-contractor-data" style="display:none">
+                            <a asp-area="Admin" asp-controller="ContractorData" asp-action="Index" class="nav-link ">
+                                <span class="title">Contractor Data</span>
+                            </a>
+                        </li>
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item" id="menu-trcp" style="display:none">
+                                <a asp-area="Admin" asp-controller="TacticalResource" asp-action="Index" class="nav-link ">
+                                    <span class="title">TRCP</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-claim-category" style="display:none">
+                                <a asp-area="Admin" asp-controller="ClaimCategory" asp-action="Index" class="nav-link ">
+                                    <span class="title">Claim Category</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-service-pack" style="display:none">
+                                <a asp-area="Admin" asp-controller="ServicePack" asp-action="Index" class="nav-link ">
+                                    <span class="title">SSOW</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-activity-list" style="display:none">
+                                <a asp-area="Admin" asp-controller="Activity" asp-action="Index" class="nav-link ">
+                                    <span class="title">Activity List</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-allowance-list" style="display:none">
+                                <a asp-area="Admin" asp-controller="AllowanceList" asp-action="Index" class="nav-link ">
+                                    <span class="title">Allowance List</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-time-sheet-type" style="display:none">
+                                <a asp-area="Admin" asp-controller="TimeSheet" asp-action="Index" class="nav-link ">
+                                    <span class="title">Time Sheet Type</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-allowance-form" style="display:none">
+                                <a asp-area="Admin" asp-controller="AllowanceForm" asp-action="Index" class="nav-link ">
+                                    <span class="title">Travel Data List</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-holidays" style="display:none">
+                                <a asp-area="Admin" asp-controller="Holidays" asp-action="Index" class="nav-link ">
+                                    <span class="title">Holidays</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-ASP-list">
+                                <a asp-area="Admin" asp-controller="ASPList" asp-action="Index" class="nav-link ">
+                                    <span class="title">ASP List</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-departement" style="display:none">
+                                <a asp-area="Admin" asp-controller="Departement" asp-action="Index" class="nav-link ">
+                                    <span class="title">Organizational Unit</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-departement-sub" style="display:none">
+                                <a asp-area="Admin" asp-controller="DepartementSub" asp-action="Index" class="nav-link ">
+                                    <span class="title">Sub Organizational Unit</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-cost-center" style="display:none">
+                                <a asp-area="Admin" asp-controller="CostCenter" asp-action="Index" class="nav-link ">
+                                    <span class="title">Cost Center</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-project">
+                                <a asp-area="Admin" asp-controller="Project" asp-action="Index" class="nav-link ">
+                                    <span class="title">Projects</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-account-name">
+                                <a asp-area="Admin" asp-controller="AccountName" asp-action="Index" class="nav-link ">
+                                    <span class="title">Account Name</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-network-number" style="display:none">
+                                <a asp-area="Admin" asp-controller="NetworkNumber" asp-action="Index" class="nav-link ">
+                                    <span class="title">Network Number</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-subops" style="display:none">
+                                <a asp-area="Admin" asp-controller="SubOps" asp-action="Index" class="nav-link ">
+                                    <span class="title">Sub Ops</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" id="menu-jobstage" style="display:none">
+                                <a asp-area="Admin" asp-controller="JobStage" asp-action="Index" class="nav-link ">
+                                    <span class="title">Jobstage</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </li>
+                    }
+                }
+            <li class="nav-item" id="menu-logout">
+                <a href="javascript:document.getElementById('logoutForm').submit()" class="nav-link nav-toggle">
+                    &nbsp;<i class='fa fa-lock font-purple-medium icon'></i>
+                    <span class="title">Logout</span>
+                </a>
+            </li>
+
+
+            @*<li class="nav-item" id="menu-user-management">
+                <a asp-area="Admin" asp-controller="UserManagement" asp-action="Index" class="nav-link nav-toggle">
+                    <i class="icon-user"></i>
+                    <span class="title">User Management</span>
+                </a>
+            </li>
+            <li class="nav-item" id="menu-role-management">
+                <a asp-area="Admin" asp-controller="RoleManagement" asp-action="Index" class="nav-link nav-toggle">
+                    <i class="icon-users"></i>
+                    <span class="title">Role Management</span>
+                </a>
+            </li>
+            <li class="nav-item" id="menu-globalization">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="icon-globe"></i>
+                    <span class="title">Globalization</span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item" id="menu-language">
+                        <a asp-area="Admin" asp-controller="Language" asp-action="Index" class="nav-link nav-toggle">
+                            <span class="title">Language</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" id="menu-locale-resource">
+                        <a asp-area="Admin" asp-controller="LocaleResource" asp-action="Index" class="nav-link nav-toggle">
+                            <span class="title">Resources</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item" id="menu-web-setting">
+                <a asp-area="Admin" asp-controller="WebSetting" asp-action="Index" class="nav-link nav-toggle">
+                    <i class="icon-wrench"></i>
+                    <span class="title">Web Setting</span>
+                </a>
+            </li>
+            <li class="nav-item" id="menu-email">
+                <a asp-area="Admin" asp-controller="Email" asp-action="Index" class="nav-link nav-toggle">
+                    <i class="icon-envelope"></i>
+                    <span class="title">Email Archieve</span>
+                </a>
+            </li>*@
+        </ul>
+        <!-- END SIDEBAR MENU -->
+        <!-- END SIDEBAR MENU -->
+    </div>
+    <!-- END SIDEBAR -->
+</div>
+<!-- END SIDEBAR -->
+<!-- BEGIN CONTENT -->

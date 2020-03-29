@@ -1,0 +1,231 @@
+﻿@{
+    ViewData["Title"] = "Network Number Page";
+}
+
+@section breadcrumb{
+    <li>
+        <span>Network Number List</span>
+    </li>
+}
+
+<h1 class="page-title">Network Number  <small>List</small></h1>
+@if (TempData["Messages"] != null)
+{
+    <div class="alert alert-warning  alert-dismissable">
+        <i class="fa fa-check"></i>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <b>Messages : </b> @TempData["Messages"]
+    </div>
+}
+<div class="portlet light portlet-fit portlet-datatable bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Network Number List</span>
+        </div>
+        <div class="pull-right" id="toolbox">
+            <a class="btn btn-success" href="@Url.Action("Import")" style="margin-left:5px!important"><i class="fa fa-download"></i> Import</a>
+            <a class="btn btn-primary" href="@Url.Action("Create")" style="margin-left:5px!important"><i class="fa fa-plus-circle"></i> Add new</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <table id="table" class="table table-striped table-bordered table-hover no-border-bottom">
+            <thead>
+                <tr>
+                    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                    <th data-column="code">Network Number</th>
+                    <th data-column="description">NN Description</th>
+                    <th data-column="departement.name">Organizational Unit</th>
+                    <th data-column="project.name">Project Name</th>
+                    <th data-column="lineManager.name">Total Project Manager</th>
+                    <th data-column="projectManager.name">Project Manager</th>
+                    <th data-column="accountName.name">Account Name</th>
+                    <th data-column="isclosed">Status</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+@{
+    Html.RenderPartial("_DatatablesAssets");
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-master-data", "#menu-network-number");
+
+            var datatableOption = {
+                listUrl: "/admin/api/networknumbers/datatables",
+                detailUrl: "@Url.Action("Details")/",
+                editUrl: "@Url.Action("Edit")/",
+                deleteUrl: "/admin/api/networknumbers/",
+                deleteAlertSuccess: "Network number has been removed",
+                columnDefs: [
+                          {
+                              "targets": 1,
+                              "data": "code",
+                              name: "Code"
+                          },
+                         {
+                             "targets": 2,
+                             "data": "description",
+                             name: "Description"
+                         },
+                         {
+                             "targets": 3,
+                             "data": "departement.name",
+                             name: "Departement.Name"
+                         },
+                         {
+                             "targets": 4,
+                             "data": "project.name",
+                             name: "Project.Name"
+                         },
+                         {
+                             "targets": 5,
+                             "data": "lineManager.name",
+                             name: "LineManager.Name"
+                         },
+                         {
+                             "targets": 6,
+                             "data": "projectManager.name",
+                             name: "ProjectManager.Name"
+
+                         },
+                         {
+                             "targets": 7,
+                             "data": "accountName.name",
+                             name: "AccountName.Name"
+                         },
+                         {
+                             "targets": 8,
+                             "data": "isClosed",
+                             name: "IsClosed",
+                             "render": function(data, type, row, meta){
+                                 if(data==true){
+                                     return "<label class='label label-danger'><i class='fa fa-close'></i> Close</label>";
+                                 }else{
+                                     return "<label class='label label-success'><i class='fa fa-check'></i> Active</label>";
+                                 }
+                             }
+                         },
+                         {
+                             "targets": 0,
+                             "data": "name",
+                             name:"Name",
+                             "render": function(data, type, row, meta){
+                                 return"<a class='detail' title='Detail Account'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                 "<a class='edit' title='Edit Entry'><i class='fa fa-edit'></i></a>&nbsp;&nbsp;&nbsp;"
+                             },
+                             "orderable": false,
+                             "width": "60px",
+                             className: "text-center"
+                         }
+                ]
+            }
+
+            $datatables.init("#table", datatableOption);
+
+
+            var success = @((TempData["Success"] != null).ToString().ToLower());
+
+            if (success == true) {  
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("Network number has been added");
+            }
+
+            var table = $('#table')
+                .on('init.dt', function(e, settings, json) { disableImmediateSearchDt(e, settings, json, '#table'); })
+                .DataTable(); theDataTable = table;
+            //table.search('').columns().search('').draw();
+            new $.fn.dataTable.Buttons(table, {
+                buttons:
+                [{
+                    text:'<i class="fa fa-file-excel-o"></i> Export to Excel',
+                    extend:'excel',
+                    exportOptions: {
+                        columns: [1,2,3,4,5,6,7]
+                    },
+                    action: function (e, dt, button, config) {
+                        window.location.href = "/Export/NetworkNumber";
+                    }
+                }]
+            });
+            table.buttons( 0, null ).container().appendTo( '#toolbox' );
+            $('.buttons-excel').each(function() {
+                $(this).removeClass('dt-button buttons-excel buttons-html5').addClass('btn btn-default')
+            })
+
+            yadcf.init(table, [
+            {
+                column_number: 1,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 2,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 3,
+                filter_default_label:'Select Filter',
+                filter_reset_button_text: false,
+            },
+            {
+                column_number: 4,
+                filter_default_label:'Select Filter',
+                filter_reset_button_text: false,
+            },
+            {
+                column_number: 5,
+                filter_default_label:'Select Filter',
+                filter_reset_button_text: false,
+            },
+            {
+                column_number: 6,
+                filter_default_label:'Select Filter',
+                filter_reset_button_text: false,
+            },
+            {
+                column_number: 7,
+                filter_default_label:'Select Filter',
+                filter_reset_button_text: false,
+            },
+            {
+                column_number: 8,
+                filter_reset_button_text: false,
+                filter_default_label:'Select Filter',
+                data: [{
+                    value: 'true',
+                    label: 'Close'
+                },{
+                    value: 'false',
+                    label: 'Active'
+                }]
+            },
+            ],'footer');
+        
+        });
+    </script>
+}

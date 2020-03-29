@@ -1,0 +1,437 @@
+﻿@model App.Web.Models.ViewModels.Core.Business.ClaimViewModel
+@{
+    ViewBag.Title = "Claim | Details";
+}
+
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Claim List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Details</span>
+    </li>
+}
+
+<h1 class="page-title">Travel <small>Details</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Claim Request Details</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <form role="form" class="form-horizontal">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <strong>CLAIM REQUEST FORM</strong>
+                        <hr />
+                    </div>
+                    <div class="clearfix"></div>
+                    @*<div class="form-group">
+                        <label  class="control-label col-md-5">
+                            <strong>Cost Center</strong>
+                        </label>
+                        <div class="col-md-6">
+                            <p class="form-control-static">
+                               @ViewBag.CostCenter
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">
+                            <strong>Network/Other Assignment </strong>
+                        </label>
+                        <div class="col-md-6">
+                            <p class="form-control-static">
+                                @ViewBag.NetworkCode
+                            </p>
+                        </div>
+                    </div>*@
+                    <div class="form-group">
+                        <label class="control-label col-md-5">
+                            <strong>Project</strong>
+                        </label>
+                        <div class="col-md-6">
+                            <p class="form-control-static">
+                                @ViewBag.Project
+                            </p>
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                        <label class="control-label col-md-5">
+                            <strong>Sub Organizational Unit </strong>
+                        </label>
+                        <div class="col-md-6">
+                            <p class="form-control-static">
+                                @ViewBag.SubOrganizationUnit
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">
+                            <strong>Activity</strong>
+                        </label>
+                        <div class="col-md-6">
+                            <p class="form-control-static">
+                                @ViewBag.Activity
+                            </p>
+                        </div>
+                    </div>*@
+                    <div class="form-group">
+                        <label class="control-label col-md-5">
+                            <strong>Type of Claim</strong>
+                        </label>
+                        <div class="col-md-6">
+                            <p class="form-control-static">
+                                @ViewBag.ClaimCategory
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">
+                            <strong>Departure Date</strong>
+                        </label>
+                        <div class="col-md-6">
+                            <p class="form-control-static">
+                               @Model.StartDate.ToString("dd MMMM yyyy")
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">
+                            <strong>Return Date</strong>
+                        </label>
+                        <div class="col-md-6">
+                            <p class="form-control-static">
+                                @Model.EndDate.ToString("dd MMMM yyyy")
+                            </p>
+                        </div>
+                    </div>
+                    @if (ViewBag.ClaimCategory == "Travel Allowance")
+                    {
+                        <div class="form-group">
+                            <label class="control-label col-md-5">
+                                <strong>Trip Type</strong>
+                            </label>
+                            <div class="col-md-6">
+                                @if (Model.TripType == App.Domain.Models.Enum.TripType.Domestic)
+                                {
+                                    <p class="form-control-static">Domestic</p>
+
+                                }
+                                else
+                                {
+                                    <p class="form-control-static">International</p>
+                                }
+                            </div>
+                        </div>
+
+                    }
+                   
+                    <div class="form-group">
+                        <label class="control-label col-md-5">
+                            <strong>Claim Value</strong>
+                        </label>
+                        <div class="col-md-6">
+                            <p class="form-control-static">
+                               <span class='numeric'>@Model.Value</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">
+                            <strong>Description</strong>
+                        </label>
+                        <div class="col-md-6">
+                            <p class="form-control-static">
+                                @Model.Description
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">
+                            <strong>RPM</strong>
+                        </label>
+                        <div class="col-md-6">
+                            <p class="form-control-static">
+                                @ViewBag.ProjectManager
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">
+                            <strong>Line Manager</strong>
+                        </label>
+                        <div class="col-md-6">
+                            <p class="form-control-static">
+                                @ViewBag.LineManager
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">
+                            <strong>Upload File</strong>
+                        </label>
+                        <div class="col-md-6">
+                            <ul style="padding:0; list-style-type:none;">
+                                @if (ViewBag.Files != null)
+                                {
+                                    @foreach (var row in (@ViewBag.Files as List<string>))
+                                    {
+                                        <li class="attachment-item">
+                                            <a href="@Url.Content("~/")">
+                                                <i class="fa fa-paperclip"></i>
+                                                <span class="label-file">@row</span>
+                                            </a>
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="form-control-static">
+                                        <strong>No file attached.</strong>
+                                    </p>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                   @if (ViewBag.ClaimCategory != "Other Travel Allowance")
+                   {
+                        <div class="col-lg-12 text-center">
+                            <strong>ALLOWANCE FORM</strong>
+                            <hr />
+                        </div>
+                        <div class="clearfix"></div>
+                        @if (ViewBag.ClaimCategory == "On Call Allowance" || ViewBag.ClaimCategory == "Shift Allowance")
+                        {
+                            <div class="form-group">
+                                <label class="control-label col-md-3">
+                                    <strong>Type</strong>
+                                </label>
+                                <div class="col-md-9">
+                                     @if (Model.DayType == App.Domain.Models.Enum.DayType.WeekDay)
+                                     {
+                                        <p class="form-control-static">
+                                            Week Day and Week End
+                                        </p>
+                                     }
+                                     else
+                                     {
+                                        <p class="form-control-static">
+                                           Lebaran / Christmas / Granted Holiday
+                                        </p>
+                                     }
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">
+                                    <strong>Allowance Value </strong>
+                                </label>
+                                <div class="col-md-9">
+                                    <p class="form-control-static">
+                                        <span class='numeric'>@Model.OnCallShift</span>
+                                    </p>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            @if (Model.TripType == App.Domain.Models.Enum.TripType.Domestic)
+                            {
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">
+                                        <strong>Flight + Airport Tax</strong>
+                                    </label>
+                                    <div class="col-md-6">
+                                        <p class="form-control-static">
+                                            <span class='numeric'>@Model.Domallo1</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">
+                                        <strong>Local Transport Home-Airport-Home</strong>
+                                    </label>
+                                    <div class="col-md-6">
+                                        <p class="form-control-static">
+                                            <span class='numeric'>@Model.Domallo2</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">
+                                        <strong>Local Transport Airport-Hotel-Airport</strong>
+                                    </label>
+                                    <div class="col-md-6">
+                                        <p class="form-control-static">
+                                            <span class='numeric'>@Model.Domallo3</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">
+                                        <strong>Accommodation & Local Transport</strong>
+                                    </label>
+                                    <div class="col-md-6">
+                                       @if (Model.AllowanceOption == App.Domain.Models.Enum.AllowanceOptions.Option1)
+                                       {
+                                         <p class="form-control-static">Option 1</p>
+                                       }
+                                       else
+                                       {
+                                         <p class="form-control-static">Option 2</p>
+                                       }
+                                    </div>
+                                </div>
+                                @if (Model.AllowanceOption == App.Domain.Models.Enum.AllowanceOptions.Option1)
+                                {
+
+                                    <div class="form-group">
+                                        <label class="control-label col-md-5">
+                                            <strong>Acomodation</strong>
+                                        </label>
+                                        <div class="col-md-6">
+                                            <p class="form-control-static">
+                                                <span class='numeric'>@Model.Domallo4</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-5">
+                                            <strong>Meal and Transport Allowance</strong>
+                                        </label>
+                                        <div class="col-md-6">
+                                            <p class="form-control-static">
+                                                <span class='numeric'>@Model.Domallo5</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="form-group">
+                                        <label class="control-label col-md-5">
+                                            <strong>Lumpsum</strong>
+                                        </label>
+                                        <div class="col-md-6">
+                                            <p class="form-control-static">
+                                                <span class='numeric'>@Model.Domallo6</span>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                }
+
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">
+                                        <strong>Flight + Airport Tax </strong>
+                                    </label>
+                                    <div class="col-md-6">
+                                        <p class="form-control-static">
+                                            <span class='numeric'>@Model.Intallo1</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">
+                                        <strong>Accomodation </strong>
+                                    </label>
+                                    <div class="col-md-6">
+                                        <p class="form-control-static">
+                                            <span class='numeric'>@Model.Intallo2</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">
+                                        <strong>Local Transport</strong>
+                                    </label>
+                                    <div class="col-md-6">
+                                        <p class="form-control-static">
+                                            <span class='numeric'>@Model.Intallo3</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">
+                                        <strong>Allowance Meal</strong>
+                                    </label>
+                                    <div class="col-md-6">
+                                        <p class="form-control-static">
+                                            <span class='numeric'>@Model.Intallo4</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">
+                                        <strong>Lumpsum Allowance (Accomodation + Meal)</strong>
+                                    </label>
+                                    <div class="col-md-6">
+                                        <p class="form-control-static">
+                                            <span class='numeric'>@Model.Intallo5</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-5">
+                                        <strong>Winter Clothes Allowance</strong>
+                                    </label>
+                                    <div class="col-md-6">
+                                        <p class="form-control-static">
+                                            <span class='numeric'>@Model.Intallo6</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            }
+
+                        }
+                   }
+                </div>
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3">
+                        <a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+                        @if (User.IsInRole("Contractor"))
+                        {
+                           <!-- <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa fa-edit"></i>&nbsp; Edit</a>
+                               -->
+                        }
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-claim", "#menu-claim");
+
+            var success = @((TempData["Success"] != null).ToString().ToLower());
+
+            if (success == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("Claim request has been updated");
+            }
+
+            $("span.numeric").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });
+
+            renderExistingFiles(null, 'li.attachment-item', null, false, '.label-file');
+
+        });
+    </script>
+}

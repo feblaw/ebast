@@ -1,0 +1,739 @@
+﻿@using App.Web.Models.ViewModels.Core.Business
+@model SrfRequestModelForm
+@{
+    ViewData["Title"] = "SRF Detail";
+    var Vacancy = (VacancyList)ViewBag.Vacancy;
+    var Candidate = (CandidateInfo)ViewBag.Candidate;
+    var Departement = (Departement)ViewBag.Departement;
+    var SSOW = (ServicePack)ViewBag.SSOW;
+    var SsCategory = (ServicePackCategory)ViewBag.SCategory;
+    var JobStage = (JobStage)ViewBag.JobsStage;
+    var ContractStart = Model.SrfBegin == null || Model.SrfBegin == DateTime.MinValue ? DateTime.Now.Date : Model.SrfBegin;
+    var ContractEnd = Model.SrfEnd == null || Model.SrfEnd == DateTime.MinValue ? DateTime.Now.Date : Model.SrfEnd;
+}
+
+@section breadcrumb{
+    <li>
+        <span>Service Request Form</span>
+    </li>
+}
+
+<h1 class="page-title">Service Request Form<small></small></h1>
+<div class="portlet light portlet-fit portlet-datatable bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Employee SRF Form</span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <form role="form" asp-action="Edit" method="post" id="FormSubmit" class="form-horizontal">
+            @Html.ValidationSummary(true, "Failed to submit", new { @class = "alert alert-danger" })
+            <div class="form-body">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Type of Request
+                    </label>
+                    <div class="col-md-9">
+                        @if (Model.Type == App.Domain.Models.Enum.SrfType.New)
+                        {
+                            <p class="form-control-static">Normal ( @ViewBag.txtOperaion )</p>
+                        }
+                        else
+                        {
+                            <p class="form-control-static">Operational ( @ViewBag.txtOperaion )</p>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Request Name
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @Candidate.Name
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        HRMS / NON
+                    </label>
+                    <div class="col-md-9">
+                        @if (Model.IsHrms)
+                        {
+                            <p class="form-control-static">HRMS</p>
+                        }
+                        else
+                        {
+                            <p class="form-control-static">Non-HRMS</p>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Price Type
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @ViewBag.PriceType
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Service Work Pack
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @SsCategory.Name
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        SSOW
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @SSOW.Name
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Service Code
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @SSOW.Code
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Manager / Non Manager
+                    </label>
+                    <div class="col-md-9">
+                        @if (Model.IsManager)
+                        {
+                            <p class="form-control-static">Manager Level</p>
+                        }
+                        else
+                        {
+                            <p class="form-control-static">Staff Level</p>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Jobstage
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @JobStage.Description
+                        </p>
+                    </div>
+                </div>
+                <div class="clearfix"><br /></div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        <strong>Additional Services Requirement</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Basic Service Level (OT)
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            Plus @Vacancy.OtLevel
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Workstation Services
+                    </label>
+                    <div class="col-md-9">
+                        @if (Model.isWorkstation == true)
+                        {
+                            <p class="form-control-static">Yes</p>
+                        }
+                        else
+                        {
+                            <p class="form-control-static">No</p>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Communication Services
+                    </label>
+                    <div class="col-md-9">
+                        @if (Model.isCommunication == true)
+                        {
+                            <p class="form-control-static">USIM</p>
+                        }
+                        else
+                        {
+                            <p class="form-control-static">Non USIM</p>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Normal Rate
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            Rp.<label class="number">@Vacancy.NoarmalRate</label>
+                        </p>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <hr />
+                <div class="form-group">
+                    <label asp-for="SrfBegin" class="control-label col-md-3">
+                        Service Start Date
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control form_datetime" id="SrfBeginView" value="@ContractStart.ToString("dd MMMM yyyy")" readonly />
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <input type="hidden" class="form-control" asp-for="SrfBegin" readonly required />
+                        <span asp-validation-for="SrfBegin" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SrfEnd" class="control-label col-md-3">
+                        Service End Date
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control form_datetime" id="SrfEndView" value="@ContractEnd.ToString("dd MMMM yyyy")" readonly />
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <input type="hidden" class="form-control" asp-for="SrfEnd" readonly required />
+                        <span asp-validation-for="SrfEnd" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Duration of Service
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            <strong id="Duration"></strong>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        Annual Leave
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            <strong id="Annual"></strong>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DepartmentId" class="control-label col-md-3">
+                        Organizational Unit
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="DepartmentId" asp-items="@(new SelectList(@ViewBag.ListDepartement, "Id","Name"))" required>
+                            <option disabled selected>-- Select Department --</option>
+                        </select>
+                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DepartmentSubId" class="control-label col-md-3">
+                        Sub Organizational Unit
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="DepartmentSubId" asp-items="@(new SelectList(@ViewBag.ListSubDepartment, "Id","SubName"))" required>
+                            <option disabled selected>-- Select Sub Organizational Unit --</option>
+                        </select>
+                        <span asp-validation-for="DepartmentSubId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CostCenterId" class="control-label col-md-3">
+                        Cost Center
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="CostCenterId" asp-items="@(new SelectList(@ViewBag.ListCostCenter, "Id","DisplayName"))" required>
+                            <option disabled selected>-- Select Cost Center --</option>
+                        </select>
+                        <span asp-validation-for="CostCenterId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="AccountId" class="control-label col-md-3">
+                        Account Name
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="AccountId" asp-items="@(new SelectList(@ViewBag.ListAccount, "Id","Name"))" required>
+                            <option disabled selected>-- Select Account Name --</option>
+                        </select>
+                        <span asp-validation-for="AccountId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NetworkId" class="control-label col-md-3">
+                        Network Number
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="NetworkId" asp-items="@(new SelectList(@ViewBag.ListNetwork, "Id","DisplayName"))" required>
+                            <option disabled selected>-- Select Network Number --</option>
+                        </select>
+                        <span asp-validation-for="NetworkId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group operation">
+                    <!--ApproveStatusTwo-->
+                    <label asp-for="ApproveTwoId" class="control-label col-md-3">
+                        Head Of Service Line
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="ApproveTwoId" asp-items="@(new SelectList(@ViewBag.ListServiceLine, "Id","Name"))">
+                            <option disabled selected>-- Select Head Of Service Line  --</option>
+                        </select>
+                        <span asp-validation-for="ApproveTwoId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group operation">
+                    <label asp-for="ApproveThreeId" class="control-label col-md-3">
+                        Head Of Operation <!--ApproveStatusThree-->
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="ApproveThreeId" asp-items="@(new SelectList(@ViewBag.HeadOperation , "Id","Name"))">
+                            <option disabled selected>-- Select Head Operation  --</option>
+                        </select>
+                        <span asp-validation-for="ApproveThreeId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group non-operation">
+                    <label asp-for="ApproveFourId" class="control-label col-md-3">
+                        Head Of Non Operation <!--ApproveStatusFour-->
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="ApproveFourId" asp-items="@(new SelectList(@ViewBag.HeadOperation, "Id","Name"))">
+                            <option disabled selected>-- Select Head Of Non Operation  --</option>
+                        </select>
+                        <span asp-validation-for="ApproveFourId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <!--ApproveStatusSix-->
+                    <label asp-for="ApproveSixId" class="control-label col-md-3">
+                        Service Cordinator
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select class="form-control" asp-for="ApproveSixId" asp-items="@(new SelectList(@ViewBag.ListServiceCordinator, "Id","Name"))">
+                            <option disabled selected>-- Select Service Cordinator  --</option>
+                        </select>
+                        <span asp-validation-for="ApproveSixId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label col-md-3">
+                        Description
+                    </label>
+                    <div class="col-md-6">
+                        <textarea class="form-control" asp-for="Description" rows="5">
+                            @Model.Description
+                        </textarea>
+                    </div>
+                </div>
+                <div class="form-group last">
+                    <div class="col-md-3 col-md-offset-3">
+                        <label class="text-danger">* Field Required</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+                        @if (User.IsInRole("Line Manager") || User.IsInRole("Administrator") || User.IsInRole("Sourcing"))
+                        {
+
+                            if (User.IsInRole("Line Manager") && ViewBag.LineManagerId == ViewBag.PreofileId)
+                            {
+                                if (@ViewBag.SetExtended == "1" && Model.Status == App.Domain.Models.Enum.SrfStatus.Done && ViewBag.LineManagerId == ViewBag.PreofileId)
+                                {
+                                    <a asp-action="Extends" asp-route-id="@ViewBag.Id" class="btn btn-info"><i class="fa fa-users"></i>&nbsp; Extends</a>
+                                }
+                                if (@ViewBag.IsEscalation == "1" && ViewBag.LineManagerId == ViewBag.PreofileId)
+                                {
+                                    <a asp-action="Edit" asp-controller="Escalation" asp-route-id="@ViewBag.Id" class="btn btn-warning" id="btn-escalation"><i class="fa fa-line-chart"></i>&nbsp; View Escalation</a>
+                                }
+                                else
+                                {
+                                    if (Model.Status == App.Domain.Models.Enum.SrfStatus.Waiting && ViewBag.LineManagerId == ViewBag.PreofileId)
+                                    {
+                                        <a asp-action="Add" asp-controller="Escalation" asp-route-id="@ViewBag.Id" class="btn btn-warning" id="btn-escalation"><i class="fa fa-line-chart"></i>&nbsp; Create Escalation</a>
+                                    }
+                                }
+                                <button type="submit" id="btn-save" name="ApproveStatusOne" value="0" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp; Save</button>
+                                <button type="submit" id="btn-submit" name="ApproveStatusOne" value="1" class="btn btn-success"><i class="fa fa-envelope-o"></i>&nbsp; Submit</button>
+                            }
+                            else
+                            {
+                                <button type="submit" id="btn-save" name="ApproveStatusOne" value="0" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp; Save</button>
+                            }
+                        }
+                        @if (ViewBag.SetExtended == "1" && Model.Status == App.Domain.Models.Enum.SrfStatus.Done && User.IsInRole("Line Manager") && ViewBag.LineManagerId == ViewBag.PreofileId)
+                        {
+                            <a href="javascript:void(0)" id="btn-terminate" class="btn btn-success"><i class="fa fa-gavel"></i>&nbsp; Request Termination</a>
+                        }
+                       
+                        @if (User.IsInRole("Head Of Service Line") && ViewBag.ServiceLineId == ViewBag.PreofileId)
+                        {
+                            if (Model.ApproveStatusTwo == App.Domain.Models.Enum.SrfApproveStatus.Waiting)
+                            {
+
+                                if (Model.ApproveStatusOne == App.Domain.Models.Enum.SrfApproveStatus.Submitted || Model.ApproveStatusOne == App.Domain.Models.Enum.SrfApproveStatus.Approved)
+                                {
+                                    <a href="javascript:void(0)" id="btn-approve" class="btn btn-success pull-right"><i class="fa fa-gavel"></i>&nbsp; Giving Approval / Reject</a>
+                                }
+                            }
+                        }
+
+                        @if (User.IsInRole("Head Of Operation") && ViewBag.HeadOpId == ViewBag.PreofileId)
+                        {
+                            if (Model.ApproveStatusThree == App.Domain.Models.Enum.SrfApproveStatus.Waiting)
+                            {
+                                if (Model.ApproveStatusTwo == App.Domain.Models.Enum.SrfApproveStatus.Approved)
+                                {
+                                    <a href="javascript:void(0)" id="btn-approve" class="btn btn-success pull-right"><i class="fa fa-gavel"></i>&nbsp; Giving Approval / Reject</a>
+                                }
+                            }
+                        }
+
+                       @if (User.IsInRole("Head Of Non Operation") && ViewBag.HeadNonId == ViewBag.PreofileId)
+                        {
+                            if (Model.ApproveStatusFour == App.Domain.Models.Enum.SrfApproveStatus.Waiting)
+                            {
+                                if (Model.ApproveStatusOne == App.Domain.Models.Enum.SrfApproveStatus.Submitted)
+                                {
+                                    <a href="javascript:void(0)" id="btn-approve" class="btn btn-success pull-right"><i class="fa fa-gavel"></i>&nbsp; Giving Approval / Reject</a>
+                                }
+                            }
+                        }
+
+                        @if (User.IsInRole("Service Coordinator") && ViewBag.ServiceCoordId == ViewBag.PreofileId)
+                        {
+                            if (Model.ApproveStatusSix == App.Domain.Models.Enum.SrfApproveStatus.Waiting)
+                            {
+                                if (Model.ApproveStatusThree == App.Domain.Models.Enum.SrfApproveStatus.Approved || Model.ApproveStatusFour == App.Domain.Models.Enum.SrfApproveStatus.Approved)
+                                {
+                                    <a href="javascript:void(0)" id="btn-approve" class="btn btn-success pull-right"><i class="fa fa-gavel"></i>&nbsp; Giving Approval / Reject</a>
+                                }
+
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Set Approval Status</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="FormApprove" asp-controller="Srf" asp-action="Approval">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Set Approval</label>
+                            <input type="hidden" name="id" id="id" value="@ViewBag.Id" required />
+                            <select id="status" name="status" class="form-control" style="width:100%" required>
+                                <option disabled selected>-- Select Approval--</option>
+                                <option value="True">Approve</option>
+                                <option value="False">Reject</option>
+                            </select>
+                        </div>
+                        @if (User.IsInRole("Service Coordinator"))
+                        {
+                            if (Model.ApproveStatusSix == App.Domain.Models.Enum.SrfApproveStatus.Waiting)
+                            {
+                                if (Model.ApproveStatusThree == App.Domain.Models.Enum.SrfApproveStatus.Approved || Model.ApproveStatusFour == App.Domain.Models.Enum.SrfApproveStatus.Approved)
+                                {
+                                    <div class="form-group" id="TextNumber">
+                                        <label for="exampleInputPassword1">SRF Number</label>
+                                        <input type="text" class="form-control" name="number" id="number" value="@ViewBag.SrfNumber" maxlength="4" min="4" required />
+                                    </div>
+                                }
+
+                            }
+                        }
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Note</label>
+                            <textarea id="notes" name="notes" class="form-control" rows="5"></textarea>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal" style="margin-left:10px;">Cancel</button>
+                        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="ModalTerminate" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Request Termination</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Are you sure wanto to request termination this resource ?
+                </p>
+                <p>
+                    Name  : <strong>@Candidate.Name</strong>
+                </p>
+                <form role="form" id="FormApprove" asp-controller="Srf" asp-action="Terminate">
+                    <input type="hidden" name="id" id="id" value="@ViewBag.Id" required />
+                    <div class="box-body">
+                        <div class="form-group">
+                            <div class="radio">
+                                <label>
+                                    <input name="type" id="type" value="3" type="radio" required />
+                                    Blacklist
+                                </label>
+                                <div class="clearfix"></div>
+                                <label>
+                                    <input name="type" id="type" value="2" type="radio" required />
+                                    Terminate
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal" style="margin-left:10px;">Cancel</button>
+                        <button type="submit" class="btn btn-primary pull-right">Send</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            var success = @((TempData["Success"] != null).ToString().ToLower());
+
+            if (success == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("SRF request has been updated");
+            }
+
+            var extend = @((TempData["Extend"] != null).ToString().ToLower());
+            if (extend == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("SRF request has been extended");
+            }
+
+            var terminate = @((TempData["Terminate"] != null).ToString().ToLower());
+            if (terminate == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("SRF request has been terminate / blacklist");
+            }
+
+            var rejected = @((TempData["Rejected"] != null).ToString().ToLower());
+            if (rejected == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.error("SRF request has been rejected");
+            }
+
+            $('#status').change(function(){
+                var val = $(this).val();
+                if(val=='True'){
+                    $('#TextNumber').show();
+                }else{
+                    $('#TextNumber').hide();
+                }
+            });
+
+            $common.setMenu("#menu-srf", "#menu-srf");
+            FormValidation.init("#FormSubmit");
+            $('select').select2();
+
+            $(".form_datetime").datepicker({
+                autoclose: true,
+                format: "dd MM yyyy",
+            });
+
+            $(".number").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });
+
+            var isOperation = parseInt('@ViewBag.isOperation');
+            var FormDisable = parseInt('@ViewBag.FormDisable');
+
+            if (isOperation == 1) {
+                $('.operation').show();
+                $('.non-operation').hide();
+            } else {
+                $('.operation').hide();
+                $('.non-operation').show();
+            }
+
+            $('#DepartmentId').change(function () {
+                var val = $(this).val();
+                LoadOption(val);
+            });
+
+
+            $('#SrfBeginView').change(function () {
+                var value = $(this).val();
+                var val = my_date.date_to_db(value);
+                var End = $('#SrfEnd').val();
+                $('#SrfBegin').val(val);
+                Duration(val,End);
+            });
+
+
+            $('#SrfEndView').change(function () {
+                var value = $(this).val();
+                var val = my_date.date_to_db(value);
+                var First = $('#SrfBegin').val();
+                $('#SrfEnd').val(val);
+                Duration(First,val);
+            });
+
+
+
+            $('#btn-approve').click(function(){
+                $('#status').val('');
+                $('#notes').val('');
+                $('#myModal').modal('show');
+            });
+
+            $('#btn-terminate').click(function(){
+                $('#type').val('');
+                $('#ModalTerminate').modal('show');
+            });
+
+            Duration($('#SrfBegin').val(), $('#SrfEnd').val());
+            $('#TextNumber').hide();
+
+            $('input[name=number]').keypress(validateNumber);
+            $('#SrfBeginView').trigger('change');
+            $('#SrfEndView').trigger('change');
+
+            var ProfileId = '@ViewBag.PreofileId';
+            var AppTwo = $('#ApproveTwoId').val();
+            var AppThree = $('#ApproveThreeId').val();
+            var AppFour = $('#ApproveThreeId').val();
+            var AppSix =  $('#ApproveSixId').val();
+
+            if(AppTwo && parseInt(AppTwo)==parseInt(ProfileId)){
+                $('#ApproveTwoId').val('@ViewBag.PreofileId').trigger('change');
+            }else if(AppThree && parseInt(AppThree)==parseInt(ProfileId)){
+                $('#ApproveThreeId').val('@ViewBag.PreofileId').trigger('change');
+            }else if(AppFour && parseInt(AppFour)==parseInt(ProfileId)){
+                $('#ApproveFourId').val('@ViewBag.PreofileId').trigger('change');
+            }else if(AppSix && parseInt(AppSix)==parseInt(ProfileId)){
+                $('#ApproveSixId').val('@ViewBag.PreofileId').trigger('change');
+            }
+
+        });
+
+        function LoadOption(val){
+            $.ajax({
+                url: "/Admin/Api/Srf/GetOptionFormSrf?id=" + val, success: function (result) {
+                    $('#DepartmentSubId').html(result.departementSub);
+                    $('#CostCenterId').html(result.costCenter);
+                    $('#NetworkId').html(result.networkNumber);
+                    if (result.isOperation == true) {
+                        $('.operation').show();
+                        $('.non-operation').hide();
+                    } else {
+                        $('.operation').hide();
+                        $('.non-operation').show();
+                    }
+                }
+            });
+        }
+
+        function Duration(first,end){
+            $.ajax({
+                url: "/Admin/Api/Srf/GetDuration?id=@Model.ExtendFrom&start="+first+"&end=" + end, success: function (result) {
+                    $('#Duration').text(result.srfduration);
+                    $('#Annual').text(result.srfannual+" Days");
+                }
+            });
+        }
+
+        function validateNumber(event) {
+            var key = window.event ? event.keyCode : event.which;
+            if (event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 9) {
+                return true;
+            } else if (key < 48 || key > 57) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+    </script>
+}

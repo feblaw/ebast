@@ -1,0 +1,460 @@
+﻿@{
+    ViewData["Title"] = "Assignment Page ";
+}
+@section breadcrumb{
+    <li>
+        <span>Assignment List </span>
+    </li>
+}
+<h1 class="page-title">Assignment <small>List</small></h1>
+@if (TempData["Messages"] != null)
+{
+    <div class="alert alert-warning  alert-dismissable">
+        <i class="fa fa-check"></i>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <b>Messages : </b> @TempData["Messages"]
+    </div>
+}
+<div class="portlet light portlet-fit portlet-datatable bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase"></span>
+        </div>
+        @if (
+                                                User.IsInRole("Administrator") ||
+                                                User.IsInRole("ASP Admin"))
+        {
+            <div class="portlet-body">
+                <div class="box-footer clearfix">
+                    <form role="form" id="FormApprove" asp-controller="assignment" asp-action="ReqBast">
+                        <input type="hidden" class="ListId" name="data" value="" required />
+                        @*<button type="submit" name="status" value=2 class="btn btn-primary pull-right" style="margin-left:10px;">BAST Final</button>*@
+                        <button type="submit" name="status" value=1 class="btn btn-primary pull-right" style="margin-left:10px; ">Request BAST</button>
+                        @if (User.IsInRole("Administrator"))
+
+                        {
+                            <span id="IsAdmin"></span>
+                            <a class="btn btn-success" href="@Url.Action("Import")" style="margin-left:5px!important"><i class="fa fa-download"></i> Import Assignment</a>
+                        }
+                    </form>
+                </div>
+            </div>
+        }
+        <div class="pull-right" id="toolbox">
+            &nbsp;&nbsp;&nbsp;
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <table id="table" class="table table-striped table-bordered table-hover no-border-bottom" data-page-length="25">
+            <thead>
+                <tr>
+                    <th>
+                        @if (User.IsInRole("Administrator") || User.IsInRole("ASP Admin"))
+                        {
+                            <input type="checkbox" id="check-all" />
+                        }
+                        else
+                        {
+                            <label>-</label>
+                        }
+                    </th>
+                    <th>Assignment Id</th>
+                    <th>SH Id</th>
+                    <th>Project Name</th>
+                    <th>Assignment Create Date</th>
+                    <th>Assignment Accepted Date</th>
+                    <th>PO Number</th>
+                    <th>PO Date</th>
+                    <th>Line Item PO</th>
+                    <th>Value Assignment</th>
+                    <th>TOP</th>
+                    <th>Assignment Create By</th>
+                    <th>ASP</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+
+</div>
+
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Terminate</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="FormApprove" asp-controller="Assignment" asp-action="Terminate">
+                    <input type="hidden" name="id" id="id" required />
+                    <div class="box-body">
+                        <p>Are you sure want to terminate / blacklist this source : <strong id="Name"></strong></p>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Terminate - Blacklist Note / Remark</label>
+                            <textarea id="notes" name="notes" class="form-control" rows="5" required></textarea>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal" style="margin-left:10px;">Cancel</button>
+                        <button type="submit" value="3" name="submit" class="btn btn-danger">Terminate</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    Html.RenderPartial("_DatatablesAssets");
+}
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            var UserRole = '@ViewBag.UserRole';
+            $('#check-all').hide();
+            var datatableOption = {
+                ajaxMethod: "POST",
+                listUrl: "/admin/api/assignment/postdatatables",
+                detailUrl: "@Url.Action("Details")/",
+                editUrl: "@Url.Action("Edit")/",
+                //deleteUrl: "/admin/api/assigment/",
+                //deleteAlertSuccess: "WP request has been removed",
+                columnDefs: [
+                    {
+                        "targets": 1, // name
+                        "data": "assignmentId",
+                        name: "AssignmentId",
+                    },
+                    {
+                        "targets": 3, // name
+                        "data": "projectName",
+                        name: "ProjectName",
+                    },
+                    {
+                        "targets": 2, // Request By
+                        "data": "shid",
+                        name: "shid",
+                    },
+
+                    {
+                        "targets": 4, // Request By
+                        "data": "assignmentCreateDate",
+                        name: "AssignmentCreateDate",
+                        "render": function (data, type, row, meta) {
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        "targets": 5, // Request By
+                        "data": "assignmentAcceptedDate",
+                        name: "AssignmentAcceptedDate",
+                        "render": function (data, type, row, meta) {
+                            if(data!=null && data!='0001-01-01T00:00:00'){
+                                var date = new Date(data);
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },           
+                     {
+                         "targets": 6, // name
+                         "data": "poNumber",
+                         name: "PONumber",
+                     },
+                     {
+                         "targets": 7, // Request By
+                         "data": "poDate",
+                         name: "PODate",
+                         "render": function (data, type, row, meta) {
+                             if(data!=null && data!='0001-01-01T00:00:00'){
+                                 var date = new Date(data);
+                                 return moment(date).format("DD MMM YYYY");
+                             }else{
+                                 return "-";
+                             }
+                         }
+                     },         
+                     {
+                         "targets": 8, // name
+                         "data": "lineItemPO",
+                         name: "LineItemPO",
+                     },
+                     {
+                         "targets": 9, // name
+                         "data": "valueAssignment",
+                         name: "ValueAssignment",
+                         "render":$.fn.dataTable.render.number( '.', ',', 0 )
+                         
+                     },
+                      {
+                          "targets": 10, // name
+                          "data": "top",
+                          name: "top",
+                      },
+                     
+                      {
+                          "targets": 11, // name
+                          "data": "assignmentCreateBy",
+                          name: "AssignmentCreateBy",
+                      },
+                      {
+                          "targets": 12, // name
+                          "data": "asp",
+                          name: "asp.Name",
+                      },
+                   
+                     {
+                         "targets": 0, // Action
+                         "data": "poNumber",
+                         name: "poNumber",
+                         "render": function (data, type, row, meta) {
+                             return CheckBox(row);
+                         }
+                     }
+                ]
+            }
+           
+
+            $datatables.init("#table", datatableOption);
+
+            $('#table tbody').on( 'click', 'tr', function () {
+                ele = $(this).find('td input:checkbox')[0];
+                ele.checked = ! ele.checked;
+                var checkedVals = $('.assignment:checkbox:checked').map(function() {
+                    return this.value;
+                }).get();
+                var result = checkedVals.join(",");
+                $('.ListId').val(result);
+            } );
+
+            var table = $('#table')
+                .on('init.dt', function (e, settings, json) { disableImmediateSearchDt(e, settings, json, '#table'); })
+                .DataTable(); theDataTable = table;theDataTable = table;
+                table.order( [[1,'assignmentId']] );
+            
+                //table.search('').columns().search('').draw();
+                var success = @((TempData["Success"] != null).ToString().ToLower());
+                if (success == true) {
+                    toastr.options = {
+                        "closeButton": true,
+                    "positionClass": "toast-top-right"
+                    }
+                    toastr.success("WP request has been added");
+                }
+
+                var danger = @((TempData["Danger"] != null).ToString().ToLower());
+                if (danger == true) {
+                    toastr.options = {
+                        "closeButton": true,
+                    "positionClass": "toast-top-right"
+                    }
+                    toastr.success("@TempData["Danger"]");
+                }
+
+            $common.setMenu("#menu-assignment", "#menu-assignmReqBastnt");
+
+            
+                table.buttons( 0, null ).container().appendTo( '#toolbox' );
+            $('.buttons-excel').each(function() {
+                $(this).removeClass('dt-button buttons-excel buttons-html5').addClass('btn btn-default')
+            })
+
+                yadcf.init(table, [
+            {
+                column_number: 2,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 1,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 3,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+
+            {
+                column_number: 6,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+
+            {
+                column_number: 8,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 9,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 10,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 11,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            {
+                column_number: 12,
+                filter_type:'text',
+                filter_reset_button_text: false,
+                filter_default_label:''
+            },
+            
+            
+
+            ],'footer');
+
+            });
+        function ShowDialog(id,name){
+            $('#id').val(id);
+            $('#Name').text(name);
+            $('#notes').val('');
+            $('#myModal').modal('show');
+        }
+
+        function InputCheckBox(val){
+            return "<input type='checkbox' class='assignment' value='"+val+"'>";
+        }
+
+        function CheckBox(object){
+
+            // 0 = Not Submit ,1 = Submitted,  2 = Approved,  3 = Rejected
+            //var StatusLineManager = parseInt(object.statusOne);
+            //var StatusServiceLine = parseInt(object.statusTwo);
+            //var StatusHeadOp = parseInt(object.statusThree);
+
+            var ProfileId = parseInt('@ViewBag.PreofileId');
+            //var LineManager = parseInt (object.approverOneId);
+            //var ServiceLine = parseInt (object.approverTwoId);
+            //var HeadOperation = parseInt (object.approverThreeId);
+            //var rpm = parseInt (object.rpmId)
+            //if(ProfileId == rpm || ProfileId == ServiceLine)
+            //{
+
+            $('#check-all').show();
+            return InputCheckBox(object.id);
+                //}
+
+            //}
+
+            //return "-";
+        }
+
+        //$('#check-all').click(function(e){
+        //    if($(this).prop('checked')){
+        //        $('#table tbody tr td input[type="checkbox"]').each(function(){
+        //            $(this).prop('checked', true);
+        //        });
+        //    }else{
+        //        $('#table tbody tr td input[type="checkbox"]').each(function(){
+        //            $(this).prop('checked', false);
+        //        });
+        //    }
+        //    var checkedVals = $('.assignment:checkbox:checked').map(function() {
+        //        return this.value;
+        //    }).get();
+        //    var result = checkedVals.join(",");
+        //    $('.ListId').val(result);
+        //});
+
+        table.on('click','.assignment',function(){
+            var checkedVals = $('.assignment:checkbox:checked').map(function() {
+                return this.value;
+            }).get();
+            var result = checkedVals.join(",");
+            $('.ListId').val(result);
+        });
+
+        $('#check-all').click(function(e){
+            if($(this).prop('checked')){
+                $('#table tbody tr td input[type="checkbox"]').each(function(){
+                    $(this).prop('checked', true);
+                });
+            }else{
+                $('#table tbody tr td input[type="checkbox"]').each(function(){
+                    $(this).prop('checked', false);
+                });
+            }
+            var checkedVals = $('.assignment:checkbox:checked').map(function() {
+                return this.value;
+            }).get();
+            var result = checkedVals.join(",");
+            $('.ListId').val(result);
+        });
+
+        function Status(val,IsLm){
+            if(parseInt(val)==0){
+                if(IsLm){
+                    return "<label class='label label-srf'><i class='fa fa-clock-o'></i> Waiting Submitted</label>";
+                }else{
+                    return "<label class='label label-srf'><i class='fa fa-clock-o'></i> Waiting</label>";
+                }
+            }else if(parseInt(val)==1){
+                return "<label class='label label-primary'><i class='fa fa-check-circle-o'></i> Submitted</label>";
+            }else if(parseInt(val)==2){
+                return "<label class='label label-primary'><i class='fa fa-check'></i> Approved </label>";
+            }else if(parseInt(val)==3){
+                return "<label class='label label-danger'><i class='fa fa-times'></i> Reject </label>";
+            }else{
+                return "-";
+            }
+        }
+        function GetStatus(val){
+            var data = new Array();
+            data[0] = "<label class='label label-info'><i class='fa fa-clock-o'></i> Job Vacancy</label>";
+            data[1] = "<label class='label label-primary'><i class='fa fa-user'></i> Selected</label>";
+            data[2] = "<label class='label label-success'><i class='fa fa-check'></i> Completed</label>";
+            data[3] = "<label class='label label-danger'><i class='fa fa-close'></i> Rejected</label>";
+            return data[val];
+        }
+
+    </script>
+}

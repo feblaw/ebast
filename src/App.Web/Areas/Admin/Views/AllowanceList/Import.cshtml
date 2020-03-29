@@ -1,0 +1,114 @@
+﻿@{
+    ViewBag.Title = "Allowance List | Import";
+}
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Allowance List List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Import</span>
+    </li>
+}
+
+<h1 class="page-title">Allowance List <small>Import</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Allowance List Import Form</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <div class="row">
+
+            <div class="col-lg-12">
+                <form role="form" asp-action="Import" method="post" id="form" class="form-horizontal" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <div class="col-md-6 control-label">
+                            <input type="file" style="margin-left:10px;" class="control-label" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="submit" class="btn btn-primary" value="Upload" />
+                        </div>
+                    </div>
+                </form>
+                <hr />
+            </div>
+
+            <div class="col-lg-12">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <p style="margin-left:10px;" class="pull-left"><strong>Type : ( A, B , FSO) , Format Import ( Example ) :</strong></p>
+                        <p style="margin-left:10px;" class="pull-right"><small><i><strong>Note :Service Work Package and SSOW must be registered</strong></i></small></p>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td></td>
+                                <td>A</td>
+                                <td>B</td>
+                                <td>C</td>
+                                <td>D</td>
+                                <td>E</td>
+                                <td>F</td>
+                                <td>G</td>
+                                <td>H</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Type</td>
+                                <td>Service Work Package</td>
+                                <td>SSOW</td>
+                                <td>On Call Normal</td>
+                                <td>Shift Normal</td>
+                                <td>On Call Holiday</td>
+                                <td>Shift Holiday</td>
+                                <td>Note/Remark</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>A</td>
+                                <td>ADMINISTRATION SERVICES</td>
+                                <td>Advance Administration Services 1</td>
+                                <td>100000</td>
+                                <td>6000</td>
+                                <td>58000</td>
+                                <td>45000</td>
+                                <td>Remark Advance Administration Services 1</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>B</td>
+                                <td>ENGINEERING SERVICES</td>
+                                <td>Advance Engineering Services 1</td>
+                                <td>25000</td>
+                                <td>210000</td>
+                                <td>60000</td>
+                                <td>56000</td>
+                                <td>Remark Advance Engineering Services 1</td>
+                            </tr>
+                            <tr>
+                                <td colspan="8" align="left"><strong>Worksheet 1</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-master-data", "#menu-allowance-list");
+            FormValidation.init("#form");
+        });
+    </script>
+}

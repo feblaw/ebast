@@ -1,0 +1,112 @@
+﻿@{
+    ViewBag.Title = "Organizational Unit | Import";
+}
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Organizational Unit List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Import</span>
+    </li>
+}
+
+<h1 class="page-title">Organizational Unit <small>Import</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Organizational Unit Import Form</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <div class="row">
+
+            <div class="col-lg-12">
+                <form role="form" asp-action="Import" method="post" id="form" class="form-horizontal" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <div class="col-md-6 control-label">
+                            <input type="file" style="margin-left:10px;" class="control-label" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="submit" class="btn btn-primary" value="Upload" />
+                        </div>
+                    </div>
+                </form>
+                <hr />
+            </div>
+
+            <div class="col-lg-12">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <p style="margin-left:10px;"><strong>Status Organizational( Operational , Non Operational  )</strong></p>
+                        <p style="margin-left:10px;"><strong>Format Import ( Example ) :</strong></p>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td></td>
+                                <td>A</td>
+                                <td>B</td>
+                                <td>C</td>
+                                <td>D</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Organizational Unit Name</td>
+                                <td>Status Organizational</td>
+                                <td>Head of Organization</td>
+                                <td>Description</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>BNEP GSU RASO SUPPLY</td>
+                                <td>Operational</td>
+                                <td>bambang.noegroho@ericsson.com</td>
+                                <td>Description Of Organizational</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>GFFI CF SSO LOCAL ADMINISTRATION SERVICES</td>
+                                <td>Operational</td>
+                                <td>bambang.noegroho@ericsson.com</td>
+                                <td>Description Of Organizational</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>RASO GENERAL AFFAIRS ID</td>
+                                <td>Non Operational</td>
+                                <td>ferry.aritonang@ericsson.com</td>
+                                <td>Description Of Organizational</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>RASO NETWORK SERVICES</td>
+                                <td>Non Operational</td>
+                                <td>ferry.aritonang@ericsson.com</td>
+                                <td>Description Of Organizational</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" align="left"><strong>Worksheet 1</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-master-data", "#menu-departement");
+            FormValidation.init("#form");
+        });
+    </script>
+}

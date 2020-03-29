@@ -1,0 +1,769 @@
+﻿@{
+    ViewData["Title"] = "Expenses Claim Page";
+}
+
+@section breadcrumb{
+    <li>
+        <span>Expenses Claim List</span>
+    </li>
+}
+
+<h1 class="page-title">Expenses Claim <small>List</small></h1>
+<div class="portlet light portlet-fit portlet-datatable bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Expenses Claim List</span>
+        </div>
+        <div class="pull-right">
+            
+                <div class="portlet-body">
+                    <div class="box-footer clearfix" style="display: inline-flex">
+@if (User.IsInRole("Regional Project Manager") || User.IsInRole("Line Manager"))
+            {
+                        <form role="form" id="FormApprove" asp-action="ApproveMultiple">
+                            <input type="hidden" class="ListId" name="data" value="" required />
+                            <a href="javascript:void(0);" class="btn btn-danger pull-right" id="btn-reject" style="margin-left:10px;">Reject</a>
+                            <button type="submit" name="ApprovalStatus" value="2" class="btn btn-primary pull-right">Giving Approval</button>
+                        </form>
+}
+                        <div id="toolbox" style="margin-left: 10px">
+
+                        </div>
+                        @if (User.IsInRole("Contractor") || User.IsInRole("HR Agency"))
+            {
+                            <a style="margin-left:10px;" class="btn btn-primary" href="@Url.Action("Create")"><i class="fa fa-plus-circle"></i> Add new</a>
+                        }
+                    </div>
+                </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <table id="table" class="table table-striped table-bordered table-hover no-border-bottom">
+            <thead>
+                <tr>
+                    <th rowspan="2">Action</th>
+                    <th rowspan="2">Claim By</th>
+                    <th>
+                        Multiple Approve
+                    </th>
+                    <th rowspan="2">Travel No</th>
+                    <th rowspan="2">Category</th>
+                    <th rowspan="2">Claim Value</th>
+                    <th rowspan="2">Post Date</th>
+                    <th rowspan="2">Start Date (Depature)</th>
+                    <th rowspan="2">End Date (Depature)</th>
+                    <th rowspan="2">Claim Description</th>
+                    <th colspan="3"><center>RPM Approval</center></th>
+                    <th colspan="3"><center>Line Manager Approval</center></th>
+                </tr>
+                <tr>
+                    <th class="text-center">
+                        @if (User.IsInRole("Line Manager"))
+                        {
+                            <input type="checkbox" id="check-all" />
+                        }
+                        else
+                        {
+                            <label>-</label>
+                        }
+                    </th>
+                    <th>Status</th>
+                    <th>RPM</th>
+                    <th>Approve Date - Remark</th>
+                    <th>Status</th>
+                    <th>Line Manager</th>
+                    <th>Approve Date - Remark</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                @*<tr class="hidden">
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>*@
+            </thead>
+            @*<tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>*@
+        </table>
+    </div>
+</div>
+
+<div id="ModalReject" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Rejected Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="FormApprove" asp-action="MultiReject">
+                    <input type="hidden" class="ListId" name="data" value="" required />
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="remarks">Remarks</label>
+                            <textarea id="remarks" name="remarks" class="form-control" rows="5" required></textarea>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal" style="margin-left:10px;">Cancel</button>
+                        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Set Approval Status</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="FormApprove" asp-controller="Claim" asp-action="Approval">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Set Approval</label>
+                            <input type="hidden" name="TravelId" id="TravelId" required />
+                            <select id="ApprovalStatus" name="ApprovalStatus" class="form-control" style="width:100%" required>
+                                <option disabled selected>-- Select Approval--</option>
+                                <option value="2">Approve</option>
+                                <option value="0">Reject</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Network Number</label>
+                            <input type="text" id="ApprovalNotes" name="ApprovalNotes" class="form-control" rows="5" required/>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal" style="margin-left:10px;">Cancel</button>
+                        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+@if (!User.IsInRole("Contractor") || User.IsInRole("HR Agency") || User.IsInRole("Administrator"))
+{
+    <div id="Approver"></div>
+}
+
+@if (User.IsInRole("Regional Project Manager"))
+{
+    <div id="IsPm"></div>
+}
+
+@if (User.IsInRole("Line Manager"))
+{
+    <div id="IsLm"></div>
+}
+
+@{
+    Html.RenderPartial("_FixedHeaderDatatablesAssets");
+}
+
+<style>
+    .DTFC_LeftBodyWrapper {
+        top: 17px !important;
+    }
+
+        .DTFC_LeftBodyWrapper table.DTFC_Cloned thead {
+            display: none;
+        }
+
+    table {
+        table-layout: fixed;
+        word-wrap: break-word;
+    }
+</style>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            $common.setMenu("#menu-claim", "#menu-claim");
+            var success = @((TempData["Success"] != null).ToString().ToLower());
+            if (success == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("Claim request has been added");
+            }
+
+            var danger = @((TempData["Danger"] != null).ToString().ToLower());
+            if (danger == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("@TempData["Danger"]");
+
+            }
+
+            var approved = @((TempData["Approved"] != null).ToString().ToLower());
+            if (approved == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("Claim request has been approved");
+            }
+
+            var rejected = @((TempData["Rejected"] != null).ToString().ToLower());
+            if (rejected == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.error("Claim request has been rejected");
+            }
+
+            $('select').select2();
+
+            var datatableOption = {
+                ajaxMethod: "POST",
+                listUrl: "/admin/api/claim/postdatatables",
+                detailUrl: "@Url.Action("Details")/",
+                editUrl: "@Url.Action("Edit")/",
+                deleteUrl: "/admin/api/claim/",
+                deleteAlertSuccess: "Claim request has been removed",
+                fixedColumns: 2,
+                columnDefs: [
+                    {
+                        "targets": 1, // Claim By
+                        "data": "contractor",
+                        name:"Contractor.Name",
+                    },
+                    {
+                        "targets": 3, // TravelNo
+                        "data": "travelReqNo",
+                        name:"TravelReqNo",
+                    },
+                     {
+                         "targets": 4, // Category
+                         "data": "category",
+                         name:"ClaimCategory.Name",
+                     },
+                    {
+                        "targets": 5, // Claim Value
+                        "data": "value",
+                        name:"Value",
+                        render: function (data, type, dataObj) {
+                            $("span.numeric").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });
+                            return "<span class='numeric'>" + data + "</span>";
+
+                        }
+                    },
+                     {
+                         "targets": 6, // Post Date
+                         "data": "addDate",
+                         name:"AddDate",
+                         "render": function (data) {
+                             var date = new Date(data);
+                             return moment(date).format("DD MMM YYYY");
+                         }
+                     },
+                    {
+                        "targets": 7, // Start Date
+                        "data": "startDate",
+                        name:"startDate",
+                        "render": function (data) {
+                            var date = new Date(data);
+                            return moment(date).format("DD MMM YYYY");
+                        }
+                    },
+                     {
+                         "targets": 8, // End Date
+                         "data": "endDate",
+                         name:"endDate",
+                         "render": function (data) {
+                             var date = new Date(data);
+                             return moment(date).format("DD MMM YYYY");
+                         }
+                     },
+                    {
+                        "targets": 9, // Claim Description
+                        "data": "description",
+                        name:"Description",
+                    },
+                    {
+                        "targets": 10,  // Status PM
+                        "data": "statusOne",
+                        name:"statusOne",
+                        "render": function(data, type, row, meta){
+                            return Status(data);
+                        }
+                    },
+                     {
+                         "targets": 11, // PM Name
+                         "data": "projectManager",
+                         name: "ClaimApproverOne.Name"
+                     },
+                    {
+                        "targets": 12, // Project Manager Approval Date Remark
+                        "data": "approvedDateOne",
+                        name:"approvedDateOne",
+                        "render": function (data, type, row, meta) {
+                            var date = new Date(data);
+                            var Status = parseInt(row.statusOne);
+                            if(Status!=1){
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+
+                        }
+                    },
+                    {
+                        "targets": 13, // Line Manager Approval Status
+                        "data": "statusTwo",
+                        name:"statusTwo",
+                        "render": function(data, type, row, meta){
+                            return Status(data);
+                        }
+                    },
+                    {
+                        "targets": 14, // Line Manager Approval Name
+                        "data": "lineManager",
+                        name: "ClaimApproverTwo.Name"
+                    },
+                    {
+                        "targets": 15, // Line Manager Approval Date Remark
+                        "data": "approvedDateTwo",
+                        name:"approvedDateTwo",
+                        "render": function (data, type, row, meta) {
+                            var date = new Date(data);
+                            var Status = parseInt(row.statusTwo);
+                            if(Status!=1){
+                                return moment(date).format("DD MMM YYYY");
+                            }else{
+                                return "-";
+                            }
+
+                        }
+                    },
+                    
+                    {
+                        "targets": 0, // Action
+                        "data": "costCenter.description",
+                        name:"CostCenter.Description",
+                        "bSearchable": false,
+                        "orderable": false,
+                        "render": function(data, type, row, meta){
+                            var status1 = parseInt(row.statusOne);
+                            var status2 = parseInt(row.statusTwo);
+                            var Id = row.id;
+                            var ProjectManager = parseInt(row.claimApproverOneId);
+                            var LineManager = parseInt(row.claimApproverTwoId);
+                            var ProfileId = parseInt('@ViewBag.PreofileId');
+
+                            console.log("Status 1 : "+status1);
+                            console.log("Status 2 : "+status2);
+                            console.log("Regional Project Manager : "+ProjectManager);
+                            console.log("Line Manager : "+LineManager);
+                            console.log("User : "+ProfileId);
+                            console.log("===========================");
+
+                            if (document.getElementById("Approver") != null) {
+                              
+                                if(document.getElementById("IsPm")!=null && ProjectManager == ProfileId){
+                                    console.log("INI");
+                                    if(status1==1 && status2==1  && ProjectManager == ProfileId){
+                                        return "<a class='detail' title='Detail Claim'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='javascript:void(0);' class='btn-approve' title='Approve Claim Request' id='"+Id+"'><i class='fa fa-gavel'></i></a>&nbsp;&nbsp;&nbsp;";
+                                    }else{
+                                        return "<a class='detail' title='Detail Claim'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;";
+                                    }
+                                }else if(document.getElementById("IsLm")!=null && LineManager == ProfileId){
+                                   
+                                    if(status1==2 && status2==1 && LineManager == ProfileId){
+                                        return "<a class='detail' title='Detail Claim'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                        "<a href='javascript:void(0);' class='btn-approve' title='Approve Claim Request' id='"+Id+"'><i class='fa fa-gavel'></i></a>&nbsp;&nbsp;&nbsp;";
+                                    }else{
+                                        return "<a class='detail' title='Detail Claim'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;";
+                                    }
+                                }else{
+                                    return "<a class='detail' title='Detail Claim'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;" + "<a class='remove' title='Remove Claim'><i class='fa fa-trash'></i></a>";
+                                }
+                            } else {
+                                @if (User.IsInRole("Contractor") || User.IsInRole("Administrator"))
+                                {
+                                    if(User.IsInRole("Administrator"))
+                                    {
+                                        @:return "<a class='detail' title='Detail Claim'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                        @:"<a class='edit' title='Edit Claim'><i class='fa fa-edit'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                        @: "<a class='remove' title='Remove Claim'><i class='fa fa-trash'></i></a>";
+
+                                    }
+                                    else
+                                    {
+                                        @:if(status1==2 && status2==2){
+                                                                                                                @:return "<a class='detail' title='Detail Claim'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;";
+                                                                                                                @:}else {
+                                                                                                                @:return "<a class='detail' title='Detail Claim'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                                                                                                @: "<a class='remove' title='Remove Claim'><i class='fa fa-trash'></i></a>";
+                                                                                                                @:}
+                                                                                                    }
+                                }
+                                else
+                                {
+                                    @:return "<a class='detail' title='Detail Activity'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;";
+                                                                                                 }
+                            }
+
+                        },
+                        "width": "60px",
+                        className: "text-center"
+                    },
+                    {
+                        "targets": 2, // Checked
+                        "data": "createdAt",
+                        name:"createdAt",
+                        "render": function (data, type, row, meta) {
+                            var status1 = parseInt(row.statusOne);
+                            var status2 = parseInt(row.statusTwo);
+                            var ProjectManager = parseInt(row.claimApproverOneId);
+                            var LineManager = parseInt(row.claimApproverTwoId);
+                            var ProfileId = parseInt('@ViewBag.PreofileId');
+
+                            if(document.getElementById("Approver")==null){
+                                $('#check-all').hide();
+                                return "-";
+                            }else{
+                                if(status1 == 1 && status2 ==1 && ProjectManager == ProfileId){
+                                    return "-";//CheckBox(row.id);
+                                }else if(status1 == 2 && status2 ==1 && LineManager == ProfileId){
+                                    return CheckBox(row.id);
+                                }else{
+                                    return "-";
+                                }
+                                return "-";
+                            }
+                        },
+                        "width": "30px",
+                        className: "text-center"
+                    },
+                ]
+            }
+
+
+            $datatables.init("#table", datatableOption);
+            var table = $('#table')
+                .on('init.dt', function(e, settings, json) { disableImmediateSearchDt(e, settings, json, '#table'); })
+                .DataTable(); theDataTable = table;
+            table.order( [[0,'desc']] );
+            table.on('click', '.btn-approve', function () {
+                var id = $(this).attr('id');
+                $('#TravelId').val(id);
+                $('#ApprovalStatus').val('');
+                $('#ApprovalNotes').val('');
+                $('#myModal').modal('show');
+                return false;
+            });
+            //table.search('').columns().search('').draw();
+            table.on( 'draw', function () {
+                $("span.numeric").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });
+            } );
+
+            $('#table tbody').on( 'click', 'tr', function () {
+                if (event.target.type !== 'checkbox') {
+                    $(':checkbox', this).trigger('click');
+                }
+            } );
+
+
+            // Check Event Trigger
+
+            table.on('click','.srf',function(){
+                var checkedVals = $('.srf:checkbox:checked').map(function() {
+                    return this.value;
+                }).get();
+                var result = checkedVals.join(",");
+                $('.ListId').val(result);
+            });
+
+
+            $('#check-all').click(function(e){
+                if($(this).prop('checked')){
+                    $('#table tbody tr td input[type="checkbox"]').each(function(){
+                        $(this).prop('checked', true);
+                    });
+                }else{
+                    $('#table tbody tr td input[type="checkbox"]').each(function(){
+                        $(this).prop('checked', false);
+                    });
+                }
+                var checkedVals = $('.srf:checkbox:checked').map(function() {
+                    return this.value;
+                }).get();
+                var result = checkedVals.join(",");
+                $('.ListId').val(result);
+            });
+
+            $('#btn-reject').click(function(){
+                $('#remarks').val('');
+                var DataId = $('#ModalReject .ListId').val();
+                if(DataId)
+                {
+                    $('#ModalReject').modal('show');
+                }
+
+            });
+
+            var Status = function(val){
+                if(val=='0'){
+                    return "<label class='label label-danger'><i class='fa fa-close'></i> Rejected</label>";
+                }
+                if(val=='1'){
+                    return "<label class='label label-success'><i class='fa fa-clock-o'></i> Waiting</label>";
+                }
+                if(val=='2'){
+                    return "<label class='label label-primary'><i class='fa fa-check'></i> Approved</label>";
+                }
+            }
+
+            var StatusTravel = function(val){
+                if(val=='0'){
+                    return "<label class='label label-danger'><i class='fa fa-close'></i> Rejected</label>";
+                }
+                if(val=='1'){
+                    return "<label class='label label-success'><i class='fa fa-clock-o'></i> Waiting</label>";
+                }
+                if(val=='2'){
+                    return "<label class='label label-primary'><i class='fa fa-check'></i> Approved</label>";
+                }
+            }
+
+            if(document.getElementById("Approver"))
+            {
+                new $.fn.dataTable.Buttons(table, {
+                    buttons:
+                    [{
+                        text:'<i class="fa fa-file-excel-o"></i> Export to Excel',
+                        extend:'excel',
+                        exportOptions: {
+                            columns: [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+                        },
+                        action: function (e, dt, button, config) {
+                            window.location.href = "/Export/Claim";
+                        }
+                    }]
+                });
+                table.buttons( 0, null ).container().appendTo( '#toolbox' );
+                $('.buttons-excel').each(function() {
+                    $(this).removeClass('dt-button buttons-excel buttons-html5').addClass('btn btn-default')
+                })
+            }
+
+            yadcf.init(table, [
+           {
+               column_number: 3,
+               filter_type: 'text',
+               filter_reset_button_text: false,
+               filter_default_label: ''
+           },
+           //{
+           //    column_number: 1,
+           //    filter_type: 'text',
+           //    filter_reset_button_text: false,
+           //    filter_default_label: ''
+           //},
+           {
+               column_number: 4,
+               filter_reset_button_text: false,
+               filter_default_label: 'Select Filter'
+           },
+           {
+               column_number: 5,
+               filter_type: 'text',
+               filter_reset_button_text: false,
+               filter_default_label: ''
+           },
+           {
+               column_number: 6,
+               filter_type: "date",
+               date_format: 'dd-mm-yy',
+               filter_reset_button_text: false,
+
+           },
+           {
+               column_number: 7,
+               filter_type: "date",
+               date_format: 'dd-mm-yy',
+               filter_reset_button_text: false,
+
+           },
+           {
+               column_number: 8,
+               filter_type: "date",
+               date_format: 'dd-mm-yy',
+               filter_reset_button_text: false,
+
+           },
+           {
+               column_number: 9,
+               filter_type: 'text',
+               filter_reset_button_text: false,
+               filter_default_label: ''
+           },
+            {
+                column_number: 10,
+                filter_reset_button_text: false,
+                filter_default_label: 'Select Filter',
+                data: [{
+                    value: 'Rejected',
+                    label: 'Rejected'
+                }, {
+                    value: 'Waiting',
+                    label: 'Waiting'
+                }, {
+                    value: 'Approved',
+                    label: 'Approved'
+                }]
+            },
+            {
+                column_number: 11,
+                filter_reset_button_text: false,
+                filter_default_label: 'Select Filter'
+            },
+            {
+                column_number: 12,
+                filter_type: 'text',
+                filter_reset_button_text: false,
+                filter_default_label: ''
+            },
+            {
+                column_number: 13,
+                filter_reset_button_text: false,
+                filter_default_label: 'Select Filter',
+                data: [{
+                    value: 'Rejected',
+                    label: 'Rejected'
+                }, {
+                    value: 'Waiting',
+                    label: 'Waiting'
+                }, {
+                    value: 'Approved',
+                    label: 'Approved'
+                }]
+            },
+            {
+                column_number: 14,
+                filter_reset_button_text: false,
+                filter_default_label: 'Select Filter'
+            },
+            {
+                column_number: 15,
+                filter_type: 'text',
+                filter_reset_button_text: false,
+                filter_default_label: ''
+            },
+            {
+                column_number: 16,
+                filter_reset_button_text: false,
+                filter_default_label: 'Select Filter'
+            },
+            {
+                column_number: 17,
+                filter_reset_button_text: false,
+                filter_default_label: 'Select Filter'
+            },
+            {
+                column_number: 18,
+                filter_reset_button_text: false,
+                filter_default_label: 'Select Filter'
+            },
+            {
+                column_number: 19,
+                filter_reset_button_text: false,
+                filter_default_label: 'Select Filter'
+            },
+            {
+                column_number: 20,
+                filter_reset_button_text: false,
+                filter_default_label: 'Select Filter'
+            },
+            ]);
+
+        });
+
+        function CheckBox(val){
+            return "<input type='checkbox' class='srf' value='"+val+"'>";
+        }
+
+    </script>
+}

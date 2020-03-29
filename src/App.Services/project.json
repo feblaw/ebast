@@ -1,0 +1,21 @@
+{
+	"version": "1.0.0-*",
+	"dependencies": {
+		"App.Data": "1.0.0-*",
+		"App.Domain": "1.0.0-*",
+		"NETStandard.Library": "1.6.1",
+		"AutoMapper": "5.1.1",
+		"DataTables.AspNet.AspNetCore": "2.0.0",
+		"MailKit": "1.4.2.1",
+		"Microsoft.EntityFrameworkCore": "1.1.0",
+		"Npgsql.EntityFrameworkCore.PostgreSQL": "1.1.0",
+		"Npgsql.EntityFrameworkCore.PostgreSQL.Design": "1.1.0",
+		"System.Linq.Dynamic.Core": "1.0.6.9",
+		"MoreLinq.Core": "2.0.0-beta04-2"
+	},
+	"frameworks": {
+		"netstandard1.6": {
+			"imports": "dnxcore50"
+		}
+	}
+}

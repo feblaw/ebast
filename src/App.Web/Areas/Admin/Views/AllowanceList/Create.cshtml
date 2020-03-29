@@ -1,0 +1,247 @@
+﻿@using App.Web.Models.ViewModels.Core.Business
+@model AllowanceListModelForm
+@{
+    ViewBag.Title = "Allowance List | Create";
+}
+
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Allowance List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Create</span>
+    </li>
+}
+
+<h1 class="page-title">Allowance List<small> Create</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Allowance List Form</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <form role="form" asp-action="Create" method="post" id="form" class="form-horizontal">
+            <div class="form-body">
+                <div class="alert alert-danger display-hide">
+                    <button class="close" data-close="alert"></button> You have some form errors. Please check below.
+                </div>
+                @Html.ValidationSummary(true, "Failed to submit", new { @class = "alert alert-danger" })
+                <div class="form-group">
+                    <label asp-for="Type" class="control-label col-md-3">
+                        Type
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select id="Type" class="form-control" asp-for="Type" required>
+                            <option value="">-- CHOOSE TYPE --</option>
+                            <option value="0">A</option>
+                            <option value="1">B</option>
+                            <option value="2">FSO</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ServicePackCategoryId" class="control-label col-md-3">
+                        Service Work Package
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select id="ServicePackCategoryId" class="form-control" asp-for="ServicePackCategoryId" required>
+                            <option value="">-- CHOOSE SERVICE WORK PACKAGE --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ServicePackId" class="control-label col-md-3">
+                        SSOW
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <select id="ServicePackId" class="form-control" asp-for="ServicePackId" required>
+                            <option value="">-- CHOOSE SSOW --</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <table border="0" width="100%">
+                    <tr>
+                        <td class="col-md-9">
+                            <div class="form-group no-margin">
+                                <label asp-for="OnCallNormal" class="control-label col-md-4">
+                                    On Call
+                                    <span class="text-danger"> * </span>
+                                </label>
+                                <div class="col-md-8" style="padding-right: 7px !important; padding-left: 11px !important;">
+                                    <input type="text" class="form-control numeric" id="OnCallNormalFormat" value="" required>
+                                    <input type="hidden" value="0" asp-for="OnCallNormal" />
+                                    <span asp-validation-for="OnCallNormal" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </td>
+                        <td rowspan="2" valign="middle" width="20px" style="border-left: dotted 1px #000000"> <i class="fa fa-caret-right fa-3x font-green-dark" style="margin-right: 0px !important; padding-right: 0px !important"></i></td>
+                        <td rowspan="2" valign="middle"><span>Normal <br />Allowance Rate</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-9">
+                            <div class="form-group no-margin margin-top-10">
+                                <label asp-for="ShiftNormal" class="control-label col-md-4">
+                                    Shift
+                                    <span class="text-danger"> * </span>
+                                </label>
+                                <div class="col-md-8" style="padding-right: 7px !important; padding-left: 9px !important">
+                                    <input type="text" class="form-control numeric" id="ShiftNormalFormat" value="" required>
+                                    <input type="hidden" value="0" asp-for="ShiftNormal" />
+                                    <span asp-validation-for="ShiftNormal" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                
+                <br />
+
+                <table border="0" width="100%">
+                    <tr>
+                        <td class="col-md-9">
+                            <div class="form-group no-margin">
+                                <label asp-for="OnCallHoliday" class="control-label col-md-4">
+                                    On Call
+                                    <span class="text-danger"> * </span>
+                                </label>
+                                <div class="col-md-8" style="padding-right: 7px !important; padding-left: 11px !important;">
+                                    <input type="text" class="form-control numeric" id="OnCallHolidayFormat" value="" required>
+                                    <input type="hidden" value="0" asp-for="OnCallHoliday" />
+                                    <span asp-validation-for="OnCallHoliday" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </td>
+                        <td rowspan="2" valign="middle" width="20px" style="border-left: dotted 1px #000000"> <i class="fa fa-caret-right fa-3x font-green-dark" style="margin-left: 0px !important; padding-left: 0px !important"></i></td>
+                        <td rowspan="2" valign="middle"><span class="margin-top-40">Holiday <br />Allowance Rate</span></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-9">
+                            <div class="form-group no-margin margin-top-10">
+                                <label asp-for="ShiftHoliday" class="control-label col-md-4">
+                                    Shift
+                                    <span class="text-danger"> * </span>
+                                </label>
+                                <div class="col-md-8" style="padding-right: 7px !important; padding-left: 9px !important">
+                                    <input type="text" class="form-control numeric" id="ShiftHolidayFormat" value="" required>
+                                    <input type="hidden" value="0" asp-for="ShiftHoliday" />
+                                    <span asp-validation-for="ShiftHoliday" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <br />
+
+
+                <div class="form-group">
+                    <label asp-for="AllowanceNote" class="control-label col-md-3">
+                        Note/Remark
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-6">
+                        <textarea rows="3" class="form-control" asp-for="AllowanceNote" required></textarea>
+                        <span asp-validation-for="AllowanceNote" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group last">
+                    <div class="col-md-3 col-md-offset-3">
+                        <label class="text-danger">* Field Required</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3">
+                        <a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp; Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-master-data", "#menu-allowance-list");
+            FormValidation.init("#form");
+            $('select').select2();
+
+            $(".numeric").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });           
+
+            $("input#OnCallNormalFormat").on("focusout", function () {
+                $("input#OnCallNormal").val($(this).autoNumeric('get'));
+            });
+
+            $("input#ShiftNormalFormat").on("focusout", function () {
+                $("input#ShiftNormal").val($(this).autoNumeric('get'));
+            });
+            
+            $("input#OnCallHolidayFormat").on("focusout", function () {
+                $("input#OnCallHoliday").val($(this).autoNumeric('get'));
+            });
+
+            $("input#ShiftHolidayFormat").on("focusout", function () {
+                $("input#ShiftHoliday").val($(this).autoNumeric('get'));
+            });
+        });
+
+        $("#Type").change(function () {
+           $.ajax({
+                //change your webapi path here
+                url: '/admin/api/allowancelists/GetByType?types=' + $("#Type").val(),
+                type: "get",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                cache: false,
+                success: function (data) {
+                    //Read the value and assign to drodownlist
+                    $('#ServicePackCategoryId').empty();
+                    $('#ServicePackId').empty();
+                    $.each(data, function (i) {
+                        $('#ServicePackCategoryId').append($('<option></option>').val(data[i].servicePackCategoryId).html(data[i].servicePackCategoryName));
+                        $('#ServicePackId').append($('<option></option>').val(data[i].id).html(data[i].name));
+                    });
+                },
+                error: function (msg) { alert(msg); }
+            });
+
+        });
+
+        $("#ServicePackCategoryId").change(function () {
+           $.ajax({
+                //change your webapi path here
+                url: '/admin/api/allowancelists/GetByTypeAndCategory?categoryId=' + $("#ServicePackCategoryId").val() + '&&types=' + $("#Type").val(),
+                type: "get",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                cache: false,
+                success: function (data) {
+                    //Read the value and assign to drodownlist
+                    $('#ServicePackId').empty();
+                    $.each(data, function (i) {
+                        $('#ServicePackId').append($('<option></option>').val(data[i].id).html(data[i].name));
+                    });
+                },
+                error: function (msg) { alert(msg); }
+            });
+        });
+    </script>
+}

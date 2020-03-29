@@ -1,0 +1,157 @@
+﻿@model App.Web.Models.ViewModels.Core.Business.TravelRequestViewModel
+@{
+    ViewBag.Title = "Travel | Details";
+}
+
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Travel List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Details</span>
+    </li>
+}
+
+<h1 class="page-title">Travel <small>Details</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Travel Request Details</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <form role="form" class="form-horizontal">
+            <div class="form-body">
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        <strong>Travel Req No</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @Model.TravelReqNo
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        <strong>WP Name</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @ViewBag.ContractorName
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="control-label col-md-3">
+                        <strong>Start Date</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @Model.StartDate.ToString("dd MMMM yyyy")
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        <strong>End Date</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @Model.EndDate.ToString("dd MMMM yyyy")
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="control-label col-md-3">
+                        <strong>Departure</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @ViewBag.Departure
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="control-label col-md-3">
+                        <strong>Main Destination</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @ViewBag.Destination
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="control-label col-md-3">
+                        <strong>Description</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @Model.Description
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">
+                        <strong>Regional Project Manager</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @ViewBag.ProjectManager 
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="control-label col-md-3">
+                        <strong>Line Manager</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @ViewBag.LineManager
+                        </p>
+                    </div>
+                </div>
+             
+             
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3">
+                        <a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+                        @if (User.IsInRole("Contractor"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa fa-edit"></i>&nbsp; Edit</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-travel", "#menu-travel");
+
+            var success = @((TempData["Success"] != null).ToString().ToLower());
+
+            if (success == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("Travel request has been updated");
+            }
+
+           
+
+        });
+    </script>
+}

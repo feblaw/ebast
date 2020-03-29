@@ -1,0 +1,36 @@
+﻿@model LocaleResourceForm
+
+@{
+    Layout = null;
+}
+
+<form id="ResourceEdit" role="form" action="/admin/api/localeresources" method="put">
+    <div class="role-body">
+        <div class="alert alert-danger display-hide">
+            <button class="close" data-close="alert"></button> You have some form errors. Please check below.
+        </div>
+        <div class="alert alert-success display-hide">
+            <button class="close" data-close="alert"></button> Your form validation is successful!
+        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger" id="validation-summary"></div>
+        <div class="form-group">
+            <label asp-for="ResourceName" class="control-label">
+                Name
+                <span class="text-danger"> * </span>
+            </label>
+            <div>
+                <input asp-for="ResourceName" class="form-control" required/>
+                <span asp-validation-for="ResourceName" class="text-danger" />
+            </div>
+        </div>
+        <div>
+            @Html.EditorFor(m => m.ResourceValues, "ResourceValues")
+        </div>
+        <hr />
+        <div class="form-actions pull-right">
+            <input type="submit" value="Save" class="btn blue" />
+            <button type="button" class="btn default bootbox-close-button">Cancel</button>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</form>

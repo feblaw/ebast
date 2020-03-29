@@ -1,0 +1,92 @@
+﻿@{
+    ViewData["Title"] = "Role Management Page";
+}
+
+@section breadcrumb{
+    <li>
+        <span>Role Management</span>
+    </li>
+}
+
+<h1 class="page-title">Role <small>Management</small></h1>
+<div class="portlet light portlet-fit portlet-datatable bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">List</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-primary" href="@Url.Action("Create")"><i class="fa fa-plus-circle"></i> Add new</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <table id="table-role" class="table table-striped table-bordered table-hover no-border-bottom" cellspacing="0" width="100%">
+            <colgorup>
+                <col width="">
+                <col width="">
+                <col width="260">
+            </colgorup>
+            <thead>
+                <tr>
+                    <th data-column="Name">Name</th>
+                    <th data-column="Description">Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tfoot>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+@{
+    Html.RenderPartial("_DatatablesAssets");
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-role-management");
+
+            var datatableOption = {
+                listUrl: "/admin/api/roles/datatables",
+                detailUrl: "@Url.Action("Details")/",
+                editUrl: "@Url.Action("Edit")/",
+                deleteUrl: "/admin/api/roles/",
+                deleteAlertSuccess: "Roles has been removed", 
+                columnDefs: [
+                         {
+                             "targets": -1,
+                             "data": null,
+                             "defaultContent": "<button class='btn btn-success detail' title='Detail Role'><i class='fa fa-info'></i></button>" +
+                                 "<button class='btn btn-primary edit' title='Edit Role'><i class='fa fa-edit'></i></button>" +
+                                 "<button class='btn btn-danger remove' title='Remove Role'><i class='fa fa-trash'></i></button>",
+                             "orderable": false
+                         },
+                          {
+                              "targets": -2,
+                              "data": "description",
+                              name: "Description"
+                          },
+                         {
+                             "targets": 0,
+                             "data": "name",
+                             name: "Name"
+                         }
+                ]
+            }
+
+            $datatables.init("#table-role", datatableOption);
+
+            var table = $('#table-role')
+                .on('init.dt', function (e, settings, json) { disableImmediateSearchDt(e, settings, json, '#table-role'); })
+                .DataTable(); theDataTable = table;
+        });
+    </script>
+}

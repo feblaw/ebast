@@ -1,0 +1,295 @@
+﻿@model UpdateProfileForm
+@{
+
+    var SrfInfo = (SrfRequest)ViewBag.Srf;
+    var ContractorInfo = (CandidateInfo)ViewBag.ContractorInfo;
+    var Departement = (Departement)ViewBag.Department;
+    var DepartmentSub = (DepartementSub)ViewBag.DepartmentSub;
+    var LineManager = (UserProfile)ViewBag.LineManager;
+    var ProjectManager = (UserProfile)ViewBag.ProjectManager;
+    var SSOW = (ServicePack)ViewBag.SSOW;
+}
+
+<form asp-action="UpdateProfile" asp-controller="Profile" method="post" role="form" id="ProfileEdit">
+    <div class="alert alert-danger display-hide">
+        <button class="close" data-close="alert"></button> You have some form errors. Please check below.
+    </div>
+    <div class="alert alert-success display-hide">
+        <button class="close" data-close="alert"></button> Your form validation is successful!
+    </div>
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey("updateError"))
+    {
+    <div class="alert alert-danger">
+        <button class="close" data-close="alert"></button>
+        @Html.ValidationMessage("updateError")
+    </div>
+    }
+    <div class="form-group">
+        <label asp-for="Photo" class="form-control-static col-md-2 bold"></label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Photo, new { @preview = true, @class = "form-control", @accept = "image/*", @extension = ".jpg,.jpeg,.png,.gif", @Ratio = 120.0 / 120.0, required = "required" })
+            <span asp-validation-for="Photo" class="text-danger"></span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="form-control-static col-md-2 bold">
+            Email<span class="text-danger"> * </span>
+        </label>
+        <div class="col-md-10">
+            <input type="email" class="form-control" asp-for="Email" required>
+            <span asp-validation-for="Email"  class="text-danger"></span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Name" class="form-control-static col-md-2 bold">
+            Name<span class="text-danger"> * </span>
+        </label>
+        <div class="col-md-10">
+            <input type="text" class="form-control" asp-for="Name" required>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Birthplace" class="form-control-static col-md-2 bold"></label>
+        <div class="col-md-10">
+            <input type="text" class="form-control" asp-for="Birthplace">
+            <span asp-validation-for="Birthplace" class="text-danger"></span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Birthdate" class="form-control-static col-md-2 bold"></label>
+        <div class="col-md-10">
+            <div class="input-group">
+                @if (Model.Birthdate.HasValue)
+                {
+                    <input type="text" class="form-control form_datetime" id="BirthdateView" value="@Model.Birthdate.Value.ToString("dd MMMM yyyy")" readonly />
+                }
+                else
+                {
+                    <input type="text" class="form-control form_datetime" id="BirthdateView" value="@DateTime.MinValue.ToString("dd MMMM yyyy")" readonly />
+                }
+                <span class="input-group-btn">
+                    <button class="btn btn-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+            </div>
+            <input type="hidden" class="form-control" asp-for="Birthdate" readonly required />
+            <span asp-validation-for="Birthdate" class="text-danger"></span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Address" class="form-control-static col-md-2 bold"></label>
+        <div class="col-md-10">
+            <textarea asp-for="Address" rows="5" class="form-control"></textarea>
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Phone" class="form-control-static col-md-2 bold">Phone number (mobile)</label>
+        <div class="col-md-10">
+            <input type="text" class="form-control" asp-for="MobilePhoneNumber">
+            <span asp-validation-for="MobilePhoneNumber" class="text-danger"></span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Phone" class="form-control-static col-md-2 bold">Phone number (home)</label>
+        <div class="col-md-10">
+            <input type="text" class="form-control" asp-for="HomePhoneNumber">
+            <span asp-validation-for="HomePhoneNumber" class="text-danger"></span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Phone" class="form-control-static col-md-2 bold">About</label>
+        <div class="col-md-10">
+            <textarea asp-for="Description" rows="5" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+   
+    @if (User.IsInRole("Contractor"))
+    {
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">SRF Number</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@SrfInfo.Number</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Signum</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@Model.AhId</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Employee Name</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@Model.Name</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Position</label>
+            <div class="col-md-10">
+                <label class="form-control-static" id="SSOWNAME">@SSOW.Name</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">SRF Begin</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@SrfInfo.SrfBegin.Value.ToString("dd MMM yyyy")</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">SRF End</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@SrfInfo.SrfEnd.Value.ToString("dd MMM yyyy")</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Homebase</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@ViewBag.HomeBase</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Line Manager</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@LineManager.Name</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Project Manager</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@ProjectManager.Name</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Phone (Mobile)</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@Model.MobilePhoneNumber</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Phone (Home)</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@Model.HomePhoneNumber</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">ID Number</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@ContractorInfo.IdNumber</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Username</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@Model.Username</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Email</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@Model.Email</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Nationality</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@ContractorInfo.Nationality</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Birthplace" class="form-control-static col-md-2 bold">Place Of Birth</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@Model.Birthplace</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Birthdate" class="form-control-static col-md-2 bold">Date Of Birth</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@Model.Birthdate.Value.ToString("dd MMM yyyy")</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Address</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@Model.Address</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Gender</label>
+            <div class="col-md-10">
+                @if (ContractorInfo.Gender == App.Domain.Models.Enum.Gender.Male)
+                {
+                    <label class="form-control-static">Male</label>
+                }
+                else
+                {
+                    <label class="form-control-static">Female</label>
+                }
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-control-static col-md-2 bold">Marital</label>
+            <div class="col-md-10">
+                <label class="form-control-static">@ContractorInfo.Martial</label>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+    }
+
+
+    <div class="margin-top-10">
+        <button type="submit" class="btn green">Save Changes</button>
+        <button type="reset" class="btn default">Cancel</button>
+    </div>
+</form>
+
+
+
+<style>
+    .form-group {
+        border-bottom: 1px solid #f0f0f0;
+        padding: 5px 0 !important;
+        margin: 0 !important;
+    }
+</style>
+
+
+
+@*<div class="form-group">
+    <label asp-for="" class="form-control-static col-md-2 bold"></label>
+    <div class="col-md-10">
+        <p class="form-control-static">
+        </p>
+    </div>
+    <div class="clearfix"></div>
+</div>*@

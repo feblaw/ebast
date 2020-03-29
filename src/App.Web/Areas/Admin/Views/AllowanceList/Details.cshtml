@@ -1,0 +1,133 @@
+﻿@model App.Web.Models.ViewModels.Core.Business.AllowanceListViewModel
+
+@{
+    ViewBag.Title = "Allowance List Page | Details";
+    var servicePack = (ServicePack)ViewBag.ServicePacks;
+    var servicePackCategory = (ServicePackCategory)ViewBag.ServicePackCategories;
+}
+
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Allowance List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Details</span>
+    </li>
+}
+
+<h1 class="page-title">Allowance List<small> Details</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Allowance List Details</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <form role="form" class="form-horizontal">
+            <div class="form-body">
+                <div class="form-group">
+                    <label asp-for="Type" class="control-label col-md-3">
+                        <strong>Type</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @servicePack.Type
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ServicePackCategoryName" class="control-label col-md-3">
+                        <strong>Service Packages Category</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @servicePackCategory.Name
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ServicePackName" class="control-label col-md-3">
+                        <strong>SSOW</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @servicePack.Name
+                        </p>
+                    </div>
+                </div>
+
+                <table border="1" width="100%">
+                    <tr style="border: 1px solid #ffffff !important">
+                        <td class="col-md-3"><span class="pull-right" style="padding:10px 5px 10px 0px !important;"><strong>On Call</strong></span></td>
+                        <td class="col-md-4" style="padding-left: 5px !important">@Model.OnCallNormal</td>
+                        <td rowspan="2" valign="middle" width="20px" style="border-left: dotted 1px #000000 !important"><i class="fa fa-caret-right fa-3x font-green-dark" style="margin-right: 0px !important; padding-right: 0px !important"></i></td>
+                        <td rowspan="2" valign="middle">Normal <br />Allowance Rate</td>
+                    </tr>
+                    <tr style="border: 1px solid #ffffff !important">
+                        <td class="col-md-3"><span class="pull-right" style="padding:10px 5px 10px 0px !important;"><strong>Shift</strong></span></td>
+                        <td class="col-md-4" style="padding-left: 5px !important">@Model.ShiftNormal</td>
+                    </tr>
+                </table>
+
+                <br />
+
+                <table border="1" width="100%">
+                    <tr style="border: 1px solid #ffffff !important">
+                        <td class="col-md-3"><span class="pull-right" style="padding:10px 5px 10px 0px !important;"><strong>On Call</strong></span></td>
+                        <td class="col-md-4" style="padding-left: 5px !important">@Model.OnCallHoliday</td>
+                        <td rowspan="2" valign="middle" width="20px" style="border-left: dotted 1px #000000 !important"><i class="fa fa-caret-right fa-3x font-green-dark" style="margin-right: 0px !important; padding-right: 0px !important"></i></td>
+                        <td rowspan="2" valign="middle">Holiday <br />Allowance Rate</td>
+                    </tr>
+                    <tr style="border: 1px solid #ffffff !important">
+                        <td class="col-md-3"><span class="pull-right" style="padding:10px 5px 10px 0px !important;"><strong>Shift</strong></span></td>
+                        <td class="col-md-4" style="padding-left: 5px !important">@Model.ShiftHoliday</td>
+                    </tr>
+                </table>
+
+                <div class="form-group">
+                    <label asp-for="ServicePackName" class="control-label col-md-3">
+                        <strong>Note/Remark</strong>
+                    </label>
+                    <div class="col-md-9">
+                        <p class="form-control-static">
+                            @Model.AllowanceNote
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3">
+                        <a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa fa-edit"></i>&nbsp; Edit</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-master-data", "#menu-allowance-list");
+
+            var success = @((TempData["Success"] != null).ToString().ToLower());
+
+            if (success == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+
+                }
+                toastr.success("Allowed list has been updated");
+            }
+        });
+    </script>
+}

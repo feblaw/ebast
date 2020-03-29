@@ -1,0 +1,127 @@
+﻿[
+  {
+    "Name": "crop.suffix",
+    "Value": "_crop",
+    "SystemSetting": true
+  },
+  {
+    "Name": "format.datetime.long",
+    "Value": "dd/MM/yyyy HH:mm:ss",
+    "SystemSetting": true
+  },
+  {
+    "Name": "format.datetime.long.moment",
+    "Value": "DD/MM/YYYY HH:mm:ss",
+    "SystemSetting": true
+  },
+  {
+    "Name": "format.datetime.long.moment.system",
+    "Value": "MM/DD/YYYY HH:mm:ss",
+    "SystemSetting": true
+  },
+  {
+    "Name": "format.datetime.long.picker",
+    "Value": "dd/mm/yyyy hh:ii:ss",
+    "SystemSetting": true
+  },
+  {
+    "Name": "format.datetime.short",
+    "Value": "dd/MM/yyyy",
+    "SystemSetting": true
+  },
+  {
+    "Name": "format.datetime.short.moment",
+    "Value": "DD/MM/YYYY",
+    "SystemSetting": true
+  },
+  {
+    "Name": "format.datetime.short.moment.system",
+    "Value": "MM/DD/YYYY",
+    "SystemSetting": true
+  },
+  {
+    "Name": "format.datetime.short.picker",
+    "Value": "dd/mm/yyyy",
+    "SystemSetting": true
+  },
+  {
+    "Name": "upload.temp.directory",
+    "Value": "uploads/temp/",
+    "SystemSetting": true
+  },
+  {
+    "Name": "flags.images.directory",
+    "Value": "/images/flags/",
+    "SystemSetting": true
+  },
+  {
+    "Name": "user.no.avatar.url",
+    "Value": "http://placehold.it/200x200?text=No+Avatar",
+    "SystemSetting": true
+  },
+  {
+    "Name": "content.no.image.url",
+    "Value": "http://placehold.it/200x200?text=No+Image",
+    "SystemSetting": true
+  },
+  {
+    "Name": "user.default.password",
+    "Value": "welcome1!",
+    "SystemSetting": true
+  },
+  {
+    "Name": "user.default.role",
+    "Value": "User",
+    "SystemSetting": true
+  },
+  {
+    "Name": "smtp.username",
+    "Value": "dellytesting@gmail.com",
+    "SystemSetting": true
+  },
+  {
+    "Name": "smtp.password",
+    "Value": "pjkxbqiutjuxyvie",
+    "SystemSetting": true
+  },
+  {
+    "Name": "smtp.server",
+    "Value": "smtp.gmail.com",
+    "SystemSetting": true
+  },
+  {
+    "Name": "smtp.port",
+    "Value": "465",
+    "SystemSetting": true
+  },
+  {
+    "Name": "smtp.ssl",
+    "Value": "true",
+    "SystemSetting": true
+  },
+  {
+    "Name": "smtp.from.email",
+    "Value": "dellytesting@gmail.com",
+    "SystemSetting": true
+  },
+  {
+    "Name": "smtp.from.name",
+    "Value": "dellytesting@gmail.com",
+    "SystemSetting": true
+  },
+  {
+    "Name": "smtp.preffered.encoding",
+    "SystemSetting": true,
+    "Value": ""
+  },
+  {
+    "Name": "smtp.requires.authentication",
+    "Value": "true",
+    "SystemSetting": true
+  },
+  {
+    "Name": "email.scheduler.interval",
+    "Value": "60",
+    "SystemSetting": true
+  }
+]

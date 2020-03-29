@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Assignment Upload Page | Import";
+}
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Assignment List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Import</span>
+    </li>
+}
+
+<h1 class="page-title">Assignment <small>Import</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Assignment Import Form</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <div class="row">
+
+            <div class="col-lg-12">
+                <form role="form" asp-action="Import" method="post" id="form" class="form-horizontal" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <div class="col-md-6 control-label">
+                            <input type="file" style="margin-left:10px;" class="control-label" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="submit" class="btn btn-primary" value="Upload" />
+                        </div>
+                    </div>
+                </form>
+                <hr />
+            </div>
+
+            <div class="col-lg-12">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <p style="margin-left:10px;" class="pull-left"><strong>Format Import ( Example ) :</strong></p>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td></td>
+                                <td>A</td>
+                                <td>B</td>
+                                <td>C</td>
+                                <td>D</td>
+                                <td>E</td>
+                                <td>F</td>
+                                <td>G</td>
+                                <td>H</td>
+                                <td>I</td>
+                                <td>J</td>
+                                <td>K</td>
+                                <td>L</td>
+                                <td>M</td>
+                                <td>N</td>
+                                <td>O</td>
+                                <td>P</td>
+                                <td>Q</td>
+                                <td>R</td>
+                                <td>S</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Assignment No</td>
+                                <td>SH ID</td>
+                                <td>Site Id</td>
+                                <td>Site Name</td>
+                                <td>Accepted Date</td>
+                                <td>PR Number</td>
+                                <td>PR Date</td>
+                                <td>PO No</td>
+                                <td>PO Date</td>
+                                <td>PO Line Item</td>
+                                <td>Account</td>
+                                <td>Project</td>
+                                <td>Value</td>
+                                <td>TOP</td>
+                                <td>Create By</td>
+                                <td>Create Date</td>
+                                <td>ASP Name</td>
+                                <td>Cancel</td>
+                                <td>Sow</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>884797</td>
+                                <td>471128</td>
+                                <td>TBH311W</td>
+                                <td> KAWASAN PERKEBUNAN PT GUNTUNG IDAMANNUSA (GIN)</td>
+                                <td>09-01-2018  2:10:15 PM</td>
+                                <td>101839584/110</td>
+                                <td>12-02-2018</td>
+                                <td>4517124819</td>
+                                <td>12-02-2018</td>
+                                <td>30</td>
+                                <td>TLKM/ISAT/XL</td>
+                                <td>TELKOMSEL SUMBAGTENG 2017</td>
+                                <td>8679050</td>
+                                <td>100%</td>
+                                <td>EDEDSIR</td>
+                                <td>08-01-2018</td>
+                                <td>SINERGI</td>
+                                <td>FALSE</td>
+                                <td>RBS</td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="7" align="left"><strong>Sheet1</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("##menu-assignment", "##menu-assignment");
+            FormValidation.init("#form");
+        });
+    </script>
+}

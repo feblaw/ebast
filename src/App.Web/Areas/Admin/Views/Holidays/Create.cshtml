@@ -1,0 +1,104 @@
+﻿@using App.Web.Models.ViewModels.Core.Business
+@model HolidaysFormModel
+@{
+    ViewBag.Title = "Holidays | Create";
+}
+
+@section breadcrumb{
+    <li>
+        <a href="@Url.Action("Index")">Holidays List</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Create</span>
+    </li>
+}
+
+<h1 class="page-title">Holidays <small>Create</small></h1>
+<div class="portlet light portlet-fit portlet-form bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Holidays Form</span>
+        </div>
+        <div class="pull-right">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <form role="form" asp-action="Create" method="post" id="RoleCreate" class="form-horizontal">
+            <div class="form-body">
+                <div class="alert alert-danger display-hide">
+                    <button class="close" data-close="alert"></button> You have some form errors. Please check below.
+                </div>
+                @Html.ValidationSummary(true, "Failed to submit", new { @class = "alert alert-danger" })
+                <div class="form-group">
+                    <label asp-for="DateDay" class="control-label col-md-3">
+                        Date Day
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <input type="text" class="form-control form_datetime" asp-for="DateDay" readonly />
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <span asp-validation-for="DateDay" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group group-1">
+                    <label asp-for="DayType" class="control-label col-md-3">
+                        Select Type
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <select asp-for="DayType" asp-items="@ViewBag.DayType" class="form-control" style="width:100%">
+                            <option disabled selected>-- Select Type --</option>
+                        </select>
+                        <span asp-validation-for="DayType" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label col-md-3">
+                        Description
+                        <span class="text-danger"> * </span>
+                    </label>
+                    <div class="col-md-4">
+                        <textarea class="form-control" asp-for="Description"  rows="5" required></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group last">
+                    <div class="col-md-3 col-md-offset-3">
+                        <label class="text-danger">* Field Required</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-3">
+                        <a asp-action="Index" class="btn btn-default"><i class="fa fa-arrow-left"></i>&nbsp; Back</a>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp; Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/assets/pages/scripts/role/form-validation.js"></script>
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-master-data", "#menu-holidays");
+            FormValidation.init("#RoleCreate");
+            $('select').select2();
+            $(".form_datetime").datepicker({
+                autoclose: true,
+                format: "yyyy-mm-dd",
+            });
+        });
+    </script>
+}

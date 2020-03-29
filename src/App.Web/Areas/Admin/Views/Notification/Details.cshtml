@@ -1,0 +1,34 @@
+﻿@model App.Web.Models.ViewModels.Core.Business.NotificationInboxViewModel
+@{
+    ViewBag.Title = "Notification | Details";
+    var Email = (EmailArchieve)ViewBag.Email;
+}
+
+@section breadcrumb{
+    <li>
+        <a asp-controller="Notification" asp-action="Index">Notification</a>
+        <i class="fa fa-circle"></i>
+    </li>
+    <li>
+        <span>Details Notification</span>
+    </li>
+}
+
+<h1 class="page-title">Notification <small>Detail</small></h1>
+<div class="portlet light portlet-fit portlet-datatable bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Notification Detail</span>
+        </div>
+        <div class="pull-right" id="toolbox">
+            <a class="btn btn-default" href="@Url.Action("Index")"><i class="fa fa-arrow-circle-left"></i> Return to index</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+       <p>
+           Send At , @Email.CreatedAt
+       </p>
+       @Html.Raw(@Email.HtmlMessage)
+    </div>
+</div>

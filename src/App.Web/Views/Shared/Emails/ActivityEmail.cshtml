@@ -1,0 +1,12 @@
+﻿@{
+    var additionalData = (Dictionary<string, string>)ViewBag.AdditionalData;
+}
+<p>Hello , <span style="margin:0;padding:0; font-weight:bold">@additionalData["Name"]</span> , @additionalData["NotificationTitle"]</p>
+<p>&nbsp;</p>
+<span>
+    @additionalData["Description"]
+</span>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>Please click on the link below to view detail:</p>
+<p><a style="color:#039;text-decoration:none;margin: 0;padding: 0;" rel="nofollow" href="@additionalData["CallbackUrl"]">@additionalData["CallbackUrl"]</a></p>

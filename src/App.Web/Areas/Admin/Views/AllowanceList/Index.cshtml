@@ -1,0 +1,249 @@
+﻿@{
+    ViewData["Title"] = "Allowance List Page";
+}
+@*TODO filternya erot searchnya juga*@
+
+@section breadcrumb{
+    <li>
+        <span>Allowance List</span>
+    </li>
+}
+
+<h1 class="page-title">Allowance <small>List</small></h1>
+@if (TempData["Messages"] != null)
+{
+    <div class="alert alert-warning  alert-dismissable">
+        <i class="fa fa-check"></i>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <b>Messages : </b> @TempData["Messages"]
+    </div>
+}
+<div class="portlet light portlet-fit portlet-datatable bordered">
+    <div class="portlet-title">
+        <div class="caption">
+            <span class="caption-subject font-blue sbold uppercase">Allowance List</span>
+        </div>
+        <div class="pull-right" id="toolbox">
+            <a class="btn btn-success" href="@Url.Action("Import")" style="margin-left:5px!important"><i class="fa fa-download"></i> Import</a>
+            <a class="btn btn-primary" href="@Url.Action("Create")" style="margin-left:5px!important"><i class="fa fa-plus-circle"></i> Add new</a>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="portlet-body">
+        <table id="table" class="table table-striped table-bordered table-hover no-border-bottom">
+            <thead>
+                <tr>
+                    <th rowspan="2"></th>
+                    <th rowspan="2" data-column="servicePack.type">Type</th>
+                    <th rowspan="2" data-column="servicePacks.servicePackCategory.name">Service Packages Category</th>
+                    <th rowspan="2" data-column="servicePacks.name">SSOW</th>
+                    <th colspan="2"><center>Normal Allowance</center></th>
+                    <th colspan="2"><center>Lebaran/Christmas/Granted Holiday</center></th>
+                    <th rowspan="2" data-column="allowanceNote">Allowance Note</th>
+                </tr>
+                <tr>
+                    <th data-column="onCallNormal">On Call Allowance</th>
+                    <th data-column="shiftNormal">Shift Allowance</th>
+                    <th data-column="onCallHoliday">On Call Allowance</th>
+                    <th data-column="shiftHoliday">Shift Allowance</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th class="tb"></th>
+                    <th class="tb"></th>
+                    <th class="tb"></th>
+                    <th class="tb"></th>
+                    <th class="tb"></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+@{
+    Html.RenderPartial("_DatatablesAssets");
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $common.setMenu("#menu-master-data", "#menu-allowance-list");
+
+            var success = @((TempData["Success"] != null).ToString().ToLower());
+
+            if (success == true) {
+                toastr.options = {
+                    "closeButton": true,
+                    "positionClass": "toast-top-right"
+                }
+                toastr.success("Allowance list has been added");
+            }
+
+            var datatableOption = {
+                listUrl: "/admin/api/allowancelists/datatables",
+                detailUrl: "@Url.Action("Details")/",
+                editUrl: "@Url.Action("Edit")/",
+                deleteUrl: "/admin/api/allowancelists/",
+                deleteAlertSuccess: "Allowance list has been removed",
+                columnDefs: [
+                         {
+                             "targets": 0,
+                             "data": "name",
+                             name:"Name",
+                             "render": function(data, type, row, meta){
+                                 return"<a class='detail' title='Detail Account'><i class='fa fa-info'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                  "<a class='edit' title='Edit Entry'><i class='fa fa-edit'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                  "<a class='remove' title='Remove Entry'><i class='fa fa-trash'></i></a>"},
+                             "orderable": false,
+                             "width": "60px",
+                             className: "text-center"
+                         },
+                          {
+                              "targets": 1,
+                              "data": "servicePacks.type",
+                              name: "ServicePack.Type",
+                              render: function (data, type, dataObj) {
+                                  if(data == 0){
+                                      return "A";                                  
+                                  }
+                                  else if (data == 1){
+                                      return "B";
+                                  }
+                                  else {
+                                      return "FSO";
+                                  }
+                              }
+                          },
+                         {
+                             "targets": 2,
+                             "data": "servicePacks.servicePackCategory.name",
+                             name: "ServicePack.ServicePackCategory.Name"
+                         },
+                         {
+                             "targets": 3,
+                             "data": "servicePacks.name",
+                             name: "ServicePack.Name"
+                         },
+                         {
+                             "targets": 4,
+                             "data": "onCallNormal",
+                             name: "OnCallNormal",
+                             render: function (data, type, dataObj) {
+                                 $("span.numeric").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });
+                                 return "<span class='numeric'>" + dataObj.onCallNormal + "</span>";
+                             }
+                         },
+                         {
+                             "targets": 5,
+                             "data": "shiftNormal",
+                             name: "ShiftNormal",
+                             render: function (data, type, dataObj) {
+                                 $("span.numeric").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });
+                                 return "<span class='numeric'>" + dataObj.shiftNormal + "</span>";
+                             },
+                         },
+                         {
+                             "targets": 6,
+                             "data": "onCallHoliday",
+                             name: "OnCallHoliday",
+                             render: function (data, type, dataObj) {
+                                 $("span.numeric").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });
+                                 return "<span class='numeric'>" + dataObj.onCallHoliday + "</span>";
+                             }
+                         },
+                         {
+                             "targets": 7,
+                             "data": "shiftHoliday",
+                             name: "ShiftHoliday",
+                             render: function (data, type, dataObj) {
+                                 $("span.numeric").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });
+                                 return "<span class='numeric'>" + dataObj.shiftHoliday + "</span>";
+                             }
+                         },
+                         {
+                             "targets": 8,
+                             "data": "allowanceNote",
+                             name: "AllowanceNote"
+                         }
+                ]
+            }
+
+            $datatables.init("#table", datatableOption);
+            var table = $('#table')
+                .on('init.dt', function(e, settings, json) { disableImmediateSearchDt(e, settings, json, '#table'); })
+                .DataTable(); theDataTable = table;
+            //table.search('').columns().search('').draw();
+            table.on( 'draw', function () {
+                $("span.numeric").autoNumeric('init', { aSep: '.', aDec: ',', mDec: 0 });
+            } );
+            new $.fn.dataTable.Buttons(table, {
+                buttons:
+                [{
+                    text: '<i class="fa fa-file-excel-o"></i> Export to Excel',
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [1,2,3,4,5,6,7,8]
+                    },
+                    action: function (e, dt, button, config) {
+                        window.location.href = "/Export/AllowanceList";
+                    }
+                }]
+            });
+            table.buttons(0, null).container().appendTo('#toolbox');
+            $('.buttons-excel').each(function () {
+                $(this).removeClass('dt-button buttons-excel buttons-html5').addClass('btn btn-default')
+            })
+
+
+            $('#table tfoot th.tb').each( function () {
+                $(this).html( '<input type="text" class="yadcf-filter" />' );
+            } );
+
+            table.columns().every( function () {
+                var that = this;
+ 
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that.search( this.value )
+                            .draw();
+                    }
+                } );
+            } );
+
+            yadcf.init(table, [
+           {
+               column_number: 1,
+               filter_reset_button_text: false,
+               filter_default_label:'Select Filter',
+               data: [{
+                   value: 'A',
+                   label: 'A'
+               },{
+                   value: 'B',
+                   label: 'B'
+               },{
+                   value: 'FSO',
+                   label: 'FSO'
+               }]
+           },
+           {
+               column_number: 2, 
+               filter_default_label:'Select Filter',
+               filter_reset_button_text: false
+           },
+           {
+               column_number: 3,
+               filter_type:'text',
+               filter_reset_button_text: false,
+               filter_default_label:''
+           },
+           ],'footer');
+
+        });
+    </script>
+}
