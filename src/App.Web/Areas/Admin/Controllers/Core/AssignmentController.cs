@@ -25,6 +25,7 @@ using OfficeOpenXml;
 using System.IO;
 using System.Linq.Expressions;
 using System.Globalization;
+using Microsoft.AspNetCore.Server.Kestrel.Internal.Http;
 
 namespace App.Web.Areas.Admin.Controllers.Core
 {
@@ -386,6 +387,8 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                             Sow =sow
                                         };
                                         Service.Add(nt);
+                                        //TempData["Messages"] = "Success add Assignment Id " + assigmentId;
+                                        Console.WriteLine("Success add Assignment Id " + assigmentId);
                                         TOTAL_INSERT++;
                                     }
                                     else
@@ -413,6 +416,8 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                         nt.Sow = sow;
                                         nt.OtherInfo = shortextPo;
                                         Service.Update(nt);
+                                        //TempData["Messages"] = "Success update Assignment Id " + assigmentId;
+                                        Console.WriteLine("Success update Assignment Id " + assigmentId);
                                         TOTAL_UPDATE++;
                                     }
 
@@ -445,7 +450,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                     //initiate variabel yang dibutuhkan
                     var a = 1;
                     var cekValidPo = true;
-                    var cekAsgValid = 0;
+                    var cekAsgNotValid = 0;
                     var noPoAwal = "";
                     var noPo = "";
                     var listAsg = 0;
@@ -493,16 +498,16 @@ namespace App.Web.Areas.Admin.Controllers.Core
 
                                 if (listAsg == 0)
                                 {
-                                    //cekAsgValid = true;
+                                    //cekAsgNotValid = true;
                                     topFix = "100%";
                                     final = true;
                                 }
                                 else
                                 {
-                                    cekAsgValid = cekAsgValid + 1;
+                                    cekAsgNotValid = cekAsgNotValid + 1;
                                 }
                             }
-                            else if (top == "30% - 70%")
+                            else if (top == "30% - 70%" || top == "30%-70%")
                             {
                                 //cek top pertama
                                 listAsg = _mappingAsgBast.GetAllQ().Where(x => x.IdAsg.ToString() == id && x.Bast.TOP == top.Substring(0, 3) &&
@@ -515,7 +520,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
 
                                 if (listAsg == 0)
                                 {
-                                    //cekAsgValid = true;
+                                    //cekAsgNotValid = true;
                                     topFix = "30%";
                                 }
                                 else //cek top kedua
@@ -530,13 +535,12 @@ namespace App.Web.Areas.Admin.Controllers.Core
 
                                     if (listAsg == 0)
                                     {
-                                        //cekAsgValid = true;
                                         topFix = "70%";
                                         final = true;
                                     }
                                     else
                                     {
-                                        cekAsgValid = cekAsgValid + 1;
+                                        cekAsgNotValid = cekAsgNotValid + 1;
                                     }
                                 }
 
@@ -555,7 +559,6 @@ namespace App.Web.Areas.Admin.Controllers.Core
 
                                 if (listAsg == 0)
                                 {
-                                    //cekAsgValid = true;
                                     topFix = "50%";
                                 }
                                 else //cek top kedua
@@ -571,13 +574,12 @@ namespace App.Web.Areas.Admin.Controllers.Core
 
                                     if (listAsg == 0)
                                     {
-                                        //cekAsgValid = true;
                                         topFix = "50%";
                                         final = true;
                                     }
                                     else
                                     {
-                                        cekAsgValid = cekAsgValid + 1;
+                                        cekAsgNotValid = cekAsgNotValid + 1;
                                     }
                                 }
                             }
@@ -608,7 +610,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                     }
 
                     Guid idid;
-                    if(cekValidPo == true && cekAsgValid == 0)
+                    if(cekValidPo == true && cekAsgNotValid == 0)
                     {
                         Bast bast = new Bast
                         {
@@ -659,7 +661,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                         if(cekValidPo == false)
                         {
                             TempData["Messages"] = "PO not valid!";
-                        }else if (cekAsgValid > 0)
+                        }else if (cekAsgNotValid > 0)
                         {
                             TempData["Messages"] = "Assignment already Submited!";
                         }                       
