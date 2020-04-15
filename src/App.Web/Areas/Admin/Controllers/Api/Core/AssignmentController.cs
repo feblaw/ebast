@@ -90,7 +90,7 @@ namespace App.Web.Areas.Admin.Controllers.Api.Core
 
 
             var ASP = _userHelper.GetUser(User).UserProfile.ASPId;
-            var response = Service.GetDataTablesResponse<AssignmentDto>(request, Mapper, $"AssignmentCancel == (\"{false}\")", Includes);
+            var response = Service.GetDataTablesResponse<AssignmentDto>(request, Mapper, null, Includes);
 
             if (User.IsInRole("ASP Admin"))
             {
