@@ -100,78 +100,16 @@ namespace App.Web.Areas.Admin.Controllers.Core
         }
 
        
-
-
-
         [HttpGet]
         [Authorize(Roles = "Administrator,ASP")]
         public override IActionResult Details(Guid id)
         {            
             try
             {
-                //Dictionary<string, int> ws = new Dictionary<string, int>();
-                //ws.Add("No", 0);
-                //ws.Add("Yes", 1);
-
-                //Dictionary<string, bool> com = new Dictionary<string, bool>();
-                //com.Add("No USIM", false);
-                //com.Add("USIM", true);
-
-                //Dictionary<string, bool> sign = new Dictionary<string, bool>();
-                //sign.Add("Non-HRMS", false);
-                //sign.Add("HRMS", true);
-
+                
                 var data = _service.GetById(id);
-                //ViewBag.OrganizationUnit = _department.GetAll().ToList();
-                //ViewBag.AccountName = _account.GetAll().ToList();
-                //ViewBag.NetworkNumber = _network.GetAll().ToList();
-                //ViewBag.SubOrganizationUnit = _subDept.GetAll().Where(x => x.DepartmentId.Equals(data.DepartmentId)).ToList();
-                //ViewBag.CostCenter = _costCenter.GetAll().Where(x => x.DepartmentId.Equals(data.DepartmentId)).ToList();
-                //ViewBag.SSOW = _servicePack.GetAll().Where(x => x.ServicePackCategoryId.Equals(data.ServicePackCategoryId)).ToList();
-                ////ViewBag.PackageType = _packageType.GetAll().ToList();
-                //ViewBag.ServicePackCategory = _serviceCategory.GetAll().ToList();
-                //ViewBag.PackageType = _packageType.GetAll().ToList();
-                //ViewBag.BasicServiceLevel = new List<int>(new int[] { 0, 20, 30, 40 }).Select(x => new { Id = x, Name = x.ToString() });
-                //ViewBag.WorkstationService = ws.Select(x => new { Id = x.Value, Name = x.Key.ToString() }).ToList();
-                //ViewBag.CommunicationService = com.Select(x => new { Id = x.Value, Name = x.Key.ToString() }).ToList();
-                //ViewBag.Signum = sign.Select(x => new { Id = x.Value, Name = x.Key.ToString() }).ToList();
-                //ViewBag.Jobstage = _jobStage.GetAll().Where(x => !string.IsNullOrEmpty(x.Description)).ToList();
-                //ViewBag.LineManager = _userHelper.GetByRoleName("Line Manager").ToList();
-                //ViewBag.Sourcing = _userHelper.GetByRoleName("Sourcing").ToList();
-                //ViewBag.ProjectManager = _userHelper.GetByRoleName("Project Manager").ToList();
-                //ViewBag.ServiceLine = _userHelper.GetByRoleName("Head Of Service Line").ToList();
-                //ViewBag.OpsHead = _userHelper.GetByRoleName("Head Of Operation").ToList();
-                //ViewBag.Rpm = _userHelper.GetByRoleName("Regional Project Manager").ToList();
-                //ViewBag.Vendor = _userHelper.GetByRoleName("HR Agency").ToList();
                 ViewBag.Id = id;
-
-                //List<string> UserRole = _userManager.GetRolesAsync(_userHelper.GetUser(User)).Result.ToList();
-                //var CurrentUser = _userHelper.GetUser(User);
-                //var CurrentProfile = _profileUser.GetByUserId(CurrentUser.Id);
-                //if (UserRole.Contains("Line Manager"))
-                //{
-
-                //    ViewBag.LineManagerId = CurrentProfile.Id;
-                //    ViewBag.LineManagerName = CurrentProfile.Name;
-                //}
-                //else
-                //{
-                //    ViewBag.LineManagerId = 0;
-                //    ViewBag.LineManagerName = "";
-                //}
-
-                //if (data != null)
-                //{
-                //    VacancyListFormModel model = Mapper.Map<VacancyListFormModel>(data);
-                //    if (!string.IsNullOrWhiteSpace(data.Files))
-                //    {
-                //        var attachments = JsonConvert.DeserializeObject<List<string>>(data.Files);
-                //        model.Files = string.Join("|", attachments.ToArray()) + "|";
-                //    }
-                //    model.NoarmalRate = model.NoarmalRate;
-                //    return View(model);
-                //}
-
+                
             }
             catch (Exception e)
             {
@@ -331,8 +269,17 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                     DateTime dt;
                                     var assigmentId = worksheet.Cells[row, 1].Value.ToString();
                                     var shId = worksheet.Cells[row, 2].Value.ToString();
-                                    var siteId = worksheet.Cells[row, 3].Value.ToString();
-                                    var siteName = worksheet.Cells[row, 4].Value.ToString();
+                                    var siteId = "-";
+                                    if (worksheet.Cells[row, 3].Value != null)
+                                    {
+                                        siteId = worksheet.Cells[row, 3].Value.ToString();
+                                    }
+
+                                    var siteName = "-";
+                                    if (worksheet.Cells[row, 4].Value != null)
+                                    {
+                                        siteId = worksheet.Cells[row, 4].Value.ToString();
+                                    }
                                     var assigmentAcceptDate =  DateTime.Parse(worksheet.Cells[row, 5].Text);
                                     var prNumber = worksheet.Cells[row, 6].Value.ToString();
                                     var prDate = DateTime.Parse(worksheet.Cells[row, 7].Text);
@@ -391,30 +338,30 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                         Console.WriteLine("Success add Assignment Id " + assigmentId);
                                         TOTAL_INSERT++;
                                     }
-                                    else
+                                    else if (AssignmentFind != null && assignmentCancel != AssignmentFind.AssignmentCancel)
                                     {
 
                                         Assignment nt = Service.GetById(AssignmentFind.Id);
-                                        nt.ProjectName = project;
-                                        nt.SiteID = siteId;
-                                        nt.SiteName = siteName;
-                                        nt.AssignmentAcceptedDate = assigmentAcceptDate;
-                                        nt.PRNo = prNumber;
-                                        nt.PRDateCreated = prDate;
-                                        nt.PONumber = poNumber;
-                                        nt.PODate = poDate;
-                                        nt.LineItemPO = poLineItem;
-                                        nt.ShortTextPO = shortextPo;
-                                        nt.SHID = shId;
-                                        nt.ValueAssignment = valueAssigment;
-                                        nt.TOP = top;
-                                        nt.AssignmentCreateBy = assignmentCreateBy;
-                                        nt.AssignmentCreateDate = assignmentCreateDate;
-                                        nt.AspId = AssignmentFind.AspId;
+                                        //nt.ProjectName = project;
+                                        //nt.SiteID = siteId;
+                                        //nt.SiteName = siteName;
+                                        //nt.AssignmentAcceptedDate = assigmentAcceptDate;
+                                        //nt.PRNo = prNumber;
+                                        //nt.PRDateCreated = prDate;
+                                        //nt.PONumber = poNumber;
+                                        //nt.PODate = poDate;
+                                        //nt.LineItemPO = poLineItem;
+                                        //nt.ShortTextPO = shortextPo;
+                                        //nt.SHID = shId;
+                                        //nt.ValueAssignment = valueAssigment;
+                                        //nt.TOP = top;
+                                        //nt.AssignmentCreateBy = assignmentCreateBy;
+                                        //nt.AssignmentCreateDate = assignmentCreateDate;
+                                        //nt.AspId = AssignmentFind.AspId;
                                         nt.AssignmentCancel = assignmentCancel;
-                                        nt.AssignmentReady4Bast = true;
-                                        nt.Sow = sow;
-                                        nt.OtherInfo = shortextPo;
+                                        //nt.AssignmentReady4Bast = true;
+                                        //nt.Sow = sow;
+                                        //nt.OtherInfo = shortextPo;
                                         Service.Update(nt);
                                         //TempData["Messages"] = "Success update Assignment Id " + assigmentId;
                                         Console.WriteLine("Success update Assignment Id " + assigmentId);
@@ -507,7 +454,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                     cekAsgNotValid = cekAsgNotValid + 1;
                                 }
                             }
-                            else if (top == "30% - 70%" || top == "30%-70%")
+                            else if (top == "30% - 70%" || top == "30%-70%" || top == "70%-30%")
                             {
                                 //cek top pertama
                                 listAsg = _mappingAsgBast.GetAllQ().Where(x => x.IdAsg.ToString() == id && x.Bast.TOP == top.Substring(0, 3) &&
