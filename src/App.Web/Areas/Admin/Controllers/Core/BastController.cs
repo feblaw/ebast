@@ -185,21 +185,60 @@ namespace App.Web.Areas.Admin.Controllers.Core
             return item.Name;
 
         }
-        public IActionResult print (Guid id)
+
+        public IActionResult print(Guid id)
         {
             try
             {
                 var item = Service.GetById(id);
                 var PreofileId = _userHelper.GetUser(User).UserProfile.Id;
-                
+
                 var data = _service.GetById(id);
                 var vendor = "\"Vendor\"";
                 var eid = "\"Ericsson\"";
                 var style = "\"a\"";
+                var styleLeft = "\"text-align:left\"";
+                var styleCenter = "\"text-align:center\"";
+                var styleWidth = "\"width:100%\""; 
                 var poNumber = _asg.GetById(getAsg(id));
                 var pmName = getUser(item.ApprovalOneID);
                 var tpmName = getUser(item.ApprovalFourID);
                 var aspName = getAspName(item.AspId);
+
+                //ini buat samain value halaman 1 dan 2
+                var Result = _mappingAsgBast.GetAll().Where(x => x.IdBast == id).ToList();
+                var counter = 1;
+                var totalBAST = new Decimal();
+                var accBAST = new Decimal();
+                foreach (var roww in Result)
+                {
+                    var itemm = _asg.GetById(roww.IdAsg);
+
+
+                    if (item.TOP == "30%")
+                    {
+                        accBAST = itemm.ValueAssignment * 0.3M;
+                    }
+                    else if (item.TOP == "70%")
+                    {
+                        accBAST = itemm.ValueAssignment * 0.7M;
+                    }
+                    else if (item.TOP == "100%")
+                    {
+                        accBAST = itemm.ValueAssignment * 1;
+                    }
+                    else if (item.TOP == "50%")
+                    {
+                        accBAST = itemm.ValueAssignment * 0.5M;
+                    }
+                    counter = counter + 1;
+                    totalBAST = totalBAST + accBAST;
+                }
+
+
+
+
+
                 if (data == null)
                 {
                     return NotFound();
@@ -209,20 +248,114 @@ namespace App.Web.Areas.Admin.Controllers.Core
                     if (item.TOP == "100%")
                     {
                         var head = $"<center><h3>HAND OVER CERTIFICATE<br>(BERITA ACARA SERAH TERIMA)</h3></center><br><p>Works: " + item.Sow + "<br>Project: " + item.Project + "</p><hr>" +
-                            $"<center><p>BAST No: EID/"+item.OtherInfo+"/" + DateTime.Now.ToString("yyyy", CultureInfo.InvariantCulture) + "/: " + item.BastNo + "</p></center>" +
-                            $"<br><p>On the date, ____________ we the undersigned: <br><ol><li>Name&emsp;&emsp;: "+pmName+"<br>Title&emsp;&emsp;&ensp;: PROJECT MANAGER<br>" +
-                            $"On the matter acting for and behalf of "+aspName+" (hereinafter " + vendor + ") and:</li><br><li>Name&emsp;&emsp;: "+tpmName+"<br>Title&emsp;&emsp;&ensp;: TOTAL PROJECT MANAGER<br>" +
-                            $"On the matter acting for and behalf of PT.ERICSSON INDONESIA (hereinafter referred to as " + eid + ")</li></ol>By virtue of: <br>PO Number: "+poNumber.PONumber+"/"+poNumber.PODate.ToString("dd-MM-yyyy")+"<br>" +
+                            $"<center><p>BAST No: EID/" + item.OtherInfo + "/" + DateTime.Now.ToString("yyyy", CultureInfo.InvariantCulture) + "/: " + item.BastNo + "</p></center>" +
+                            $"<br><p>On the date, ____________ we the undersigned: <br><ol><li>Name&emsp;&emsp;: " + pmName + "<br>Title&emsp;&emsp;&ensp;: PROJECT MANAGER<br>" +
+                            $"On the matter acting for and behalf of " + aspName + " (hereinafter " + vendor + ") and:</li><br><li>Name&emsp;&emsp;: " + tpmName + "<br>Title&emsp;&emsp;&ensp;: TOTAL PROJECT MANAGER<br>" +
+                            $"On the matter acting for and behalf of PT.ERICSSON INDONESIA (hereinafter referred to as " + eid + ")</li></ol>By virtue of: <br>PO Number: " + poNumber.PONumber + "/" + poNumber.PODate.ToString("dd-MM-yyyy") + "<br>" +
                             $"Vendor and Ericsson hereby stated the followings: <ol><li>Vendor has transferred the works and the title thereof to Ericsson at the Location in accordance with Purchase Order referred to above :<br></li><br>" +
-                            $"<li>Ericsson has accepted the works and the title thereof satisfactorily, provided that :<br> <ol type=" + style + ">  <li>Completion of the works, (Number of days delay: "+item.TotalDelay+")</li>" +
+                            $"<li>Ericsson has accepted the works and the title thereof satisfactorily, provided that :<br> <ol type=" + style + ">  <li>Completion of the works, (Number of days delay: " + item.TotalDelay + ")</li>" +
                             $"<li>Warranty period for the works shall apply for the period agreed within the Supply Agreement referred above. Any insufficiency or defect to the works encountered during such period due to workmanship or quality thereof shall become the responsibility of Vendor to rectify replace such insufficiency or defect.</li>" +
-                            $"<li>Upon the expiry of such warranty period and the works has been functioning properly in accordance with the condition of the above referred Supply Agreement and/or Purchase Order, The Second Hand Over Certificate (or Berita Acara Serah Terima Kedua or "+"\"BAST\""+") will be issued accordingly by Ericsson.</li>" +
-                            $"<li>There is/ There is no additional/ subtraction of works as basis of Amendment of the Purchase Order.</li></ol> </li><li>Total project cost (actual implemented/PO value revised): IDR "+Convert.ToInt32(item.totalValue).ToString("N1", CultureInfo.InvariantCulture) + "(see attachment).</li>" +
-                            $"</ol>This certificate is made in one original bearing sufficient stamp duties which shall have the same legal powers after being signed by their respective duly representatives.<br><br>&emsp;&emsp;"+
-                            $"PT Ericsson Indonesia&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + aspName + "<br><br>&emsp;&emsp;<small>Approved by " + tpmName + "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small>Approved by " + pmName + "</small><br>&emsp;&emsp;<small></small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<br><br><br>" +
-                            $"&emsp;&emsp;" + tpmName + "&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + pmName + "<br>&emsp;&emsp;TOTAL PROJECT MANAGER&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;PROJECT MANAGER<br><br><br><small>This is a computer-generated document. No signature is required.</small> </p>";
+                            $"<li>Upon the expiry of such warranty period and the works has been functioning properly in accordance with the condition of the above referred Supply Agreement and/or Purchase Order, The Second Hand Over Certificate (or Berita Acara Serah Terima Kedua or " + "\"BAST\"" + ") will be issued accordingly by Ericsson.</li>" +
+                            $"<li>There is/ There is no additional/ subtraction of works as basis of Amendment of the Purchase Order.</li></ol> </li><li>Total project cost (actual implemented/PO value revised): IDR " + Convert.ToInt32(totalBAST).ToString("N1", CultureInfo.InvariantCulture) + "(see attachment).</li>" +
+                            $"</ol>This certificate is made in one original bearing sufficient stamp duties which shall have the same legal powers after being signed by their respective duly representatives.<br><br>&emsp;&emsp;" +
 
-
+                            $"<table style=" + styleWidth + ">" +
+                              $"<tr>" +
+                                $"<th style=" + styleLeft + "> PT ERICSSON INDONESIA</th>" +
+                                $"<th></th> " +
+                                $"<th>"+aspName+"</th>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td><small>Approved By "+tpmName+"</td>" +
+                                $"<td></td>" +
+                                $"<td style=" + styleCenter + "><small> Approved By "+pmName+"</td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td>"+tpmName+"</td>" +
+                                $"<td></td>" +
+                                $"<td style=" + styleCenter + ">"+pmName+"</td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td>Total Project Manager</td>" +
+                                $"<td></td>" +
+                                $"<td style=" + styleCenter + "> Project Manager</td>" +
+                              $"</tr>" +
+                             $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td><small>This is a computer-generated document. No signature is required.</td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                            $"</table>";
 
                         byte[] pdf;
                         HtmlToPdfDocument doc;
@@ -239,24 +372,124 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                         },
                                     }
                         };
-                       
-
-                            pdf = _converter.Convert(doc);
 
 
-                            return new FileContentResult(pdf, "application/pdf");
+                        pdf = _converter.Convert(doc);
+
+
+                        return new FileContentResult(pdf, "application/pdf");
                     }
                     else
                     {
                         var head = $"<center><h3>DOWN PAYMENT ACKNOWLEDGEMENT CERTIFICATE<br></h3></center><br><p>Works: " + item.Sow + "<br>Project: " + item.Project + "</p><hr>" +
-                            $"<center><p>BAST No: EID/"+item.OtherInfo+"/" + DateTime.Now.ToString("yyyy", CultureInfo.InvariantCulture) + "/: " + item.BastNo + "</p></center>" +
+                            $"<center><p>BAST No: EID/" + item.OtherInfo + "/" + DateTime.Now.ToString("yyyy", CultureInfo.InvariantCulture) + "/: " + item.BastNo + "</p></center>" +
                             $"<br><p>On the date, ____________ we the undersigned: <br><ol><li>Name&emsp;&emsp;: " + pmName + "<br>Title&emsp;&emsp;&ensp;: PROJECT MANAGER<br>" +
                             $"On the matter acting for and behalf of " + aspName + " (hereinafter " + vendor + ") and:</li><br><li>Name&emsp;&emsp;: " + tpmName + "<br>Title&emsp;&emsp;&ensp;: TOTAL PROJECT MANAGER<br>" +
                             $"On the matter acting for and behalf of PT.ERICSSON INDONESIA (hereinafter referred to as " + eid + ")</li></ol>By virtue of: <br>PO Number: " + poNumber.PONumber + "/" + poNumber.PODate.ToString("dd-MM-yyyy") + "<br>" +
                             $"Vendor and Ericsson hereby stated the followings: <ol><li>Attached to this Down Payment Certificate, are all required supporting documents for this project as agreed with Ericsson Project Manager, for example  (but not limited to): Purchase Order (PO)</li><br>" +
-                            $"<li>Total project cost (actual implemented/PO value revised): IDR " + Convert.ToInt32(item.totalValue).ToString("N1", CultureInfo.InvariantCulture) + "(see attachment).</li>" +
-                            $"</ol>This certificate is made in one original bearing sufficient stamp duties which shall have the same legal powers after being signed by their respective duly representatives.<br><br>&emsp;&emsp;PT Ericsson Indonesia&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + aspName + "<br><br>&emsp;&emsp;<small>Approved by " + tpmName+ "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small>Approved by " + pmName + "</small><br>&emsp;&emsp;<small></small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small></small><br><br><br>" +
-                            $"&emsp;&emsp;" + tpmName + "&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + pmName + "<br>&emsp;&emsp;TOTAL PROJECT MANAGER&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;PROJECT MANAGER<br><br><br><small>This is a computer-generated document. No signature is required.</small> </p>";
+                            $"<li>Total project cost (actual implemented/PO value revised): IDR " + Convert.ToInt32(totalBAST).ToString("N1", CultureInfo.InvariantCulture) + "(see attachment).</li>" +
+                            $"</ol>This certificate is made in one original bearing sufficient stamp duties which shall have the same legal powers after being signed by their respective duly representatives.<br><br>&emsp;&emsp;"+
+
+                            $"<table style=" + styleWidth + ">" +
+                              $"<tr>" +
+                                $"<th style=" + styleLeft + "> PT ERICSSON INDONESIA</th>" +
+                                $"<th></th> " +
+                                $"<th>" + aspName + "</th>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td><small>Approved By " + tpmName + "</td>" +
+                                $"<td></td>" +
+                                $"<td style=" + styleCenter + "><small> Approved By " + pmName + "</td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td>" + tpmName + "</td>" +
+                                $"<td></td>" +
+                                $"<td style=" + styleCenter + ">" + pmName + "</td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td>Total Project Manager</td>" +
+                                $"<td></td>" +
+                                $"<td style=" + styleCenter + "> Project Manager</td>" +
+                              $"</tr>" +
+                             $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td><small>This is a computer-generated document. No signature is required.</td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                            $"</table>";
+
+                        //$"PT Ericsson Indonesia&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + aspName + "<br><br>&emsp;&emsp;<small>Approved by " + tpmName + "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small>Approved by " + pmName + "</small><br>&emsp;&emsp;<small></small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small></small><br><br><br>" +
+                        //    $"&emsp;&emsp;" + tpmName + "&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + pmName + "<br>&emsp;&emsp;TOTAL PROJECT MANAGER&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;PROJECT MANAGER<br><br><br><small>This is a computer-generated document. No signature is required.</small> </p>";
 
 
 
@@ -283,7 +516,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                         return new FileContentResult(pdf, "application/pdf");
                     }
                 }
-                
+
 
 
                 return base.BastEditor(id);
@@ -294,13 +527,159 @@ namespace App.Web.Areas.Admin.Controllers.Core
             }
         }
 
+        //public IActionResult print (Guid id)
+        //{
+        //    try
+        //    {
+        //        var item = Service.GetById(id);
+        //        var PreofileId = _userHelper.GetUser(User).UserProfile.Id;
+                
+        //        var data = _service.GetById(id);
+        //        var vendor = "\"Vendor\"";
+        //        var eid = "\"Ericsson\"";
+        //        var style = "\"a\"";
+        //        var poNumber = _asg.GetById(getAsg(id));
+        //        var pmName = getUser(item.ApprovalOneID);
+        //        var tpmName = getUser(item.ApprovalFourID);
+        //        var aspName = getAspName(item.AspId);
+
+        //        //ini buat samain value halaman 1 dan 2
+        //        var Result = _mappingAsgBast.GetAll().Where(x => x.IdBast == id).ToList();
+        //        var counter = 1;
+        //        var totalBAST = new Decimal();
+        //        var accBAST = new Decimal();
+        //        foreach (var roww in Result)
+        //        {
+        //            var itemm = _asg.GetById(roww.IdAsg);
+
+                    
+        //            if (item.TOP == "30%")
+        //            {
+        //                accBAST = itemm.ValueAssignment * 0.3M;
+        //            }
+        //            else if (item.TOP == "70%")
+        //            {
+        //                accBAST = itemm.ValueAssignment * 0.7M;
+        //            }
+        //            else if (item.TOP == "100%")
+        //            {
+        //                accBAST = itemm.ValueAssignment * 1;
+        //            }
+        //            else if (item.TOP == "50%")
+        //            {
+        //                accBAST = itemm.ValueAssignment * 0.5M;
+        //            }
+        //            counter = counter + 1;
+        //            totalBAST = totalBAST + accBAST;
+        //        }
+
+
+
+
+
+        //        if (data == null)
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            if (item.TOP == "100%")
+        //            {
+        //                var head = $"<center><h3>HAND OVER CERTIFICATE<br>(BERITA ACARA SERAH TERIMA)</h3></center><br><p>Works: " + item.Sow + "<br>Project: " + item.Project + "</p><hr>" +
+        //                    $"<center><p>BAST No: EID/"+item.OtherInfo+"/" + DateTime.Now.ToString("yyyy", CultureInfo.InvariantCulture) + "/: " + item.BastNo + "</p></center>" +
+        //                    $"<br><p>On the date, ____________ we the undersigned: <br><ol><li>Name&emsp;&emsp;: "+pmName+"<br>Title&emsp;&emsp;&ensp;: PROJECT MANAGER<br>" +
+        //                    $"On the matter acting for and behalf of "+aspName+" (hereinafter " + vendor + ") and:</li><br><li>Name&emsp;&emsp;: "+tpmName+"<br>Title&emsp;&emsp;&ensp;: TOTAL PROJECT MANAGER<br>" +
+        //                    $"On the matter acting for and behalf of PT.ERICSSON INDONESIA (hereinafter referred to as " + eid + ")</li></ol>By virtue of: <br>PO Number: "+poNumber.PONumber+"/"+poNumber.PODate.ToString("dd-MM-yyyy")+"<br>" +
+        //                    $"Vendor and Ericsson hereby stated the followings: <ol><li>Vendor has transferred the works and the title thereof to Ericsson at the Location in accordance with Purchase Order referred to above :<br></li><br>" +
+        //                    $"<li>Ericsson has accepted the works and the title thereof satisfactorily, provided that :<br> <ol type=" + style + ">  <li>Completion of the works, (Number of days delay: "+item.TotalDelay+")</li>" +
+        //                    $"<li>Warranty period for the works shall apply for the period agreed within the Supply Agreement referred above. Any insufficiency or defect to the works encountered during such period due to workmanship or quality thereof shall become the responsibility of Vendor to rectify replace such insufficiency or defect.</li>" +
+        //                    $"<li>Upon the expiry of such warranty period and the works has been functioning properly in accordance with the condition of the above referred Supply Agreement and/or Purchase Order, The Second Hand Over Certificate (or Berita Acara Serah Terima Kedua or "+"\"BAST\""+") will be issued accordingly by Ericsson.</li>" +
+        //                    $"<li>There is/ There is no additional/ subtraction of works as basis of Amendment of the Purchase Order.</li></ol> </li><li>Total project cost (actual implemented/PO value revised): IDR "+Convert.ToInt32(totalBAST).ToString("N1", CultureInfo.InvariantCulture) + "(see attachment).</li>" +
+        //                    $"</ol>This certificate is made in one original bearing sufficient stamp duties which shall have the same legal powers after being signed by their respective duly representatives.<br><br>&emsp;&emsp;"+
+        //                    $"PT Ericsson Indonesia&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + aspName + "<br><br>&emsp;&emsp;<small>Approved by " + tpmName + "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small>Approved by " + pmName + "</small><br>&emsp;&emsp;<small></small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<br><br><br>" +
+        //                    $"&emsp;&emsp;" + tpmName + "&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + pmName + "<br>&emsp;&emsp;TOTAL PROJECT MANAGER&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;PROJECT MANAGER<br><br><br><small>This is a computer-generated document. No signature is required.</small> </p>";
+
+
+
+        //                byte[] pdf;
+        //                HtmlToPdfDocument doc;
+        //                doc = new HtmlToPdfDocument()
+        //                {
+        //                    GlobalSettings = {
+        //                            PaperSize = PaperKind.A4,
+        //                            Orientation = Orientation.Portrait,
+        //                        },
+
+        //                    Objects = {
+        //                            new ObjectSettings(){
+        //                                HtmlContent = head,
+        //                                },
+        //                            }
+        //                };
+                       
+
+        //                    pdf = _converter.Convert(doc);
+
+
+        //                    return new FileContentResult(pdf, "application/pdf");
+        //            }
+        //            else
+        //            {
+        //                var head = $"<center><h3>DOWN PAYMENT ACKNOWLEDGEMENT CERTIFICATE<br></h3></center><br><p>Works: " + item.Sow + "<br>Project: " + item.Project + "</p><hr>" +
+        //                    $"<center><p>BAST No: EID/"+item.OtherInfo+"/" + DateTime.Now.ToString("yyyy", CultureInfo.InvariantCulture) + "/: " + item.BastNo + "</p></center>" +
+        //                    $"<br><p>On the date, ____________ we the undersigned: <br><ol><li>Name&emsp;&emsp;: " + pmName + "<br>Title&emsp;&emsp;&ensp;: PROJECT MANAGER<br>" +
+        //                    $"On the matter acting for and behalf of " + aspName + " (hereinafter " + vendor + ") and:</li><br><li>Name&emsp;&emsp;: " + tpmName + "<br>Title&emsp;&emsp;&ensp;: TOTAL PROJECT MANAGER<br>" +
+        //                    $"On the matter acting for and behalf of PT.ERICSSON INDONESIA (hereinafter referred to as " + eid + ")</li></ol>By virtue of: <br>PO Number: " + poNumber.PONumber + "/" + poNumber.PODate.ToString("dd-MM-yyyy") + "<br>" +
+        //                    $"Vendor and Ericsson hereby stated the followings: <ol><li>Attached to this Down Payment Certificate, are all required supporting documents for this project as agreed with Ericsson Project Manager, for example  (but not limited to): Purchase Order (PO)</li><br>" +
+        //                    $"<li>Total project cost (actual implemented/PO value revised): IDR " + Convert.ToInt32(totalBAST).ToString("N1", CultureInfo.InvariantCulture) + "(see attachment).</li>" +
+        //                    $"</ol>This certificate is made in one original bearing sufficient stamp duties which shall have the same legal powers after being signed by their respective duly representatives.<br><br>&emsp;&emsp;PT Ericsson Indonesia&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + aspName + "<br><br>&emsp;&emsp;<small>Approved by " + tpmName+ "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small>Approved by " + pmName + "</small><br>&emsp;&emsp;<small></small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small></small><br><br><br>" +
+        //                    $"&emsp;&emsp;" + tpmName + "&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + pmName + "<br>&emsp;&emsp;TOTAL PROJECT MANAGER&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;PROJECT MANAGER<br><br><br><small>This is a computer-generated document. No signature is required.</small> </p>";
+
+
+
+        //                byte[] pdf;
+        //                HtmlToPdfDocument doc;
+        //                doc = new HtmlToPdfDocument()
+        //                {
+        //                    GlobalSettings = {
+        //                            PaperSize = PaperKind.A4,
+        //                            Orientation = Orientation.Portrait,
+        //                        },
+
+        //                    Objects = {
+        //                            new ObjectSettings(){
+        //                                HtmlContent = head,
+        //                                },
+        //                            }
+        //                };
+
+
+        //                pdf = _converter.Convert(doc);
+
+
+        //                return new FileContentResult(pdf, "application/pdf");
+        //            }
+        //        }
+                
+
+
+        //        return base.BastEditor(id);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Content(e.ToString());
+        //    }
+        //}
+
         public IActionResult print2(Guid id)
         {
             try
             {
                 var item = Service.GetById(id);
                 var PreofileId = _userHelper.GetUser(User).UserProfile.Id;
-
+                var styleLeft = "\"text-align:left\"";
+                var styleCenter = "\"text-align:center\"";
+                var styleWidth = "\"width:100%\"";
                 var data = _service.GetById(id);
                 //var vendor = "\"Vendor\"";
                 //var eid = "\"Ericsson\"";
@@ -396,11 +775,111 @@ namespace App.Web.Areas.Admin.Controllers.Core
                            $"<center><p>BAST No: EID/"+item.OtherInfo+"/" + DateTime.Now.ToString("yyyy", CultureInfo.InvariantCulture) + "/: " + item.BastNo + "</p></center>" + table +
 
 
-                           $"<br><br>&emsp;&emsp;PT Ericsson Indonesia&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + aspName + "<br><br>&emsp;&emsp;" +
-                           $"<small>Approved by " + tpmName + "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small>Approved by " + pmName + "</small><br>&emsp;&emsp;<small>" +
-                           "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small></small><br><br><br>" +
-                           $"&emsp;&emsp;" + tpmName + "&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + pmName + "<br>&emsp;&emsp;" +
-                           $"TOTAL PROJECT MANAGER&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;PROJECT MANAGER<br><br><br>This is a computer-generated document. No signature is required. </p>";
+                           $"<br><br>&emsp;&emsp;"+
+
+                           $"<table style=" + styleWidth + ">" +
+                              $"<tr>" +
+                                $"<th style=" + styleLeft + "> PT ERICSSON INDONESIA</th>" +
+                                $"<th></th> " +
+                                $"<th>" + aspName + "</th>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td><small>Approved By " + tpmName + "</td>" +
+                                $"<td></td>" +
+                                $"<td style=" + styleCenter + "><small> Approved By " + pmName + "</td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td>" + tpmName + "</td>" +
+                                $"<td></td>" +
+                                $"<td style=" + styleCenter + ">" + pmName + "</td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td>Total Project Manager</td>" +
+                                $"<td></td>" +
+                                $"<td style=" + styleCenter + "> Project Manager</td>" +
+                              $"</tr>" +
+                             $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td><small>This is a computer-generated document. No signature is required.</td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                            $"</table>";
+
+                        //$"PT Ericsson Indonesia&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + aspName + "<br><br>&emsp;&emsp;" +
+                        //   $"<small>Approved by " + tpmName + "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small>Approved by " + pmName + "</small><br>&emsp;&emsp;<small>" +
+                        //   "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small></small><br><br><br>" +
+                        //   $"&emsp;&emsp;" + tpmName + "&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + pmName + "<br>&emsp;&emsp;" +
+                        //   $"TOTAL PROJECT MANAGER&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;PROJECT MANAGER<br><br><br>This is a computer-generated document. No signature is required. </p>";
 
 
 
@@ -434,11 +913,111 @@ namespace App.Web.Areas.Admin.Controllers.Core
                             $"<center><p>BAST No: EID/"+item.OtherInfo+"/" + DateTime.Now.ToString("yyyy", CultureInfo.InvariantCulture) + "/: " + item.BastNo + "</p></center>"+table+
 
 
-                            $"<br><br>&emsp;&emsp;PT Ericsson Indonesia&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + aspName + "<br><br>&emsp;&emsp;"+
-                            $"<small>Approved by " + tpmName + "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small>Approved by " + pmName + "</small><br>&emsp;&emsp;<small>" + 
-                            "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small></small><br><br><br>" +
-                            $"&emsp;&emsp;" + tpmName + "&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + pmName + "<br>&emsp;&emsp;" +
-                            $"TOTAL PROJECT MANAGER&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;PROJECT MANAGER<br><br><br>This is a computer-generated document. No signature is required. </p>";
+                            $"<br><br>&emsp;&emsp;"+
+
+                            $"<table style=" + styleWidth + ">" +
+                              $"<tr>" +
+                                $"<th style=" + styleLeft + "> PT ERICSSON INDONESIA</th>" +
+                                $"<th></th> " +
+                                $"<th>" + aspName + "</th>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td><small>Approved By " + tpmName + "</td>" +
+                                $"<td></td>" +
+                                $"<td style=" + styleCenter + "><small> Approved By " + pmName + "</td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td>" + tpmName + "</td>" +
+                                $"<td></td>" +
+                                $"<td style=" + styleCenter + ">" + pmName + "</td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td>Total Project Manager</td>" +
+                                $"<td></td>" +
+                                $"<td style=" + styleCenter + "> Project Manager</td>" +
+                              $"</tr>" +
+                             $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                              $"<tr>" +
+                                $"<td><small>This is a computer-generated document. No signature is required.</td>" +
+                                $"<td></td>" +
+                                $"<td></td>" +
+                              $"</tr>" +
+                            $"</table>";
+
+                        //$"PT Ericsson Indonesia&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + aspName + "<br><br>&emsp;&emsp;"+
+                        //    $"<small>Approved by " + tpmName + "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small>Approved by " + pmName + "</small><br>&emsp;&emsp;<small>" + 
+                        //    "</small>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<small></small><br><br><br>" +
+                        //    $"&emsp;&emsp;" + tpmName + "&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;" + pmName + "<br>&emsp;&emsp;" +
+                        //    $"TOTAL PROJECT MANAGER&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;PROJECT MANAGER<br><br><br>This is a computer-generated document. No signature is required. </p>";
 
 
 
