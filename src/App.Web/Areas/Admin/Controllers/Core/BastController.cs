@@ -22,7 +22,6 @@ using Microsoft.AspNetCore.Identity;
 using App.Web.Models.ViewModels.Hosting;
 using Microsoft.Extensions.Options;
 using OfficeOpenXml;
-using System.IO;
 using System.Linq.Expressions;
 using System.Globalization;
 using DinkToPdf;
@@ -217,11 +216,12 @@ namespace App.Web.Areas.Admin.Controllers.Core
 
                     if (item.TOP == "30%")
                     {
-                        accBAST = itemm.ValueAssignment * 0.3M;
+                        accBAST = Math.Round(itemm.ValueAssignment * 0.3M);
+                        //Math.Round(accBAST);
                     }
                     else if (item.TOP == "70%")
                     {
-                        accBAST = itemm.ValueAssignment * 0.7M;
+                        accBAST = itemm.ValueAssignment - (Math.Round(itemm.ValueAssignment * 0.3M));
                     }
                     else if (item.TOP == "100%")
                     {
@@ -229,7 +229,15 @@ namespace App.Web.Areas.Admin.Controllers.Core
                     }
                     else if (item.TOP == "50%")
                     {
-                        accBAST = itemm.ValueAssignment * 0.5M;
+                        if (item.BastFinal == false)
+                        {
+                            accBAST = itemm.ValueAssignment * 0.5M;
+                        }
+                        else
+                        {
+                            accBAST = itemm.ValueAssignment - (Math.Round(itemm.ValueAssignment * 0.5M));
+                        }
+                        
                     }
                     counter = counter + 1;
                     totalBAST = totalBAST + accBAST;
@@ -245,7 +253,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                 }
                 else
                 {
-                    if (item.TOP == "100%")
+                    if (item.TOP == "100%" || item.BastFinal == true)
                     {
                         var head = $"<center><h3>HAND OVER CERTIFICATE<br>(BERITA ACARA SERAH TERIMA)</h3></center><br><p>Works: " + item.Sow + "<br>Project: " + item.Project + "</p><hr>" +
                             $"<center><p>BAST No: EID/" + item.OtherInfo + "/" + DateTime.Now.ToString("yyyy", CultureInfo.InvariantCulture) + "/: " + item.BastNo + "</p></center>" +
@@ -722,13 +730,15 @@ namespace App.Web.Areas.Admin.Controllers.Core
                     var column9 = $"<td style=" + stylee + ">"+ Convert.ToInt32(itemm.ValueAssignment * 1).ToString("N1", CultureInfo.InvariantCulture) + "</td>";
                     if (item.TOP == "30%")
                     {
-                        column9 = $"<td style=" + stylee + ">"+ Convert.ToInt32(itemm.ValueAssignment * 0.3M).ToString("N1", CultureInfo.InvariantCulture) + "</td>";
-                        accBAST = itemm.ValueAssignment * 0.3M;
+                        accBAST = Math.Round(itemm.ValueAssignment * 0.3M);
+                        column9 = $"<td style=" + stylee + ">"+ Convert.ToInt32(accBAST).ToString("N1", CultureInfo.InvariantCulture) + "</td>";
+                        
                     }
                     else if (item.TOP == "70%")
                     {
-                        column9 = $"<td style=" + stylee + ">" + Convert.ToInt32(itemm.ValueAssignment * 0.7M).ToString("N1", CultureInfo.InvariantCulture) + "</td>";
-                        accBAST = itemm.ValueAssignment * 0.7M;
+                        accBAST = itemm.ValueAssignment - (Math.Round(itemm.ValueAssignment * 0.3M));
+                        column9 = $"<td style=" + stylee + ">" + Convert.ToInt32(accBAST).ToString("N1", CultureInfo.InvariantCulture) + "</td>";
+                        
                     }
                     else if (item.TOP == "100%")
                     {
@@ -737,8 +747,19 @@ namespace App.Web.Areas.Admin.Controllers.Core
                     }
                     else if (item.TOP == "50%")
                     {
-                        column9 = $"<td style=" + stylee + ">" + Convert.ToInt32(itemm.ValueAssignment * 0.5M).ToString("N1", CultureInfo.InvariantCulture) + "</td>";
-                        accBAST = itemm.ValueAssignment * 0.5M;
+                        if(item.BastFinal == false)
+                        {
+                            accBAST = Math.Round(itemm.ValueAssignment * 0.5M);
+                            column9 = $"<td style=" + stylee + ">" + Convert.ToInt32(accBAST).ToString("N1", CultureInfo.InvariantCulture) + "</td>";
+                            
+                        }
+                        else
+                        {
+                            accBAST = itemm.ValueAssignment - (Math.Round(itemm.ValueAssignment * 0.5M));
+                            column9 = $"<td style=" + stylee + ">" + Convert.ToInt32(accBAST).ToString("N1", CultureInfo.InvariantCulture) + "</td>";
+                            
+                        }
+                        
                     }
 
 

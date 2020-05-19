@@ -457,7 +457,8 @@ namespace App.Web.Areas.Admin.Controllers.Core
                             else if (top == "30% - 70%" || top == "30%-70%" || top == "70%-30%")
                             {
                                 //cek top pertama
-                                listAsg = _mappingAsgBast.GetAllQ().Where(x => x.IdAsg.ToString() == id && x.Bast.TOP == top.Substring(0, 3) &&
+                                var topp = "30% - 70%";
+                                listAsg = _mappingAsgBast.GetAllQ().Where(x => x.IdAsg.ToString() == id && x.Bast.TOP == topp.Substring(0, 3) &&
                                 x.Bast.ApprovalOneStatus != BastApproveStatus.Reject &&
                                 x.Bast.ApprovalTwoStatus != BastApproveStatus.Reject &&
                                 x.Bast.ApprovalThreeStatus != BastApproveStatus.Reject &&
@@ -472,7 +473,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                 }
                                 else //cek top kedua
                                 {
-                                    listAsg = _mappingAsgBast.GetAllQ().Where(x => x.IdAsg.ToString() == id && x.Bast.TOP == top.Substring(6, 3) &&
+                                    listAsg = _mappingAsgBast.GetAllQ().Where(x => x.IdAsg.ToString() == id && x.Bast.TOP == topp.Substring(6, 3) &&
                                         x.Bast.ApprovalOneStatus != BastApproveStatus.Reject &&
                                         x.Bast.ApprovalTwoStatus != BastApproveStatus.Reject &&
                                         x.Bast.ApprovalThreeStatus != BastApproveStatus.Reject &&
@@ -492,10 +493,11 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                 }
 
                             }
-                            else if (top == "50% - 50%")
+                            else if (top == "50% - 50%" || top == "50%-50%")
                             {
                                 //cek top pertama
-                                listAsg = _mappingAsgBast.GetAllQ().Where(x => x.IdAsg.ToString() == id && x.Bast.TOP == top.Substring(0, 3) &&
+                                var topp = "30% - 70%";
+                                listAsg = _mappingAsgBast.GetAllQ().Where(x => x.IdAsg.ToString() == id && x.Bast.TOP == topp.Substring(0, 3) &&
                                 x.Bast.BastFinal == false &&
                                 x.Bast.ApprovalOneStatus != BastApproveStatus.Reject &&
                                 x.Bast.ApprovalTwoStatus != BastApproveStatus.Reject &&
@@ -510,7 +512,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                 }
                                 else //cek top kedua
                                 {
-                                    listAsg = _mappingAsgBast.GetAllQ().Where(x => x.IdAsg.ToString() == id && x.Bast.TOP == top.Substring(6, 3) &&
+                                    listAsg = _mappingAsgBast.GetAllQ().Where(x => x.IdAsg.ToString() == id && x.Bast.TOP == topp.Substring(6, 3) &&
                                         x.Bast.BastFinal == true &&
                                         x.Bast.ApprovalOneStatus != BastApproveStatus.Reject &&
                                         x.Bast.ApprovalTwoStatus != BastApproveStatus.Reject &&
