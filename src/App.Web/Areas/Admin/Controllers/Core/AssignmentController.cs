@@ -278,7 +278,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                     var siteName = "-";
                                     if (worksheet.Cells[row, 4].Value != null)
                                     {
-                                        siteId = worksheet.Cells[row, 4].Value.ToString();
+                                        siteName = worksheet.Cells[row, 4].Value.ToString();
                                     }
                                     var assigmentAcceptDate =  DateTime.Parse(worksheet.Cells[row, 5].Text);
                                     var prNumber = worksheet.Cells[row, 6].Value.ToString();

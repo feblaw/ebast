@@ -64,6 +64,7 @@ namespace App.Web.Areas.Admin.Controllers.Export
                 {
                     worksheet.Cells[index, i += 1].Value = "Bast Req No";
                     worksheet.Cells[index, i += 1].Value = "Bast No";
+                    worksheet.Cells[index, i += 1].Value = "ASP";
                     worksheet.Cells[index, i += 1].Value = "TOP";
                     worksheet.Cells[index, i += 1].Value = "Value";
                     worksheet.Cells[index, i += 1].Value = "Req By";//ah id
@@ -77,7 +78,7 @@ namespace App.Web.Areas.Admin.Controllers.Export
                     worksheet.Cells[index, i += 1].Value = "ASP PM";
                     worksheet.Cells[index, i += 1].Value = "Status";
                     worksheet.Cells[index, i += 1].Value = "Approval Date";
-                    worksheet.Cells[index, i += 1].Value = "ASP PM";
+                    worksheet.Cells[index, i += 1].Value = "ASP TPM";
                     worksheet.Cells[index, i += 1].Value = "Status";
                     worksheet.Cells[index, i += 1].Value = "Approval Date";
                 }
@@ -177,6 +178,7 @@ namespace App.Web.Areas.Admin.Controllers.Export
                             int j = 0;
                             worksheet.Cells[index, j += 1].Value = row.BastReqNo;
                             worksheet.Cells[index, j += 1].Value = row.BastNo;
+                            worksheet.Cells[index, j += 1].Value = row.Asp.Name;
                             worksheet.Cells[index, j += 1].Value = row.TOP;
                             worksheet.Cells[index, j += 1].Value = row.totalValue;
                             worksheet.Cells[index, j += 1].Value = row.CreatedBy;
