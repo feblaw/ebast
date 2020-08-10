@@ -34,10 +34,12 @@
                 <tr>
                     <th></th>
                     <th data-column="Name">ASP Name</th>
+                    <th data-column="OtherInfo">Object Group</th>
                 </tr>
             </thead>
             <tfoot>
                 <tr>
+                    <th></th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -65,6 +67,11 @@
                               "targets": 1,
                               "data": "name",
                               name: "Name"
+                          },
+                          {
+                              "targets": 2,
+                              "data": "otherInfo",
+                              name: "OtherInfo"
                           },
                          {
                              "targets": 0,
@@ -117,6 +124,12 @@
              yadcf.init(table, [
             {
                 column_number: 1,
+                filter_type: 'text',
+                filter_reset_button_text: false,
+                filter_default_label: ''
+            },
+            {
+                column_number: 2,
                 filter_type: 'text',
                 filter_reset_button_text: false,
                 filter_default_label: ''

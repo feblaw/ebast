@@ -49,6 +49,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
         protected override void CreateData(ASP item)
         {
             item.Name = item.Name.ToUpper();
+            item.OtherInfo = item.OtherInfo;
             item.CreatedBy = _userHelper.GetUserId(User);
             item.CreatedAt = DateTime.Now;
         }
@@ -56,6 +57,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
         protected override void UpdateData(ASP item, ASPModelForm model)
         {
             item.Name = model.Name.ToUpper();
+            item.OtherInfo = model.OtherInfo;
             item.Status = model.Status;
             item.LastEditedBy = _userHelper.GetUserId(User);
             item.LastUpdateTime = DateTime.Now;
@@ -93,7 +95,9 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                     var Check = service.GetAll().FirstOrDefault(x => _excel.TruncateString(x.Name)==_excel.TruncateString(ASPName.ToString()));
                                     if(Check==null)
                                     {
-                                        ASP ct = new ASP { Name = ASPName.ToString().ToUpper() };
+                                        ASP ct = new ASP { Name = ASPName.ToString().ToUpper(),
+                                            OtherInfo = worksheet.Cells[row,2].Value.ToString()
+                                        };
                                         service.Add(ct);
                                         TOTAL_INSERT++;
                                     }

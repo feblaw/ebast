@@ -12,6 +12,7 @@ namespace App.Web.Models.ViewModels.Core.Business
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public string OtherInfo { get; set; }
         public string Token { get; set; }
         public Status Status { get; set; }
     }
@@ -20,6 +21,7 @@ namespace App.Web.Models.ViewModels.Core.Business
     {
         [Required]
         public string Name { get; set; }
+        public string OtherInfo { get; set; }
         public Status Status { get; set; }
     }
 }
