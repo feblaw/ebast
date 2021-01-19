@@ -21,14 +21,15 @@
             <span class="caption-subject font-blue sbold uppercase"></span>
         </div>
         @if (
-                                                User.IsInRole("Administrator") ||
-                                                User.IsInRole("ASP Admin"))
+                                                        User.IsInRole("Administrator") ||
+                                                        User.IsInRole("ASP Admin"))
         {
             <div class="portlet-body">
                 <div class="box-footer clearfix">
+                    <button id="submitBtn" value=1 class="btn btn-primary pull-right" style="margin-left:10px; ">Sync with DPM</button>
+                    <a href="https://bam-id.e-dpm.com" class="btn btn-primary pull-right" style="margin-left:10px;"> DPM Link</a>
                     <form role="form" id="FormApprove" asp-controller="assignment" asp-action="ReqBast">
                         <input type="hidden" class="ListId" name="data" value="" required />
-                        @*<button type="submit" name="status" value=2 class="btn btn-primary pull-right" style="margin-left:10px;">BAST Final</button>*@
                         <button type="submit" name="status" value=1 class="btn btn-primary pull-right" style="margin-left:10px; ">Request BAST</button>
                         @if (User.IsInRole("Administrator"))
 
@@ -42,7 +43,7 @@
         }
         <div class="pull-right" id="toolbox">
             &nbsp;&nbsp;&nbsp;
-            
+
         </div>
         <div class="clearfix"></div>
     </div>
@@ -93,7 +94,7 @@
             </tfoot>
         </table>
     </div>
-    
+
 
 </div>
 
@@ -128,6 +129,38 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="ModalExport" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Please input PO Number</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" asp-controller="assignment" asp-action="asgDPM">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="remarks">PO Number</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control text" id="poNumber" name="poNumber" value="" required />
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer clearfix">
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal" style="margin-left:10px;">Cancel</button>
+                        @*<button type="submit" class="btn btn-primary pull-right">Submit</button>*@
+                        <button type="submit" name="status" value="" class="btn btn-primary pull-right" style="margin-left:10px; ">Sync</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
 @{
     Html.RenderPartial("_DatatablesAssets");
 }
@@ -139,7 +172,7 @@
             $('#check-all').hide();
             var datatableOption = {
                 ajaxMethod: "POST",
-                listUrl: "/admin/api/assignment/postdatatables",
+                listUrl: "/admin/api/assignment/PostDatatables",
                 detailUrl: "@Url.Action("Details")/",
                 editUrl: "@Url.Action("Edit")/",
                 //deleteUrl: "/admin/api/assigment/",
@@ -186,7 +219,7 @@
                                 return "-";
                             }
                         }
-                    },           
+                    },
                      {
                          "targets": 6, // name
                          "data": "poNumber",
@@ -204,7 +237,7 @@
                                  return "-";
                              }
                          }
-                     },         
+                     },
                      {
                          "targets": 8, // name
                          "data": "lineItemPO",
@@ -215,14 +248,14 @@
                          "data": "valueAssignment",
                          name: "ValueAssignment",
                          "render":$.fn.dataTable.render.number( '.', ',', 0 )
-                         
+
                      },
                       {
                           "targets": 10, // name
                           "data": "top",
                           name: "top",
                       },
-                     
+
                       {
                           "targets": 11, // name
                           "data": "assignmentCreateBy",
@@ -233,7 +266,7 @@
                           "data": "asp",
                           name: "asp.Name",
                       },
-                   
+
                      {
                          "targets": 0, // Action
                          "data": "poNumber",
@@ -244,9 +277,13 @@
                      }
                 ]
             }
-           
+
 
             $datatables.init("#table", datatableOption);
+
+            $('#submitBtn').click(function (){
+                $('#ModalExport').modal('show');
+            });
 
             $('#table tbody').on( 'click', 'tr', function () {
                 ele = $(this).find('td input:checkbox')[0];
@@ -262,7 +299,7 @@
                 .on('init.dt', function (e, settings, json) { disableImmediateSearchDt(e, settings, json, '#table'); })
                 .DataTable(); theDataTable = table;theDataTable = table;
                 table.order( [[1,'assignmentId']] );
-            
+
                 //table.search('').columns().search('').draw();
                 var success = @((TempData["Success"] != null).ToString().ToLower());
                 if (success == true) {
@@ -282,9 +319,28 @@
                     toastr.success("@TempData["Danger"]");
                 }
 
+            //new $.fn.dataTable.Buttons(table, {
+            //    buttons:
+            //    [{
+            //        text:'<i class="fa fa-file-excel-o"></i> Sync DPM',
+            //        extend:'excel',
+            //        exportOptions: {
+            //            columns: [2,3,4,5,6,7,8,9,10,11,12,13,14]
+            //        },
+            //        action: function (e, dt, button, config) {
+            //            //window.location.href = "/Export/TimeSheetActivity/Download";
+            //            $('#ModalExport').modal('show');
+            //        }
+            //    }]
+            //});
+            table.buttons( 0, null ).container().appendTo( '#toolbox' );
+            $('.buttons-excel').each(function() {
+                $(this).removeClass('dt-button buttons-excel buttons-html5').addClass('btn btn-default')
+            })
+
             $common.setMenu("#menu-assignment", "#menu-assignmReqBastnt");
 
-            
+
                 table.buttons( 0, null ).container().appendTo( '#toolbox' );
             $('.buttons-excel').each(function() {
                 $(this).removeClass('dt-button buttons-excel buttons-html5').addClass('btn btn-default')
@@ -347,8 +403,8 @@
                 filter_reset_button_text: false,
                 filter_default_label:''
             },
-            
-            
+
+
 
             ],'footer');
 

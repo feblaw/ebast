@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq.Expressions;
 using System.Globalization;
 using Microsoft.AspNetCore.Server.Kestrel.Internal.Http;
+using System.Net;
 
 namespace App.Web.Areas.Admin.Controllers.Core
 {
@@ -48,10 +49,11 @@ namespace App.Web.Areas.Admin.Controllers.Core
         private readonly IASPService _asp;
         private readonly IMapAsgBastService _mappingAsgBast;
         private readonly IBastService _bast;
+        private readonly IWebSettingService _webset;
 
 
-        public AssignmentController(IHttpContextAccessor httpContextAccessor, 
-            IUserService userService, IMapper mapper, 
+        public AssignmentController(IHttpContextAccessor httpContextAccessor,
+            IUserService userService, IMapper mapper,
             IAssignmentService service,
             IUserProfileService profileUser,
             IUserProfileService user,
@@ -64,7 +66,8 @@ namespace App.Web.Areas.Admin.Controllers.Core
             IASPService asp,
             IMapAsgBastService mappingAsgBast,
             IBastService bast,
-            IUserHelper userHelper) : 
+            IWebSettingService webset,
+            IUserHelper userHelper) :
             base(httpContextAccessor, userService, mapper, service, userHelper)
         {
             _user = user;
@@ -80,6 +83,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
             _excel = excel;
             _bast = bast;
             _mappingAsgBast = mappingAsgBast;
+            _webset = webset;
             this._asp = asp;
         }
 
@@ -99,17 +103,17 @@ namespace App.Web.Areas.Admin.Controllers.Core
             return base.Index();
         }
 
-       
+
         [HttpGet]
         [Authorize(Roles = "Administrator,ASP")]
         public override IActionResult Details(Guid id)
-        {            
+        {
             try
             {
-                
+
                 var data = _service.GetById(id);
                 ViewBag.Id = id;
-                
+
             }
             catch (Exception e)
             {
@@ -119,7 +123,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
             return NotFound();
         }
 
-        
+
         protected override void AfterCreateData(Assignment item)
         {
 
@@ -213,8 +217,8 @@ namespace App.Web.Areas.Admin.Controllers.Core
 
         protected override void UpdateData(Assignment item, AssignmentFormModel model)
         {
-            
-           
+
+
             if (User.IsInRole("Administrator"))
             {
                 item.AssignmentId = model.AssignmentId;
@@ -280,7 +284,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                     {
                                         siteName = worksheet.Cells[row, 4].Value.ToString();
                                     }
-                                    var assigmentAcceptDate =  DateTime.Parse(worksheet.Cells[row, 5].Text);
+                                    var assigmentAcceptDate = DateTime.Parse(worksheet.Cells[row, 5].Text);
                                     var prNumber = worksheet.Cells[row, 6].Value.ToString();
                                     var prDate = DateTime.Parse(worksheet.Cells[row, 7].Text);
                                     var poNumber = worksheet.Cells[row, 8].Value.ToString();
@@ -305,7 +309,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                     Assignment AssignmentFind = Service
                                        .GetAll()
                                        .FirstOrDefault(x => _excel.TruncateString(x.AssignmentId.ToString()) == _excel.TruncateString(assigmentId));
-                                    
+
 
                                     if (AssignmentFind == null)
                                     {
@@ -330,8 +334,8 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                             AssignmentCreateBy = assignmentCreateBy,
                                             AssignmentCreateDate = assignmentCreateDate,
                                             AspId = aspFind.Id,
-                                            AssignmentCancel = assignmentCancel,                                                                                       
-                                            Sow =sow
+                                            AssignmentCancel = assignmentCancel,
+                                            Sow = sow
                                         };
                                         Service.Add(nt);
                                         //TempData["Messages"] = "Success add Assignment Id " + assigmentId;
@@ -368,7 +372,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                         TOTAL_UPDATE++;
                                     }
 
-                                   
+
 
                                 }
                             }
@@ -382,7 +386,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                     TempData["Messages"] = ex.ToString();
                 }
             }
-            
+
             System.IO.File.Delete(System.IO.Path.Combine(uploads, file.FileName));
             return RedirectToAction("Index");
         }
@@ -405,10 +409,10 @@ namespace App.Web.Areas.Admin.Controllers.Core
                     var top = "";
                     var topFix = "";
                     bool final = false;
-                    decimal topCalculation=0;
-                    decimal valueBast=0;
-                    string project ="";
-                    string sow ="";
+                    decimal topCalculation = 0;
+                    decimal valueBast = 0;
+                    string project = "";
+                    string sow = "";
                     string account = "";
                     foreach (var id in AsgId)
                     {
@@ -417,15 +421,15 @@ namespace App.Web.Areas.Admin.Controllers.Core
                         {
                             noPoAwal = getNoPO(id);
                             project = getProject(id);
-                            sow =  getSow(id);
+                            sow = getSow(id);
                             account = getAccount(id);
                         }
                         noPo = getNoPO(id);
-                        
+
                         if (noPo != noPoAwal)
                         {
                             cekValidPo = false;
-                            
+
                         }
                         a = a + 1;
 
@@ -539,11 +543,12 @@ namespace App.Web.Areas.Admin.Controllers.Core
                             error = e.ToString();
                         }
 
-                        
-                        if(topFix == "100%")
+
+                        if (topFix == "100%")
                         {
                             topCalculation = 1.00M;
-                        }else if (topFix == "30%")
+                        }
+                        else if (topFix == "30%")
                         {
                             topCalculation = 0.30M;
                         }
@@ -559,7 +564,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                     }
 
                     Guid idid;
-                    if(cekValidPo == true && cekAsgNotValid == 0)
+                    if (cekValidPo == true && cekAsgNotValid == 0)
                     {
                         Bast bast = new Bast
                         {
@@ -572,7 +577,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                             totalValue = (valueBast * topCalculation),
                             AspId = _userHelper.GetUser(User).UserProfile.ASPId,
                             CreatedBy = _userHelper.GetUser(User).UserProfile.Name,
-                            Sow =sow,
+                            Sow = sow,
                             Project = project,
                             BastReqNo = GenerateNumberBastReqNo(),
                             BastFinal = final,
@@ -589,6 +594,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                     IdBast = bast.Id,
                                     IdAsg = Guid.Parse(id),
                                     CreatedBy = _userHelper.GetUser(User).UserProfile.Name,
+                                    StatusApi = "NOK"
                                 };
                                 _mappingAsgBast.Add(map);
                             }
@@ -597,23 +603,24 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                 Console.WriteLine(e.ToString());
                                 //error = e.ToString();
                             }
-                            
+
                         }
                         TempData["Messages"] = "OK";
-                        
+
                         //return RedirectToAction("BastEditor", new { Id = idid });
                         return RedirectToAction("Edit", "Bast", new { id = idid });
 
                     }
                     else
                     {
-                        if(cekValidPo == false)
+                        if (cekValidPo == false)
                         {
                             TempData["Messages"] = "PO not valid!";
-                        }else if (cekAsgNotValid > 0)
+                        }
+                        else if (cekAsgNotValid > 0)
                         {
                             TempData["Messages"] = "Assignment already Submited!";
-                        }                       
+                        }
                     }
                 }
             }
@@ -724,87 +731,158 @@ namespace App.Web.Areas.Admin.Controllers.Core
 
         }
 
-        //private void ApproveGeneralBast(string id, int status)
-        //{
-        //    var item = Service.GetById(Guid.Parse(id));
-        //    //var Dept = _department.GetById(item.DepartmentId);
-        //    if (item != null)
-        //    {
-        //        MultiApproveBast(status, item);
-        //    }
+        public async Task<IActionResult> asgDPM(string poNumber)
+        {
+            try
+            {
+                var ASP = _userHelper.GetUser(User).UserProfile.ASPId;
+                var filter = "\"PO_Number\"";
 
-        //}
+                var api = _webset.GetAll().Where(x => x.Name == "apiGet").FirstOrDefault();
 
-        //private void MultiApproveBast(int status, VacancyList item)
-        //{
-        //    var PreofileId = _userHelper.GetUser(User).UserProfile.Id;
-        //    if (User.IsInRole("Regional Project Manager"))
-        //    {
-        //        if (status == 1)
-        //        {
-        //            if (item.BastStatus1 == SrfApproveStatus.Waiting)
-        //            {
-        //                item.BastApprover1Id = PreofileId;
-        //                item.DateBastApproved1 = DateTime.Now;
-        //                item.BastStatus1 = SrfApproveStatus.Approved;
-        //            }
-        //        }
-        //        else if (status == 2)
-        //        {
-        //            if (item.BastStatus1 == SrfApproveStatus.Approved && item.BastStatus2 == SrfApproveStatus.Waiting && item.BastStatusSL1 == SrfApproveStatus.Approved)
-        //            {
-        //                item.BastApprover2Id = PreofileId;
-        //                item.DateBastApproved2 = DateTime.Now;
-        //                item.BastStatus2 = SrfApproveStatus.Approved;
-        //            }
+                //Api prod xl
+                //var urll = "https://api.xl.pdb.e-dpm.com/xlpdbapi/prpo_assignment?where={" + filter + ":" + (char)34+ poNumber + (char)34 + "}";
 
-        //        }
-        //        else if (status == 3)
-        //        {
-        //            if (item.BastStatus2 == SrfApproveStatus.Approved && item.BastStatus3 == SrfApproveStatus.Waiting && item.BastStatusSL2 == SrfApproveStatus.Approved)
-        //            {
-        //                item.BastApprover3Id = PreofileId;
-        //                item.DateBastApproved3 = DateTime.Now;
-        //                item.BastStatus3 = SrfApproveStatus.Approved;
-        //            }
+                //api dev isat
+                //var urll = "https://api-dev.isat.pdb.e-dpm.com/isatapi/prpo_assignment?where={" + filter + ":" + (char)34 + poNumber + (char)34 + "}";
 
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (status == 1 && item.BastStatus1 == SrfApproveStatus.Approved)
-        //        {
-        //            if (item.BastStatusSL1 == SrfApproveStatus.Waiting)
-        //            {
-        //                item.BastApproverSL1Id = PreofileId;
-        //                item.DateBastApprovedSL1 = DateTime.Now;
-        //                item.BastStatusSL1 = SrfApproveStatus.Approved;
-        //            }
-        //        }
-        //        else if (status == 2 && item.BastStatus2 == SrfApproveStatus.Approved)
-        //        {
-        //            if (item.BastStatusSL1 == SrfApproveStatus.Approved && item.BastStatusSL2 == SrfApproveStatus.Waiting)
-        //            {
-        //                item.BastApproverSL2Id = PreofileId;
-        //                item.DateBastApprovedSL2 = DateTime.Now;
-        //                item.BastStatusSL2 = SrfApproveStatus.Approved;
-        //            }
+                //api isat prod
+                var urll = api.Value + filter + ":" + (char)34 + poNumber + (char)34 + "}";
 
-        //        }
-        //        else if (status == 3 && item.BastStatus3 == SrfApproveStatus.Approved)
-        //        {
-        //            if (item.BastStatusSL2 == SrfApproveStatus.Approved && item.BastStatusSL1 == SrfApproveStatus.Approved && item.BastStatusSL3 == SrfApproveStatus.Waiting)
-        //            {
-        //                item.BastApproverSL3Id = PreofileId;
-        //                item.DateBastApprovedSL3 = DateTime.Now;
-        //                item.BastStatusSL3 = SrfApproveStatus.Approved;
-        //            }
+                HttpWebRequest WebReq = (HttpWebRequest)WebRequest.Create(urll);
 
-        //        }
-        //    }
+                WebReq.Method = "GET";
+                CredentialCache credentialCache = new CredentialCache();
+                credentialCache.Add(
+                    new Uri(urll),
+                    "Basic",
+                    new NetworkCredential("userebastapi", "Pm1RQ6edV4IZ")
+                );
 
-        //    Service.Update(item);
-        //}
+                WebReq.Credentials = credentialCache;
 
+                HttpWebResponse WebResp = (HttpWebResponse)await WebReq.GetResponseAsync();
+
+                Console.WriteLine(WebResp.StatusCode);
+                //Console.WriteLine(WebResp.Server);
+
+                string jsonString;
+                using (Stream stream = WebResp.GetResponseStream())   //modified from your code since the using statement disposes the stream automatically when done
+                {
+                    StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8);
+                    jsonString = reader.ReadToEnd();
+                }
+                AssignmentDPM items = JsonConvert.DeserializeObject<AssignmentDPM>(jsonString);
+                //List<AssignmentDPM> items = JsonConvert.DeserializeObject<List<AssignmentDPM>>(jsonString);
+                int TOTAL_INSERT = 0;
+                int TOTAL_UPDATE = 0;
+                foreach (var a in items._items)
+                {
+                    //Console.WriteLine(a.Assignment_No);
+                    ASP aspFind = _asp.GetAll().FirstOrDefault(x => x.OtherInfo == a.Vendor_Code_Actual);
+
+
+
+
+                    Assignment AssignmentFind = Service
+                       .GetAll()
+                       .FirstOrDefault(x => x.AssignmentId == a.Assignment_No);
+
+
+                    if (AssignmentFind == null)
+                    {
+
+                        Assignment nt = new Assignment
+                        {
+                            AssignmentId = a.Assignment_No,
+                            ProjectName = a.Project,
+                            SiteID = a.Site_ID,
+                            SiteName = a.Site_Name,
+                            AssignmentAcceptedDate = DateTime.Parse(a.ASP_Acceptance_Date),
+                            PRNo = a.PR_for_ASP,
+                            PRDateCreated = DateTime.Parse(a.PR_For_ASP_Date),
+                            PONumber = a.PO_Number,
+                            PODate = DateTime.Parse(a.PO_Date),
+                            LineItemPO = a.PO_Item,
+                            AssignmentReady4Bast = true,
+                            ShortTextPO = a.Account_Name,
+                            SHID = a.WP_ID,
+                            ValueAssignment = a.Total_Service_Price,
+                            TOP = a.Payment_Terms,
+                            AssignmentCreateBy = a.Requisitioner,
+                            AssignmentCreateDate = DateTime.Parse(a.created_on),
+                            AspId = aspFind.Id,
+                            AssignmentCancel = a.PR_PO_Cancelation,
+                            Sow = a.SOW_Type,
+                            idDPM = a._id,
+                            id_project_doc = a.id_project_doc
+                        };
+                        Service.Add(nt);
+                        //TempData["Messages"] = "Success add Assignment Id " + assigmentId;
+                        Console.WriteLine("Success add Assignment Id " + a.Assignment_No);
+                        TOTAL_INSERT++;
+                    }
+                    else if (AssignmentFind != null)
+                    {
+
+                        Assignment nt = Service.GetById(AssignmentFind.Id);
+                        nt.ProjectName = a.Project;
+                        nt.SiteID = a.Site_ID;
+                        nt.SiteName = a.Site_Name;
+                        nt.AssignmentAcceptedDate = DateTime.Parse(a.ASP_Acceptance_Date);
+                        nt.PRNo = a.PR_for_ASP;
+                        nt.PRDateCreated = DateTime.Parse(a.PR_For_ASP_Date);
+                        nt.PONumber = a.PO_Number;
+                        nt.PODate = DateTime.Parse(a.PO_Date);
+                        nt.LineItemPO = a.PO_Item;
+                        nt.ShortTextPO = a.Account_Name;
+                        nt.SHID = a.WP_ID;
+                        nt.ValueAssignment = a.Total_Service_Price;
+                        nt.TOP = a.Payment_Terms;
+                        nt.AssignmentCreateBy = a.Requisitioner;
+                        nt.AssignmentCreateDate = DateTime.Parse(a.created_on);
+                        nt.AspId = AssignmentFind.AspId;
+                        nt.AssignmentCancel = a.PR_PO_Cancelation;
+                        nt.AssignmentReady4Bast = true;
+                        nt.Sow = a.SOW_Type;
+                        nt.idDPM = a._id;
+                        nt.id_project_doc = a.id_project_doc;
+                        //nt.OtherInfo = shortextPo;
+                        Service.Update(nt);
+                        //TempData["Messages"] = "Success update Assignment Id " + assigmentId;
+                        Console.WriteLine("Success update Assignment Id " + a.Assignment_No);
+                        TOTAL_UPDATE++;
+                    }
+
+                }
+                TempData["Messages"] = "Total Inserted = " + TOTAL_INSERT + " , Total Updated = " + TOTAL_UPDATE;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                TempData["Messages"] = ex.ToString();
+            }
+            return RedirectToAction("Index");
+
+
+            //var response = JsonConvert.DeserializeObject(jsonString);
+
+
+            //Console.WriteLine(items.Count);
+
+
+
+
+
+
+            //##################################################################################################
+            //if (User.IsInRole("ASP Admin"))
+            //{
+            //    response = Service.GetDataTablesResponse<AssignmentDto>(request, Mapper, $"AspId.toString().Equals(\"{ASP.ToString()}\") && AssignmentCancel == (\"{false}\")", Includes);
+            //}
+
+            //return Ok(response);
+            //return new DataTablesJsonResult(response, true);
+        }
     }
 }

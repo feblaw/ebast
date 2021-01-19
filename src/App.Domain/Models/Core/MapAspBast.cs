@@ -20,7 +20,8 @@ namespace App.Domain.Models.Core
 
         [Key]
         public Guid Id { get; set; }
-        
+        public string StatusApi { get; set; }
+
 
         #region relationship
 
@@ -31,11 +32,11 @@ namespace App.Domain.Models.Core
         public Guid IdBast { get; set; }
         [ForeignKey("IdBast")]
         public virtual Bast Bast { get; set; }
-        
+
         #endregion
     }
 
 
-   
+
 
 }

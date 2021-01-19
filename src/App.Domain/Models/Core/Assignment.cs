@@ -33,23 +33,25 @@ namespace App.Domain.Models.Core
         public string LineItemPO { get; set; }
         public bool AssignmentReady4Bast { get; set; }
         public string ShortTextPO { get; set; }
-        public decimal ValueAssignment  { get; set; }
+        public decimal ValueAssignment { get; set; }
         public string SHID { get; set; }
         public string TOP { get; set; }
         public string Sow { get; set; }
         public string AssignmentCreateBy { get; set; }
+        public string idDPM { get; set; }
+        public string id_project_doc { get; set; }
         public bool AssignmentCancel { get; set; }
 
 
         #region relationship
         public Guid AspId { get; set; }
         [ForeignKey("AspId")]
-        public virtual ASP Asp{ get; set; }
+        public virtual ASP Asp { get; set; }
 
         #endregion
     }
 
 
-   
+
 
 }
