@@ -145,11 +145,11 @@
                         name: "top",
                     },
                     {
-                        "targets": 4, 
+                        "targets": 4,
                         "data": "totalValue",
                         name: "TotalValue",
                         "render":$.fn.dataTable.render.number( '.', ',', 0 )
-                         
+
                     },
                     {
                         "targets": 5, // Request By
@@ -161,7 +161,7 @@
                         "data": "asp",
                         name: "Asp.Name",
                     },
-                    
+
                     {
                         "targets": 7, // Request By
                         "data": "approvalOne",
@@ -174,7 +174,7 @@
                         "render": function (data, type, row, meta) {
                             var statussDB = parseInt(data);
                             return Status(statussDB,true);
-                            
+
                         }
                     },
                     {
@@ -203,7 +203,7 @@
                         "render": function (data, type, row, meta) {
                             var statussDB = parseInt(data);
                             return Status(statussDB,true);
-                            
+
                         }
                     },
                     {
@@ -232,7 +232,7 @@
                         "render": function (data, type, row, meta) {
                             var statussDB = parseInt(data);
                             return Status(statussDB,true);
-                            
+
                         }
                     },
                     {
@@ -261,7 +261,7 @@
                         "render": function (data, type, row, meta) {
                             var statussDB = parseInt(data);
                             return Status(statussDB,true);
-                            
+
                         }
                     },
                     {
@@ -292,7 +292,8 @@
                              //var Count = parseInt(row.countCandidate);
                              if(document.getElementById("IsAdmin")!=null){
                                  if (row.approvalFourStatus == 1) {
-                                     return "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                     return "<a href='@Url.Content("~/")admin/bast/sendDPM/" + row.id + "'><i class='fa fa-paper-plane' title='Resend to DPM'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                            "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;" +
                                          "<a class='remove' title='Remove " + row.id + "'><i class='fa fa-trash'></i></a>&nbsp;&nbsp;&nbsp;" +
                                          "<a href='@Url.Content("~/")admin/bast/print/" + row.id + "'><i class='fa fa-download'></i>1</a>&nbsp;&nbsp;&nbsp;" +
                                      "<a href='@Url.Content("~/")admin/bast/print2/" + row.id + "'><i class='fa fa-download'></i>2</a>";
@@ -301,22 +302,23 @@
                                  }
 
 
-                                 
-                                 
-                                    
-                                 
+
+
+
+
                              }else{
-                                 if (row.approvalOneStatus == 1 ) 
+                                 if (row.approvalOneStatus == 1 )
                                  {
                                      if (row.approvalFourStatus == 1) {
-                                         return "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                         return "<a href='@Url.Content("~/")admin/bast/sendDPM/" + row.id + "'><i class='fa fa-paper-plane' title='Resend to DPM'></i></a>&nbsp;&nbsp;&nbsp;" +
+                                            "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;" +
                                              "<a href='@Url.Content("~/")admin/bast/print/" + row.id + "'><i class='fa fa-download'></i>1</a>" +
                                              "<a href='@Url.Content("~/")admin/bast/print2/" + row.id + "'><i class='fa fa-download'></i>2</a>";
                                      } else {
                                          return "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;";
                                      }
-                                     
-                                     
+
+
                                  }else if (row.approvalOneStatus == 0){
                                      return "<a class='edit' title='Edit Vacancy'><i class='fa fa-edit'></i></a>&nbsp;&nbsp;&nbsp;" +
                                           "<a class='detail' title='Details'><i class='fa fa-eye'></i></a>&nbsp;&nbsp;&nbsp;" +
@@ -333,7 +335,7 @@
                      }
                 ]
             }
-            
+
 
             $datatables.init("#table", datatableOption);
             var table = $('#table')
@@ -378,7 +380,7 @@
             $('.buttons-excel').each(function() {
                 $(this).removeClass('dt-button buttons-excel buttons-html5').addClass('btn btn-default')
             })
-            
+
 
 
 
@@ -419,7 +421,7 @@
                 filter_reset_button_text: false,
                 filter_default_label:''
             },
-            
+
             {
                 column_number: 7,
                 filter_type:'text',
