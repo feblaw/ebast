@@ -982,8 +982,9 @@ namespace App.Web.Areas.Admin.Controllers.Core
                         GRPercent = "1";
                     }
                     //var account = _webset.GetAll().Where(x => x.Name == "AccountApi").FirstOrDefault();
+                    //var urll = "https://api2.bam-id.e-dpm.com/bamidapi/aspAssignment/updateBastNumberIntegration/" + roww.Assignment.idDPM;
                     var urll = "https://api2.bam-id.e-dpm.com/bamidapi/aspAssignment/updateBastNumberIntegration/" + roww.Assignment.idDPM;
-                    string json = "{\"account_id\" :\"ISAT\"," +
+                    string json = "{\"account_id\" :\"TSEL\"," +
                                       "\"data\" :[" +
                                       "{\"Request_Type\":\"New GR\"," +
                                       "\"id_assignment_doc\":" + (char)34 + roww.Assignment.idDPM + (char)34 + "," +
@@ -1155,7 +1156,7 @@ namespace App.Web.Areas.Admin.Controllers.Core
                     //var urll = "https://api2-dev.bam-id.e-dpm.com/bamidapi/aspAssignment/updateBastNumberIntegration/" + itemm.idDPM;
                     //var account = _webset.GetAll().Where(x => x.Name == )
 
-                    string json = "{\"account_id\" :\"ISAT\"," +
+                    string json = "{\"account_id\" :\"TSEL\"," +
                                       "\"data\" :[" +
                                       "{\"Request_Type\":\"New GR\"," +
                                       "\"id_assignment_doc\":" + (char)34 + itemm.idDPM + (char)34 + "," +

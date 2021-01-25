@@ -154,7 +154,7 @@ namespace App.Web.Areas.Admin.Controllers.Export
                             worksheet.Cells[index, j += 1].Value = row.Assignment.PONumber;
                             worksheet.Cells[index, j += 1].Value = row.Assignment.LineItemPO;
                             worksheet.Cells[index, j += 1].Value = row.Assignment.Asp.Name;
-                            worksheet.Cells[index, j += 1].Value = row.Bast.BastNo == null ? "-" : "EID/"+row.Bast.OtherInfo+"/" + DateTime.Now.ToString("yyyy", CultureInfo.InvariantCulture) + "/:" + row.Bast.BastNo;
+                            worksheet.Cells[index, j += 1].Value = row.Bast.BastNo == null ? "-" : "EID/"+row.Bast.OtherInfo+"/" + row.Bast.ApprovalFourDate.ToString("yyyy", CultureInfo.InvariantCulture) + "/:" + row.Bast.BastNo;
                             worksheet.Cells[index, j += 1].Value = row.Bast.Project;
                             worksheet.Cells[index, j += 1].Value = row.Bast.TOP;
                             worksheet.Cells[index, j += 1].Value = row.Assignment.ValueAssignment;
