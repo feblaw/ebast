@@ -189,6 +189,12 @@ namespace App.Web.Areas.Admin.Controllers.Core
 
         }
 
+        private string getAspCode(Guid id)
+        {
+            var item = _asp.GetById(id);
+            return item.OtherInfo;
+        }
+
         public IActionResult print(Guid id)
         {
             try
@@ -939,6 +945,8 @@ namespace App.Web.Areas.Admin.Controllers.Core
         public async void resendDPM(Guid id)
         {
             var item = _service.GetById(id);
+            var Vendor_Code = getAspCode(item.AspId);
+            var Vendor_Name = getAspName(item.AspId);
             sendCount = 0;
             try
             {
@@ -981,10 +989,32 @@ namespace App.Web.Areas.Admin.Controllers.Core
                     {
                         GRPercent = "1";
                     }
+                    var Site_Region = "";
+                    var shID = roww.Assignment.SHID.Substring(0, 2);
+                    if (shID == "J1")
+                    {
+                        Site_Region = "JABO1";
+                    }
+                    else if (shID == "J2")
+                    {
+                        Site_Region = "JABO2";
+                    }
+                    else if (shID == "CJ")
+                    {
+                        Site_Region = "Central";
+                    }
+                    else if (shID == "CS")
+                    {
+                        Site_Region = "CSR";
+                    }
+                    else
+                    {
+                        Site_Region = " ";
+                    }
                     //var account = _webset.GetAll().Where(x => x.Name == "AccountApi").FirstOrDefault();
-                    //var urll = "https://api2.bam-id.e-dpm.com/bamidapi/aspAssignment/updateBastNumberIntegration/" + roww.Assignment.idDPM;
                     var urll = "https://api2.bam-id.e-dpm.com/bamidapi/aspAssignment/updateBastNumberIntegration/" + roww.Assignment.idDPM;
-                    string json = "{\"account_id\" :\"TSEL\"," +
+                    //var urll = "https://api2-dev.bam-id.e-dpm.com/bamidapi/aspAssignment/updateBastNumberIntegration/" + roww.Assignment.idDPM;
+                    string json = "{\"account_id\" :\"XL\"," +
                                       "\"data\" :[" +
                                       "{\"Request_Type\":\"New GR\"," +
                                       "\"id_assignment_doc\":" + (char)34 + roww.Assignment.idDPM + (char)34 + "," +
@@ -1002,7 +1032,10 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                       "\"GR_Percentage\":" + (char)34 + GRPercent + (char)34 + "," +
                                       "\"PO_Number\":" + (char)34 + roww.Assignment.PONumber + (char)34 + "," +
                                       "\"PO_Item\":" + (char)34 + roww.Assignment.LineItemPO + (char)34 + "," +
-                                      "\"Item_Status\":" + (char)34 + "Submit" + (char)34 + "}" +
+                                      "\"Item_Status\":" + (char)34 + "Submit" + (char)34 + "," +
+                                      "\"Vendor_Code\":" + (char)34 + Vendor_Code + (char)34 + "," +
+                                      "\"Vendor_Name\":" + (char)34 + Vendor_Name + (char)34 + "," + 
+                                      "\"Site_Region\":" + (char)34 + Site_Region + (char)34 + "}" +
                                       "]," +
                                       "\"user\" :{" +
                                       "\"username\":" + (char)34 + "ebastxl" + (char)34 + "," +
@@ -1120,6 +1153,9 @@ namespace App.Web.Areas.Admin.Controllers.Core
 
         private async void patchToDPM(string id, string BASTNO, Bast item)
         {
+            var Vendor_Code = getAspCode(item.AspId);
+            var Vendor_Name = getAspName(item.AspId);
+
             try
             {
                 var Result = _mappingAsgBast.GetAll().Where(x => x.IdBast == Guid.Parse(id)).ToList();
@@ -1152,11 +1188,33 @@ namespace App.Web.Areas.Admin.Controllers.Core
                     {
                         GRPercent = "1";
                     }
+                    var Site_Region = "";
+                    var shID = roww.Assignment.SHID.Substring(0, 2);
+                    if (shID == "J1")
+                    {
+                        Site_Region = "JABO1";
+                    }
+                    else if (shID == "J2")
+                    {
+                        Site_Region = "JABO2";
+                    }
+                    else if (shID == "CJ")
+                    {
+                        Site_Region = "Central";
+                    }
+                    else if (shID == "CS")
+                    {
+                        Site_Region = "CSR";
+                    }
+                    else
+                    {
+                        Site_Region = " ";
+                    }
                     var urll = "https://api2.bam-id.e-dpm.com/bamidapi/aspAssignment/updateBastNumberIntegration/" + itemm.idDPM;
                     //var urll = "https://api2-dev.bam-id.e-dpm.com/bamidapi/aspAssignment/updateBastNumberIntegration/" + itemm.idDPM;
                     //var account = _webset.GetAll().Where(x => x.Name == )
 
-                    string json = "{\"account_id\" :\"TSEL\"," +
+                    string json = "{\"account_id\" :\"XL\"," +
                                       "\"data\" :[" +
                                       "{\"Request_Type\":\"New GR\"," +
                                       "\"id_assignment_doc\":" + (char)34 + itemm.idDPM + (char)34 + "," +
@@ -1174,7 +1232,10 @@ namespace App.Web.Areas.Admin.Controllers.Core
                                       "\"GR_Percentage\":" + (char)34 + GRPercent + (char)34 + "," +
                                       "\"PO_Number\":" + (char)34 + itemm.PONumber + (char)34 + "," +
                                       "\"PO_Item\":" + (char)34 + itemm.LineItemPO + (char)34 + "," +
-                                      "\"Item_Status\":" + (char)34 + "Submit" + (char)34 + "}" +
+                                      "\"Item_Status\":" + (char)34 + "Submit" + (char)34 + "," + 
+                                      "\"Vendor_Code\":" + (char)34 + Vendor_Code + (char)34 + "," +
+                                      "\"Vendor_Name\":" + (char)34 + Vendor_Name + (char)34 + "," +
+                                      "\"Site_Region\":" + (char)34 + Site_Region + (char)34 + "}" +
                                       "]," +
                                       "\"user\" :{" +
                                       "\"username\":" + (char)34 + "ebastxl" + (char)34 + "," +
